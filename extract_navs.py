@@ -78,8 +78,119 @@ def num(s) -> float | None:
         return None
 
 
+# ---------------------------------------------------------------------------
+# FIRST ATLANTIC (FAAM) LAYOUT
+#
+# Third provider, third shape. Like the old Stanbic files this is two-column
+# and pypdf flattens it to a run of LABELS followed by a run of VALUES:
+#
+#   Inception date / Currency / Valuation period / Benchmark / Min. investment
+#   / Upfront fee / Redemption fee / Share Price (NAV per share) /
+#   Management Fee (p.a) / Custody Fee (p.a) / AUM / Custodian / Auditors /
+#   Risk Profile
+#       ...then 14 values in the same order...
+#   April 11, 2022 / Ghanaian Cedi / Daily / Average 91-Day T-bill / GH¢50.00
+#   / Nil / Nil / GH¢0.1488 / 1.50% / 0.25% / GHS13.26m / GT Bank (GH) Ltd. /
+#   UHY Godwinson / Medium
+#
+# So the zip is positional, exactly as it was for the Stanbic charges block.
+# Regex proximity finds nothing because no value sits near its label.
+# ---------------------------------------------------------------------------
+
+FAAM_LABELS = [
+    "inception date", "currency", "valuation period", "benchmark",
+    "min. investment", "upfront fee", "redemption fee",
+    "share price", "management fee", "custody fee", "aum",
+    "custodian", "auditors", "risk pro",
+]
+
+
+def _is_faam_label(line: str) -> str:
+    low = line.strip().lower()
+    for lab in FAAM_LABELS:
+        if low.startswith(lab):
+            return lab
+    return ""
+
+
+def parse_faam(text: str) -> dict:
+    """
+    Identify FAAM values by SHAPE, not by position.
+
+    Positional zipping fails here and the failure is silent. The label run is
+    not stable:
+      FAIF Dec 2024 : 14 labels, including a "Manager" row
+      FAIF Feb 2026 : 13 labels, "Manager" dropped
+      PIPS Feb 2026 : only 4 labels survive extraction at all, then the values
+    Zipping 4 labels onto that value run mapped Benchmark -> GH¢50.00 and read
+    the 91-day benchmark and the GH¢50 minimum as if they were NAVs. The
+    series then read 91.0 for seven months, dropped to 0.12, and the engine
+    reported a -99.90% annual return.
+
+    The shapes are unambiguous instead:
+      NAV      GH¢0.xxxx   - a sub-unit cedi price, 3-4 decimals
+      minimum  GH¢50.00    - whole cedis
+      fees     1.50% / 0.25% - the two percentages next to each other
+      AUM      GHS10.03m
+    """
+    if not re.search(r"First\s+Atlantic", text, re.I):
+        return {}
+
+    out: dict = {}
+
+    # NAV: the only sub-unit cedi amount with 3+ decimals.
+    navs = re.findall(r"GH[¢C]\s*(0\.\d{3,6})", text)
+    if navs:
+        out["nav"] = float(navs[0])
+
+    # Minimum: a whole-cedi amount, typically 50.00.
+    mins = re.findall(r"GH[¢C]\s*([\d,]+\.\d{2})\b", text)
+    whole = [float(m.replace(",", "")) for m in mins
+             if float(m.replace(",", "")) >= 1]
+    if whole:
+        out["min_investment"] = min(whole)
+
+    mgmt = re.search(r"Management\s*Fee[^\n]{0,30}?([\d.]+)\s*%", text, re.I)
+    cust = re.search(r"Custody\s*Fee[^\n]{0,30}?([\d.]+)\s*%", text, re.I)
+    if not (mgmt and cust):
+        # Labels stripped: the management and custody fees are the adjacent
+        # pair immediately after the NAV in the value run.
+        pair = re.search(r"GH[¢C]\s*0\.\d{3,6}\s*\n\s*([\d.]+)\s*%\s*\n\s*([\d.]+)\s*%",
+                         text)
+        if pair:
+            out["management_fee_pct"] = float(pair.group(1))
+            out["trustee_or_custody_fee_pct"] = float(pair.group(2))
+    if mgmt:
+        out["management_fee_pct"] = float(mgmt.group(1))
+    if cust:
+        out["trustee_or_custody_fee_pct"] = float(cust.group(1))
+
+    aum = re.search(r"GHS\s*([\d.,]+)\s*([mb])\b", text, re.I)
+    if aum:
+        out["aum_raw"] = f"GHS{aum.group(1)}{aum.group(2).lower()}"
+
+    cu = re.search(r"([A-Z][A-Za-z ]{2,30}Bank[A-Za-z ()]{0,20})", text)
+    if cu:
+        out["custodian"] = cu.group(1).strip()
+
+    bm = re.search(r"((?:Average\s+)?\d{2,3}-Day\s+T-bill)", text, re.I)
+    if bm:
+        out["benchmark"] = bm.group(1).strip()
+
+    inc = re.search(r"([A-Z][a-z]+\s+\d{1,2},\s*\d{4})", text)
+    if inc:
+        out["inception"] = inc.group(1)
+
+    return out
+
+
 def parse_period(text: str, filename: str) -> date | None:
     """Both date styles: 'Fact Sheet as of July 2026' and 'as at 30th June 2025'."""
+    # FAAM header: "FIXED INCOME FUND / FEBRUARY 28, 2026"
+    m = re.search(r"/\s*([A-Z]{3,9})\s+\d{1,2},\s*(\d{4})", text)
+    if m and m.group(1).capitalize() in MONTHS:
+        return date(int(m.group(2)), MONTHS[m.group(1).capitalize()], 1)
+
     m = re.search(r"as\s+(?:at|of)\s+\d{1,2}(?:st|nd|rd|th)?\s+([A-Z][a-z]+)\s+(\d{4})",
                   text, re.I)
     if not m:
@@ -207,6 +318,7 @@ def extract(path: str) -> list[dict]:
     if not as_of:
         return []
 
+    faam = parse_faam(text) if re.search(r"First\s+Atlantic", text, re.I) else {}
     new_layout = bool(re.search(r"NAV\s*\(", text, re.I))
 
     fund, _ = (re.search(r"^\s*(.{3,60}?(?:Fund|Trust)(?:\s+PLC)?)\s*$", text, re.M) or
@@ -266,6 +378,22 @@ def extract(path: str) -> list[dict]:
     }
 
     rows: list[dict] = []
+    if faam and faam.get("nav") is not None:
+        base.update({k: v for k, v in faam.items()
+                     if k in ("min_investment", "management_fee_pct",
+                              "trustee_or_custody_fee_pct")})
+        base["custodian"] = faam.get("custodian", "")
+        rows.append({**base, "share_class": "main", "nav": faam["nav"],
+                     "period_return_pct": None, "yield_pct": None,
+                     "series_kind": "quoted", "review_required": False,
+                     "review_reason": "", "confidence": "high",
+                     "aum_raw": faam.get("aum_raw", ""),
+                     "benchmark": faam.get("benchmark", ""),
+                     "dealing_frequency": faam.get("dealing_frequency", ""),
+                     "inception": faam.get("inception", ""),
+                     "risk_rating": faam.get("risk_rating", "")})
+        return rows
+
     if new_layout:
         nav_m = re.search(r"NAV\s*\([^)]*\)\s*(?:GHS|GH₵)?\s*([\d,]+\.\d+)", text, re.I)
         yld_m = re.search(r"Weighted\s*Average\s*Yield[^%\n]{0,35}?([\d.]+)\s*%", text, re.I)
@@ -397,10 +525,36 @@ def chain(rows: list[dict], label: str = "") -> list[dict]:
     return out
 
 
+# A quoted unit price does not change scale. If consecutive NAVs differ by
+# more than this factor, the extractor read two DIFFERENT FIELDS, not two
+# prices — FAAM's benchmark (91.0) and minimum (50.0) were being read as NAVs,
+# giving a series that sat at 91.0 for seven months then dropped to 0.12. The
+# engine dutifully reported -99.90% annualised. A market cannot do that to a
+# unit price; only a parser can.
+MAX_NAV_SCALE_JUMP = 5.0
+
+
+def flag_scale_jumps(obs: list[dict], label: str) -> list[dict]:
+    """Mark, never drop — same rule as the monthly-return guard."""
+    bad = []
+    for i in range(1, len(obs)):
+        a, b = obs[i - 1]["nav"], obs[i]["nav"]
+        if a and b and (b / a > MAX_NAV_SCALE_JUMP or a / b > MAX_NAV_SCALE_JUMP):
+            bad.append((obs[i]["as_of"], a, b))
+    if bad:
+        print(f"    !! {label}: {len(bad)} NAV scale jump(s) — "
+              f"e.g. {bad[0][0]} {bad[0][1]} -> {bad[0][2]}")
+        print("       A unit price cannot do that. The extractor is reading")
+        print("       different fields as NAV. DO NOT TRUST this series.")
+    return bad
+
+
 def call_engine(fund: str, obs: list[dict], kind: str) -> None:
     if len(obs) < 2:
         print(f"  {fund}: {len(obs)} usable point(s) — nothing to compute")
         return
+    if kind == "quoted":
+        flag_scale_jumps(obs, fund)
     payload = {"product_id": fund, "as_of": max(o["as_of"] for o in obs),
                "observations": obs, "benchmarks": {},
                "windows": ["3m", "6m", "1y", "3y"]}
