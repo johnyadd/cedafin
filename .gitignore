@@ -59,3 +59,13 @@ check_text.py
 __pycache__/
 *.pyc
 engine/.venv/
+
+# All downloaded source documents — reproducible via the adapters
+data/
+faam_factsheets.csv
+arg_funds.csv
+arg_docs.csv
+cis_*.json
+headers.txt
+h2.txt
+h3.txt
