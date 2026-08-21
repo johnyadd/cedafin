@@ -1,0 +1,15 @@
+# CediWise — unit price submission template
+# Return to: data@[domain]  |  Cadence: weekly (or your normal publication cycle)
+#
+# One row per fund per pricing date. Leave a cell blank rather than estimating.
+# Please attach the factsheet or price notice the figures come from — we record
+# a source document against every published number and cannot publish without one.
+#
+# currency: GHS or USD.  nav: price per unit, decimals as published.
+# yield_annualised: for money market funds quoting a rate rather than a NAV. Use
+#   percent, e.g. 18.75 for 18.75%.  fund_size: total fund value on that date.
+# basis: bid | offer | mid | single
+#
+fund_name,fund_sec_id,as_of_date,currency,nav,yield_annualised,fund_size,basis,notes
+Example Money Market Fund,,2026-08-14,GHS,,18.75,412500000,single,Weekly rate notice
+Example Balanced Fund,,2026-08-14,GHS,2.8431,,96200000,single,
