@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+Date: Fri, 21 Aug 2026 20:58:10 GMT
+Content-Type: application/json; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+access-control-allow-headers: Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type
+access-control-expose-headers: X-WP-Total, X-WP-TotalPages, Link
+allow: GET
+alt-svc: h3=":443"; ma=86400
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=488u%2Fr69ZE7N8cuvOsA8Ug0X7J81Ls9c54ray5kEwXW68yPfOEDY7TtaVrvfeEg20y9BIT%2BCCXyBAESQFuoRdaddLD6AvUGm%2BL7irMwF8DRKKZ7C9ssifmluEZGK6veOWoCWzBeSWLrc"}]}
+link: <https://annualreportsghana.com/wp-json/wp/v2/media?per_page=1&page=2>; rel="next"
+vary: Origin
+vary: Accept-Encoding
+via: 0.0 Caddy
+x-content-type-options: nosniff
+x-robots-tag: noindex
+x-wp-total: 7072
+x-wp-totalpages: 7072
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-cache-status: DYNAMIC
+Server: cloudflare
+CF-RAY: a2ec8de4bfa8eb14-MAN
+
