@@ -1,6 +1,0 @@
-fund_class,points,first,last,series_kind,latest_nav,ter_pct,ter_is_ytd,management_fee_pct,trustee_fee_pct,min_investment,distributes,trustee_or_custodian,sec_no,rows_needing_review
-PDIF_Fact_Sheet::main,6,2026-01-01,2026-07-01,quoted,112.53,1.14,False,1.95,0.15,25000.0,True,Standard Chartered Bank Ghana,SEC/CIS/MFL 51/25,0
-Stanbic_Cash_Trust_Fact_Sheet::main,25,2024-01-01,2026-02-01,chained,8.3046,1.66,False,2.0,0.25,20.0,False,Universal Merchant Bank,SEC/CIS/UTL 17/26,0
-Stanbic_Cash_Trust_Fact_Sheet::sub,25,2024-01-01,2026-02-01,chained,,0.43,True,2.25,0.4,20.0,False,Universal Merchant Bank,SEC/CIS/UTL 17/25,0
-Stanbic_Income_Fund_Trust_Fact_Sheet::main,15,2024-01-01,2026-03-01,chained,12.4581,1.49,False,2.0,0.25,20.0,False,Universal Merchant Bank,,0
-Stanbic_Income_Fund_Trust_Fact_Sheet::sub,15,2024-01-01,2026-03-01,chained,,0.55,True,2.0,0.25,20.0,False,Universal Merchant Bank,SEC/CIS/UTL 12/26,0
