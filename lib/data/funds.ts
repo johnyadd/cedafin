@@ -312,6 +312,48 @@ function toFundRow(p: RawProduct): FundRow {
 // Public queries
 // ---------------------------------------------------------------------------
 
+/**
+ * A directory entry: a fund known to exist, with no verified figures yet.
+ *
+ * These are the 67 funds catalogued from a third-party aggregator. They carry a
+ * name, a probable provider and sometimes a category — and nothing else. They
+ * are `status='draft'` so they can never reach a comparison page and appear to
+ * have no charges; absent is not free.
+ *
+ * The name is NOT verified against the SEC register. The catalogue's own slugs
+ * carry "formerly" markers, which is evidence enough that fund names move.
+ * Anything user-facing must say so, and anything provider-facing must be
+ * checked first — getting a manager's own fund name wrong in a first approach
+ * undoes exactly the credibility the listing is meant to build.
+ */
+export interface DirectoryEntry {
+  id: string;
+  slug: string;
+  name: string;
+  assetClass: string | null;
+  /** What the catalogue knows exists but we have not obtained. */
+  note: string | null;
+  nameVerified: false;
+}
+
+export async function getDirectory(): Promise<DirectoryEntry[]> {
+  const { data, error } = await publicClient()
+    .from("products")
+    .select("id, slug, name, asset_class, objective, status")
+    .eq("status", "draft")
+    .like("slug", "cat-%")
+    .order("name");
+  if (error) throw new Error(`getDirectory: ${error.message}`);
+  return (data ?? []).map((d: Record<string, unknown>) => ({
+    id: String(d.id),
+    slug: String(d.slug),
+    name: String(d.name),
+    assetClass: (d.asset_class as string | null) ?? null,
+    note: (d.objective as string | null) ?? null,
+    nameVerified: false as const,
+  }));
+}
+
 export async function getPublishedFunds(): Promise<FundRow[]> {
   const { data, error } = await publicClient()
     .from("products")

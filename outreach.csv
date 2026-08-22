@@ -1,0 +1,68 @@
+provider,fund,slug,factsheets_available,annual_reports_available,missing,priority,name_verified_against_sec
+EDC,EDC Ghana Africa Cash Trust,edc-ghana-africa-cash-trust,2,1,"fees, minimum",medium,NO — check sec_licensees.csv first
+EDC,EDC Ghana Balanced Fund,edc-ghana-balanced-fund-formerly-ifund-mutual-fund,22,16,"fees, minimum",medium,NO — check sec_licensees.csv first
+EDC,EDC Ghana Fixed Income Unit Trust,edc-ghana-fixed-income-unit-trust,19,13,"fees, minimum",medium,NO — check sec_licensees.csv first
+EDC,EDC Ghana Growth Trust,edc-ghana-growth-trust,2,1,"fees, minimum",medium,NO — check sec_licensees.csv first
+EDC,EDC Ghana Money Market Unit Trust,edc-ghana-money-market-unit-trust,18,9,"fees, minimum",medium,NO — check sec_licensees.csv first
+EDC,EDC Retirement Fund,edc-retirement-fund,5,4,"fees, minimum",medium,NO — check sec_licensees.csv first
+Databank,Databank Ark Fund,databank-ark-fund,1,17,"fees, minimum",medium,NO — check sec_licensees.csv first
+Databank,Databank Balanced Fund,databank-balanced-fund,1,18,"fees, minimum",medium,NO — check sec_licensees.csv first
+Databank,Databank Educational Investment Fund,databank-educational-investment-fund,1,11,"fees, minimum",medium,NO — check sec_licensees.csv first
+Databank,Databank Epack Investment Fund,databank-epack-investment-fund,1,22,"fees, minimum",medium,NO — check sec_licensees.csv first
+Databank,Databank MFund,databank-mfund-formerly-databank-money-market-fund,1,23,"fees, minimum",medium,NO — check sec_licensees.csv first
+Republic,Republic Equity Trust,republic-equity-trust-formerly-hfc-equity-trust,0,19,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Republic,Republic Future Plan Trust,republic-future-plan-trust-formerly-hfc-future-plan-trust,0,15,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Republic,Republic REIT,republic-reit-formerly-hfc-reit,0,19,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Republic,Republic Unit Trust,republic-unit-trust-formerly-hfc-unit-trust,0,19,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Republic,Republic Wealth Trust,republic-wealth-trust,0,4,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+InvestCorp,InvestCorp Active Equity Fund,investcorp-active-equity-fund,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+InvestCorp,InvestCorp Mid-Tier Financial Services Investment Fund,investcorp-mid-tier-financial-services-investment-fund,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+InvestCorp,InvestCorp Money Market Fund,investcorp-money-market-fund,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+InvestCorp,InvestCorp Treasury Securities Fund,investcorp-treasury-securities-fund,1,1,"fees, minimum",medium,NO — check sec_licensees.csv first
+Bora,Bora Balanced Unit Trust,bora-balanced-unit-trust,0,3,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Bora,Bora Fixed Income Unit Trust,bora-fixed-income-unit-trust,0,2,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Bora,Bora Global Balanced Trust,bora-global-balanced-trust,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Fidelity,Fidelity Balanced Trust,fidelity-balanced-trust,1,6,"fees, minimum",medium,NO — check sec_licensees.csv first
+Fidelity,Fidelity Fixed Income Trust,fidelity-fixed-income-trust,1,6,"fees, minimum",medium,NO — check sec_licensees.csv first
+Fidelity,Fidelity Money Market Trust,fidelity-money-market-trust,0,4,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Plus,Fixed Income Alpha Plus Fund,fixed-income-alpha-plus-fund,1,6,"fees, minimum",medium,NO — check sec_licensees.csv first
+Plus,Plus Balanced Fund,plus-balanced-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Plus,Plus Income Fund,plus-income-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Sentinel,Sentinel Africa Eurobond Trust,sentinel-africa-eurobond-trust,8,0,"fees, minimum",medium,NO — check sec_licensees.csv first
+Sentinel,Sentinel Commercial Real Estate Investment Trust,sentinel-commercial-real-estate-investment-trust,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Sentinel,Sentinel Ghana Fixed Income Trust,sentinel-ghana-fixed-income-trust,9,0,"fees, minimum",medium,NO — check sec_licensees.csv first
+CAL,CAL Advantage Balanced Unit Trust,cal-advantage-unit-trust,0,3,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+CAL,CAL Benefit Fixed Income Unit Trust,cal-benefit-unit-trust,0,3,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Gold,Gold Fund Unit Trust,gold-fund-unit-trust,0,9,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Gold,Gold Money Market Fund,gold-money-market-fund,0,2,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Nimed,NIMED Fixed Income Fund,nimed-fixed-income-fund,3,0,"fees, minimum",medium,NO — check sec_licensees.csv first
+Nimed,NIMED Lifetime Unit Trust,nimed-lifetime-unit-trust,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Omega,Omega Equity Fund,omega-equity-fund,0,5,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Omega,Omega Income Fund,omega-income-fund,0,5,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+SAS,SAS Fortune Fund,sas-fortune-fund,0,20,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+SAS,SAS Midas Fund,sas-midas-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+SEM,SEM Income Fund,sem-income-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+SEM,SEM Money Plus Fund,sem-money-plus-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Tesah,Tesah Future Fund,kiddifund-mutual-fund,0,9,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Tesah,Tesah Treasury Trust,tesah-treasury-trust,1,1,"fees, minimum",medium,NO — check sec_licensees.csv first
+AIM,AIM Freedom Fixed Income Trust,aim-freedom-fixed-income-trust,0,1,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Algebra,Algebra Income Trust,algebra-income-trust,0,5,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Anidaso,Anidaso Mutual Fund,anidaso-mutual-fund,0,9,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Brassica,Brassica Alpha Fund,brassica-alpha-fund,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+CM,CM Fund,cm-fund-formerly-campus-mutual-fund,0,19,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Christian,Christian Community Mutual Fund,christian-community-mutual-fund,2,14,"fees, minimum",medium,NO — check sec_licensees.csv first
+Dalex,Dalex Vision Fund,dalex-vision-fund,0,8,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Delta,Delta Fund,delta-fund,0,4,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+EcoCapital,EcoCapital Prime Fund,ecocapital-prime-fund,2,2,"fees, minimum",medium,NO — check sec_licensees.csv first
+Elite,Elite Mutual Fund,elite-mutual-fund,0,5,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Enhanced,Enhanced Equity Beta,enhanced-equity-beta,1,5,"fees, minimum",medium,NO — check sec_licensees.csv first
+Financial,Financial Independence Mutual Fund,financial-independence-mutual-fund,0,5,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+First,First Fund,first-fund,0,14,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+GLICO,GLICO Fixed Income Fund,glico-fixed-income-fund,1,2,"fees, minimum",medium,NO — check sec_licensees.csv first
+Golden,Golden Eagle Unit Trust,golden-eagle-unit-trust,0,1,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Heritage,Heritage Fund,heritage-fund,0,12,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+IC Asset Managers,IC Liquidity Fund,ic-liquidity-fund,4,1,"fees, minimum",medium,NO — check sec_licensees.csv first
+NTHC,NTHC Horizon Fund,nthc-horizon-fund,0,19,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Pinnacle,Pinnacle Balanced Fund (previously OctaneDC Bond Fund),pinnacle-balanced-fund-previously-octanedc-bond-fund,0,3,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+Rangoon,Rangoon REIT,rangoon-reit,0,0,"prices, fees, minimum",high,NO — check sec_licensees.csv first
+UMB,UMB Balanced Fund,umb-balanced-fund,0,6,"prices, fees, minimum",high,NO — check sec_licensees.csv first
