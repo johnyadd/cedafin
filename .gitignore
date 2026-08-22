@@ -69,3 +69,4 @@ cis_*.json
 headers.txt
 h2.txt
 h3.txt
+supabase/.temp/
