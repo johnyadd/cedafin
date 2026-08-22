@@ -85,6 +85,14 @@ export interface FundRow {
   /** Latest FULL-YEAR expense ratio. Part-year figures never land here. */
   lastFullYearTerPct: Sourced<number> | null;
   lastFullYearTerYear: number | null;
+  /**
+   * A part-year expense ratio, where one is published but no complete year has
+   * elapsed. PDIF launched in October 2024 and its factsheets carry a
+   * year-to-date figure, so "not published" was simply wrong — the fund
+   * publishes it, there just isn't a full year yet. Distinct field so a page
+   * can say "part-year only" rather than implying non-disclosure.
+   */
+  partYearTerPct: Sourced<number> | null;
   feeHistory: FeePeriod[];
   /** True when a fee changed within the observed window — worth surfacing. */
   feeChanged: boolean;
@@ -200,6 +208,15 @@ function currentFee(fees: RawFee[], type: string): RawFee | null {
  * roughly half. The loader marks full years in `conditions`; this trusts that
  * marking rather than re-deriving it.
  */
+function partYearTer(fees: RawFee[]): RawFee | null {
+  return (
+    fees
+      .filter((f) => f.fee_type === "ter")
+      .filter((f) => /PART-YEAR/i.test(f.conditions ?? ""))
+      .sort((a, b) => b.effective_from.localeCompare(a.effective_from))[0] ?? null
+  );
+}
+
 function lastFullYearTer(fees: RawFee[]): { fee: RawFee; year: number } | null {
   const complete = fees
     .filter((f) => f.fee_type === "ter" && f.effective_to)
@@ -221,6 +238,7 @@ function toFundRow(p: RawProduct): FundRow {
   const cust = currentFee(p.product_fees ?? [], "custody");
   const ter = lastFullYearTer(p.product_fees ?? []);
   const stated = currentFee(p.product_fees ?? [], "stated_charges");
+  const partial = partYearTer(p.product_fees ?? []);
 
   const history: FeePeriod[] = (p.product_fees ?? [])
     .map((f) => ({
@@ -303,6 +321,13 @@ function toFundRow(p: RawProduct): FundRow {
         )
       : null,
     lastFullYearTerYear: ter?.year ?? null,
+    partYearTerPct: partial
+      ? sourced(
+          Number((partial.rate * 100).toFixed(4)),
+          partial.verified_on ?? partial.effective_from,
+          partial.sources,
+        )
+      : null,
     feeHistory: history,
     feeChanged,
   };
@@ -463,7 +488,12 @@ const DISCLOSURE_FIELDS: {
 }[] = [
   { field: "Management fee", test: (f) => f.currentManagementFeePct !== null },
   { field: "Custody fee", test: (f) => f.currentCustodyFeePct !== null },
-  { field: "Total expense ratio", test: (f) => f.lastFullYearTerPct !== null },
+  {
+    field: "Total expense ratio",
+    // A part-year figure counts: the provider DOES publish the field, it just
+    // has not completed a year. The checklist asks what they disclose.
+    test: (f) => f.lastFullYearTerPct !== null || f.partYearTerPct !== null,
+  },
   { field: "Minimum investment", test: (f) => f.minimumGhs !== null },
   { field: "Dealing frequency", test: (f) => f.dealingFrequency !== null },
   { field: "Unit price", test: (f) => f.latestNav !== null },

@@ -103,8 +103,8 @@ export default async function ProviderPage({
         className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
         style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        {provider.observationCount} price points from their own factsheets
-
+        {provider.documentCount} source documents · {provider.observationCount}{" "}
+        price points · every figure dated
       </div>
 
       <header className="mx-auto max-w-4xl px-5 pt-6 sm:px-8">
@@ -226,7 +226,9 @@ export default async function ProviderPage({
                   <dd className="font-semibold tabular-nums">
                     {f.lastFullYearTerPct
                       ? `${f.lastFullYearTerPct.value.toFixed(2)}% (${f.lastFullYearTerYear})`
-                      : "not published"}
+                      : f.partYearTerPct
+                        ? `${f.partYearTerPct.value.toFixed(2)}% part-year`
+                        : "not published"}
                   </dd>
                 </div>
                 {f.peerGroup && (
