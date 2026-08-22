@@ -93,8 +93,16 @@ export default async function HomePage() {
         className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
         style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        {total} funds on Ghana&rsquo;s SEC register · {unique.length} with
-        verified charges · every figure dated
+        {/*
+          NOT "on Ghana's SEC register". The catalogue came from
+          annualreportsghana, a third-party aggregator — the SEC register
+          itself lists 53 mutual funds plus ETFs and private funds, and our 72
+          includes renamed and possibly delisted entries. Claiming regulator
+          provenance for an aggregator's list is exactly what we would call out
+          a competitor for.
+        */}
+        {total} Ghanaian collective investment schemes tracked ·{" "}
+        {unique.length} with verified charges · every figure dated
       </div>
 
       <header className="mx-auto max-w-4xl px-5 pt-6 sm:px-8">
@@ -122,9 +130,10 @@ export default async function HomePage() {
             see what it costs.
           </h1>
           <p className="mt-6 max-w-xl text-[15px] leading-relaxed opacity-90">
-            Every fund on Ghana&rsquo;s SEC register, in one place. We read the
-            providers&rsquo; own factsheets and publish the charges, minimums and
-            access terms — with the document and the date beside every figure.
+            Ghana&rsquo;s collective investment schemes, in one place. We read
+            the providers&rsquo; own factsheets and publish the charges,
+            minimums and access terms — with the document and the date beside
+            every figure.
           </p>
 
           {cheapest !== null && (
@@ -191,7 +200,7 @@ export default async function HomePage() {
           Who this is for
         </h2>
         <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: C.muted }}>
-          The funds here are regulated in Ghana. Who can buy them depends on each
+          These funds are regulated in Ghana. Who can buy them depends on each
           provider&rsquo;s own rules, and those rules aren&rsquo;t published in
           one place — so here&rsquo;s what we&rsquo;ve established and
           what we&rsquo;re still working out.
