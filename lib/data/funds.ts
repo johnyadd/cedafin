@@ -428,6 +428,149 @@ export async function getPeerGroups(): Promise<PeerGroupSummary[]> {
 }
 
 // ---------------------------------------------------------------------------
+// Providers
+//
+// A provider page is what a fund manager is sent a link to, so it has to be
+// accurate about what they disclose and what they don't. The disclosure score
+// below is built ONLY from what a provider actually publishes — never from a
+// judgement about the provider — because the page exists to prompt a
+// correction, not to grade anyone.
+// ---------------------------------------------------------------------------
+
+export interface ProviderSummary {
+  slug: string;
+  name: string;
+  legalName: string;
+  website: string | null;
+  custodian: string | null;
+  funds: FundRow[];
+  /** Documents held for this provider's funds. */
+  documentCount: number;
+  /** Price points held across all their funds. */
+  observationCount: number;
+  /** Whether they appear to have stopped publishing — a separate question. */
+  publication: PublicationStatus;
+  /** Of the fields a comparison needs, how many are filled. 0-1. */
+  disclosureScore: number;
+  disclosed: { field: string; has: boolean }[];
+  /** Most recent price date across all their funds. */
+  lastPublished: string | null;
+}
+
+const DISCLOSURE_FIELDS: {
+  field: string;
+  test: (f: FundRow) => boolean;
+}[] = [
+  { field: "Management fee", test: (f) => f.currentManagementFeePct !== null },
+  { field: "Custody fee", test: (f) => f.currentCustodyFeePct !== null },
+  { field: "Total expense ratio", test: (f) => f.lastFullYearTerPct !== null },
+  { field: "Minimum investment", test: (f) => f.minimumGhs !== null },
+  { field: "Dealing frequency", test: (f) => f.dealingFrequency !== null },
+  { field: "Unit price", test: (f) => f.latestNav !== null },
+  { field: "12+ months of history", test: (f) => f.observationCount >= 12 },
+];
+
+// Deliberately NOT a disclosure field: whether prices are recent.
+//
+// "Prices within 90 days" sat in the checklist beside "Total expense ratio" as
+// though both were things a provider had failed to publish. They are different
+// failures. A missing expense ratio means the factsheet does not carry the
+// field. A stale price means the factsheets stopped — FAAM's most recent is
+// February 2026 and they publish monthly, so something changed rather than
+// something is absent.
+//
+// Asking a manager to "publish prices within 90 days" when they publish
+// monthly reads as though we have not looked. Asking "your latest factsheet we
+// hold is February — have you published since?" is a question they can answer,
+// and the answer may be that they moved somewhere we cannot see.
+export interface PublicationStatus {
+  latestDocument: string | null;
+  monthsSince: number | null;
+  looksPaused: boolean;
+}
+
+export async function getProviders(): Promise<ProviderSummary[]> {
+  const funds = await getPublishedFunds();
+  const { data, error } = await publicClient()
+    .from("providers")
+    .select("slug, trading_name, legal_name, website, custodian, status")
+    .eq("status", "published");
+  if (error) throw new Error(`getProviders: ${error.message}`);
+
+  return (data ?? [])
+    .map((p: Record<string, unknown>) => {
+      const slug = String(p.slug);
+      const mine = funds.filter((f) => f.provider.slug === slug);
+      const disclosed = DISCLOSURE_FIELDS.map(({ field, test }) => ({
+        field,
+        // A provider discloses a field if ANY of their funds does — the page
+        // asks "do you publish this at all", not "do you publish it everywhere".
+        has: mine.some(test),
+      }));
+      const dates = mine
+        .map((f) => f.lastObservation)
+        .filter((d): d is string => Boolean(d))
+        .sort();
+      // Every document behind every figure we hold for them — not just the
+      // handful cited by whatever is currently on screen. "Documents held: 2"
+      // when 34 of their factsheets are on disk reads, from their side, as
+      // though we barely know them.
+      const docs = new Set(
+        mine.flatMap((f) => [
+          f.statedChargesPct?.source,
+          f.currentManagementFeePct?.source,
+          f.currentCustodyFeePct?.source,
+          f.lastFullYearTerPct?.source,
+          f.latestNav?.source,
+          f.minimumGhs?.source,
+          ...f.feeHistory.map((h) => h.source),
+        ]),
+      );
+      docs.delete(undefined);
+      docs.delete("unverified");
+      const observations = mine.reduce((a, f) => a + f.observationCount, 0);
+      return {
+        slug,
+        name: String(p.trading_name ?? p.legal_name ?? slug),
+        legalName: String(p.legal_name ?? ""),
+        website: (p.website as string | null) ?? null,
+        custodian: (p.custodian as string | null) ?? null,
+        funds: mine,
+        documentCount: docs.size,
+        observationCount: observations,
+        publication: {
+          latestDocument: dates[dates.length - 1] ?? null,
+          monthsSince: dates.length
+            ? Math.round(
+                (Date.now() -
+                  new Date(dates[dates.length - 1] + "T00:00:00Z").getTime()) /
+                  (30 * 86_400_000),
+              )
+            : null,
+          // Monthly publishers who have gone quiet for a quarter have paused,
+          // not failed to disclose.
+          looksPaused: dates.length
+            ? Date.now() -
+                new Date(dates[dates.length - 1] + "T00:00:00Z").getTime() >
+              100 * 86_400_000
+            : false,
+        },
+        disclosureScore:
+          disclosed.filter((d) => d.has).length / DISCLOSURE_FIELDS.length,
+        disclosed,
+        lastPublished: dates[dates.length - 1] ?? null,
+      };
+    })
+    .filter((p) => p.funds.length > 0)
+    .sort((a, b) => b.disclosureScore - a.disclosureScore);
+}
+
+export async function getProvider(slug: string): Promise<ProviderSummary | null> {
+  const all = await getProviders();
+  return all.find((p) => p.slug === slug) ?? null;
+}
+
+// ---------------------------------------------------------------------------
 // The yield bridge (§7.1) — what the investor actually keeps
 // ---------------------------------------------------------------------------
 
