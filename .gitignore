@@ -61,7 +61,7 @@ __pycache__/
 engine/.venv/
 
 # All downloaded source documents — reproducible via the adapters
-data/
+/data/
 faam_factsheets.csv
 arg_funds.csv
 arg_docs.csv
