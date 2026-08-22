@@ -148,7 +148,7 @@ export default async function ComparePage({
   params: Promise<{ group: string }>;
 }) {
   const { group } = await params;
-  const peerGroup = group.replace("-", ":");
+  const peerGroup = group.replace(/-([^-]*)$/, ":$1");
   const [groups, all] = await Promise.all([getPeerGroups(), getPublishedFunds()]);
   const summary = groups.find((g) => g.peerGroup === peerGroup);
   if (!summary) notFound();
