@@ -123,12 +123,21 @@ def build_timeline(points: list[tuple[str, float, str]]) -> list[dict]:
     segments: list[dict] = []
     for as_of, rate, src in points:
         if segments and abs(segments[-1]["rate"] - rate) < 1e-9:
-            continue                      # unchanged — extend the current segment
+            # Unchanged. Extend the segment AND move its citation forward: a fee
+            # that has held steady should cite its most recent confirmation, not
+            # the first time it was seen. Stanbic Income Fund's fee never moved,
+            # so it cited a January 2024 factsheet while the same figure sat in
+            # the July 2026 one — technically true, and it reads as though
+            # nobody had checked in two and a half years.
+            segments[-1]["source_file"] = src
+            segments[-1]["last_confirmed"] = as_of
+            continue
         if segments:
             prev = date.fromisoformat(as_of) - timedelta(days=1)
             segments[-1]["effective_to"] = prev.isoformat()
         segments.append({"rate": rate, "effective_from": as_of,
-                         "effective_to": None, "source_file": src})
+                         "effective_to": None, "source_file": src,
+                         "last_confirmed": as_of})
     return segments
 
 
@@ -210,6 +219,38 @@ def main() -> int:
         for seg in annual_ters(frows):
             plans.append({**seg, "fee_type": "ter"})
 
+        # Comparable cost across providers.
+        #
+        # FAAM publishes NO expense ratio — only management 1.50% and custody
+        # 0.25%. Stanbic publishes both stated charges AND a TER. Comparing
+        # Stanbic's 1.86% TER against FAAM's 1.75% stated charges would compare
+        # two different things and flatter Stanbic.
+        #
+        # So the cross-provider figure is management + custody, which both
+        # disclose. Stored as its own fee_type so a page never has to decide
+        # which number is comparable at render time.
+        mgmt_segs = [p for p in plans if p["fee_type"] == "management"]
+        cust_segs = [p for p in plans if p["fee_type"] == "custody"]
+        for m in mgmt_segs:
+            overlapping = [c for c in cust_segs
+                           if c["effective_from"] <= (m["effective_to"] or "9999-12-31")
+                           and (c["effective_to"] or "9999-12-31") >= m["effective_from"]]
+            for c in overlapping:
+                start = max(m["effective_from"], c["effective_from"])
+                ends = [x for x in (m["effective_to"], c["effective_to"]) if x]
+                plans.append({
+                    "rate": round(m["rate"] + c["rate"], 6),
+                    "effective_from": start,
+                    "effective_to": min(ends) if ends else None,
+                    "source_file": m["source_file"],
+                    "last_confirmed": m.get("last_confirmed", start),
+                    "fee_type": "stated_charges",
+                    "conditions": "Management plus custody, as disclosed. The "
+                                  "figure every provider publishes, so the one "
+                                  "that compares across providers. Not a total "
+                                  "expense ratio.",
+                })
+
         print(f"\n  {fund}  ({len(classes)} class(es))")
         for p in plans:
             span = f"{p['effective_from']} → {p['effective_to'] or 'current'}"
@@ -236,7 +277,10 @@ def main() -> int:
                     "basis": "annual_nav", "conditions": p["conditions"],
                     "effective_from": p["effective_from"],
                     "effective_to": p["effective_to"],
-                    "source_id": sid, "verified_on": p["effective_from"],
+                    "source_id": sid,
+                    # The date the figure was last CONFIRMED, which is what a
+                    # freshness badge should show — not when it first appeared.
+                    "verified_on": p.get("last_confirmed", p["effective_from"]),
                 })
             if body:
                 rest("POST", "/product_fees", body)
