@@ -38,6 +38,35 @@ export interface Sourced<T> {
 
 export type Staleness = "current" | "ageing" | "stale";
 
+/**
+ * A computed return over a stated window.
+ *
+ * THE WINDOW IS NOT OPTIONAL CONTEXT — it is half the number. Stanbic Cash
+ * Trust returned 36.88% over the year to February 2026, and 8% over the seven
+ * months of 2026 on their own July factsheet. Both are true; they describe
+ * different periods, and the first captures a bond recovery the second does
+ * not. A return shown without its window is the kind of figure a fund's own
+ * marketing prints, and doing that here would defeat the point of the site.
+ *
+ * realReturnPct is null unless the CPI series actually spanned the window.
+ * compute_metrics.py withholds it rather than measuring a 2025 return against
+ * 2026 inflation.
+ */
+export interface FundReturn {
+  window: string;
+  windowLabel: string;
+  annualisedPct: number | null;
+  totalPct: number | null;
+  volatilityPct: number | null;
+  maxDrawdownPct: number | null;
+  realReturnPct: number | null;
+  excessOverTbillPct: number | null;
+  observationCount: number;
+  coverage: number;
+  /** Last observation in the window — what "to March 2026" refers to. */
+  asOf: string;
+}
+
 export interface FeePeriod {
   feeType: "management" | "custody" | "ter" | string;
   ratePct: number;
@@ -96,6 +125,10 @@ export interface FundRow {
   feeHistory: FeePeriod[];
   /** True when a fee changed within the observed window — worth surfacing. */
   feeChanged: boolean;
+
+  returns: FundReturn[];
+  /** Longest window with a computed return — the headline figure. */
+  headlineReturn: FundReturn | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,6 +174,31 @@ interface RawFee {
   sources: { title: string; content_sha256: string | null } | null;
 }
 
+const WINDOW_LABELS: Record<string, string> = {
+  "1m": "1 month",
+  "3m": "3 months",
+  "6m": "6 months",
+  "1y": "1 year",
+  "3y": "3 years",
+  "5y": "5 years",
+};
+
+// Longest first: a 3-year record says more than a 1-month one.
+const WINDOW_RANK = ["5y", "3y", "1y", "6m", "3m", "1m"];
+
+interface RawMetric {
+  window_code: string;
+  as_of: string;
+  total_return: number | null;
+  annualised_return: number | null;
+  volatility: number | null;
+  max_drawdown: number | null;
+  real_return: number | null;
+  excess_over_tbill: number | null;
+  observation_count: number;
+  coverage: number;
+}
+
 interface RawObs {
   as_of: string;
   nav: number | null;
@@ -164,6 +222,7 @@ interface RawProduct {
   providers: { trading_name: string | null; legal_name: string; slug: string } | null;
   product_fees: RawFee[];
   nav_observations: RawObs[];
+  product_metrics: RawMetric[];
 }
 
 const SELECT = `
@@ -172,7 +231,10 @@ const SELECT = `
   providers ( trading_name, legal_name, slug ),
   product_fees ( fee_type, rate, effective_from, effective_to, verified_on,
                  conditions, sources ( title, content_sha256 ) ),
-  nav_observations ( as_of, nav, series_kind, sources ( title, content_sha256 ) )
+  nav_observations ( as_of, nav, series_kind, sources ( title, content_sha256 ) ),
+  product_metrics ( window_code, as_of, total_return, annualised_return,
+                    volatility, max_drawdown, real_return, excess_over_tbill,
+                    observation_count, coverage )
 `;
 
 function sourced<T>(
@@ -256,6 +318,27 @@ function toFundRow(p: RawProduct): FundRow {
         a.effectiveFrom.localeCompare(b.effectiveFrom),
     );
 
+  const pct = (v: number | null | undefined) =>
+    v === null || v === undefined ? null : Number((v * 100).toFixed(2));
+
+  const returns: FundReturn[] = (p.product_metrics ?? [])
+    .map((m) => ({
+      window: m.window_code,
+      windowLabel: WINDOW_LABELS[m.window_code] ?? m.window_code,
+      annualisedPct: pct(m.annualised_return),
+      totalPct: pct(m.total_return),
+      volatilityPct: pct(m.volatility),
+      maxDrawdownPct: pct(m.max_drawdown),
+      realReturnPct: pct(m.real_return),
+      excessOverTbillPct: pct(m.excess_over_tbill),
+      observationCount: m.observation_count,
+      coverage: m.coverage,
+      asOf: m.as_of,
+    }))
+    .sort(
+      (a, b) => WINDOW_RANK.indexOf(a.window) - WINDOW_RANK.indexOf(b.window),
+    );
+
   const feeChanged =
     ["management", "custody"].some(
       (t) => history.filter((h) => h.feeType === t).length > 1,
@@ -330,6 +413,10 @@ function toFundRow(p: RawProduct): FundRow {
       : null,
     feeHistory: history,
     feeChanged,
+    returns,
+    // The longest window with an actual figure. A fund with 25 months of data
+    // says more with its 1-year number than its 1-month one.
+    headlineReturn: returns.find((r) => r.annualisedPct !== null) ?? null,
   };
 }
 

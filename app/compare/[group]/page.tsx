@@ -148,7 +148,7 @@ export default async function ComparePage({
   params: Promise<{ group: string }>;
 }) {
   const { group } = await params;
-  const peerGroup = group.replace(/-([^-]*)$/, ":$1");
+  const peerGroup = group.replace("-", ":");
   const [groups, all] = await Promise.all([getPeerGroups(), getPublishedFunds()]);
   const summary = groups.find((g) => g.peerGroup === peerGroup);
   if (!summary) notFound();
@@ -411,6 +411,58 @@ export default async function ComparePage({
                   )}
                 </div>
 
+                {/*
+                  RETURN, WITH ITS WINDOW ATTACHED.
+                  Stanbic Cash Trust returned 36.88% over the year to February
+                  2026 and 8% over the first seven months of 2026 — both true,
+                  different periods, and the first includes a bond recovery the
+                  second does not. A return without its window is what a fund's
+                  own marketing prints, so the period gets the same visual
+                  weight as the figure.
+
+                  Real return appears ONLY when compute_metrics.py had a CPI
+                  series spanning the window. Otherwise the line says the number
+                  is before inflation, which is what a nominal figure is.
+                */}
+                {fund.headlineReturn &&
+                  fund.headlineReturn.annualisedPct !== null && (
+                    <div
+                      className="mt-5 rounded-2xl px-4 py-3.5"
+                      style={{ background: `${C.teal}0D` }}
+                    >
+                      <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                        <span
+                          className="text-[1.5rem] font-bold tabular-nums leading-none"
+                          style={{ color: C.deep }}
+                        >
+                          {fund.headlineReturn.annualisedPct.toFixed(2)}%
+                        </span>
+                        <span className="text-[12.5px]" style={{ color: C.muted }}>
+                          a year over {fund.headlineReturn.windowLabel} to{" "}
+                          {fmtDate(fund.headlineReturn.asOf)}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-[11.5px]" style={{ color: C.muted }}>
+                        {fund.headlineReturn.realReturnPct !== null ? (
+                          <>
+                            <strong style={{ color: C.ink }}>
+                              {fund.headlineReturn.realReturnPct.toFixed(2)}% after
+                              inflation
+                            </strong>{" "}
+                            — what your money gained in buying power.
+                          </>
+                        ) : (
+                          <>
+                            Before inflation. Past returns don&rsquo;t predict
+                            future ones.
+                          </>
+                        )}
+                        {fund.headlineReturn.volatilityPct !== null &&
+                          ` Volatility ${fund.headlineReturn.volatilityPct.toFixed(1)}%.`}
+                      </p>
+                    </div>
+                  )}
+
                 <dl
                   className="mt-6 grid grid-cols-2 gap-x-5 gap-y-4 border-t pt-5 text-[13px] sm:grid-cols-4"
                   style={{ borderColor: C.rule }}
@@ -458,14 +510,20 @@ export default async function ComparePage({
                     style={{ background: `${C.teal}0F`, color: C.ink }}
                   >
                     <strong>
-                      {fg.classes.length} share classes — same charges, different
-                      returns.
+                      {fg.classes.length} share classes — same charges, very
+                      different returns.
                     </strong>{" "}
                     {fg.classes
-                      .map((c) => c.shareClassLabel ?? c.shareClass)
-                      .join(" and ")}
-                    . They hold different assets, so their performance differs
-                    even though the fees do not.
+                      .map((c) => {
+                        const r = c.headlineReturn?.annualisedPct;
+                        const label = c.shareClassLabel ?? c.shareClass;
+                        return r !== null && r !== undefined
+                          ? `${label} ${r.toFixed(1)}%`
+                          : label;
+                      })
+                      .join(" · ")}
+                    . They hold different assets, so performance differs sharply
+                    even though the fees are identical.
                   </p>
                 )}
 
@@ -516,15 +574,22 @@ export default async function ComparePage({
             style={{ color: C.muted }}
           >
             <li>
+              <strong style={{ color: C.ink }}>What comes next.</strong> Every
+              figure here is what a fund has already done, over the period
+              stated. Ghanaian rates have fallen hard — the 91-day Treasury bill
+              paid over 20% in early 2025 and under 6% by August 2026 — so a
+              return earned in one rate environment says little about the next.
+            </li>
+            <li>
               <strong style={{ color: C.ink }}>Tax.</strong> Ghanaian withholding
               on investment income hasn&rsquo;t been verified, so it&rsquo;s
               missing here rather than assumed to be nil. You&rsquo;ll keep less
               than these charges alone suggest.
             </li>
             <li>
-              <strong style={{ color: C.ink }}>Past returns.</strong> Each
-              provider publishes them. They don&rsquo;t predict what a fund does
-              next, and they&rsquo;re not shown here yet.
+              <strong style={{ color: C.ink }}>Everything else.</strong> Holdings,
+              asset allocation and credit quality all affect risk and are not
+              shown here. Read the fund&rsquo;s own factsheet before deciding.
             </li>
             <li>
               <strong style={{ color: C.ink }}>Fee history</strong> starts when
