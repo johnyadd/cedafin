@@ -1,0 +1,20 @@
+series,as_of,value,source_note
+# One row per observation. Lines starting with # are ignored.
+#
+# value is a PERCENT for rate series (5.6289 = 5.6289%) and a LEVEL for
+# GHS_USD, GHS_GBP and GSE_CI. Do not mix the two.
+#
+# as_of is the date the figure REFERS to, not the day you typed it.
+#
+# Where to read them:
+#   GH_TBILL_*    bog.gov.gh -> Markets -> Weekly GOG T-Bill Auction Results
+#   GH_CPI_YOY    statsghana.gov.gh -> CPI monthly release
+#   GHS_USD       bog.gov.gh -> Daily Interbank FX Rates
+#
+# Verified figures to start from — replace and extend:
+GH_TBILL_91,2026-08-07,5.6289,BoG tender 2019
+GH_TBILL_182,2026-08-07,7.5265,BoG tender 2019
+GH_TBILL_364,2026-08-07,12.9864,BoG tender 2019
+GH_CPI_YOY,2026-07-31,4.6,GSS CPI release July 2026
+GH_CPI_YOY,2026-06-30,5.3,GSS CPI release June 2026
+GH_POLICY_RATE,2026-07-31,14.0,BoG MPC July 2026
