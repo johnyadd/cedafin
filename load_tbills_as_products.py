@@ -190,8 +190,8 @@ def main() -> int:
             "yield_annualised": r["value"], "basis": "single",
             "series_kind": "quoted", "source_id": r["source_id"],
         } for r in p["points"]]
-        rest("POST", "/nav_observations", obs,
-             prefer="return=minimal,resolution=ignore-duplicates")
+        rest("DELETE", f"/nav_observations?product_id=eq.{pid}", prefer="return=minimal")
+        rest("POST", "/nav_observations", obs, prefer="return=minimal")
 
         print(f"  {p['name']:<24} {len(obs)} observation(s), charges 0.00%")
 
