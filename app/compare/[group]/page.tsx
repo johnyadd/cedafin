@@ -99,7 +99,18 @@ function ageLabel(days: number | null): string {
 }
 
 /** No figure without its receipt. Permanently visible, not a hover reveal. */
-function Receipt({ from }: { from: Sourced<unknown> | null }) {
+function Receipt({
+  from,
+  label = "Charges confirmed",
+}: {
+  from: Sourced<unknown> | null;
+  /**
+   * What the date actually refers to. A yield and a charge are different
+   * facts and can be verified on different days — "Charges confirmed" sitting
+   * under a Treasury bill's yield read as though it dated the yield.
+   */
+  label?: string;
+}) {
   if (!from) return null;
   return (
     <p
@@ -107,7 +118,7 @@ function Receipt({ from }: { from: Sourced<unknown> | null }) {
       style={{ color: C.muted }}
       title={`${from.source} · verified ${from.asOf}`}
     >
-      <span style={{ color: C.teal }}>✓</span> Charges confirmed{" "}
+      <span style={{ color: C.teal }}>✓</span> {label}{" "}
       {fmtDate(from.asOf)}
       {from.sourceHash && <span className="opacity-60"> · {from.sourceHash}</span>}
     </p>
@@ -436,9 +447,15 @@ export default async function ComparePage({
                           fund.staleness === "current" ? C.good : C.clay,
                       }}
                     />
-                    {fund.staleness === "current"
-                      ? "Prices up to date"
-                      : `Prices ${ageLabel(fund.daysSinceLastObservation)}`}
+                    {(() => {
+                      // Bills quote a RATE; funds quote a price. Same
+                      // freshness question, different noun.
+                      const noun = yieldLed ? "Rate" : "Prices";
+                      const verb = yieldLed ? "current" : "up to date";
+                      return fund.staleness === "current"
+                        ? `${noun} ${verb}`
+                        : `${noun} ${ageLabel(fund.daysSinceLastObservation)}`;
+                    })()}
                   </span>
                 </div>
 
@@ -475,7 +492,7 @@ export default async function ComparePage({
                           </span>
                         )}
                     </div>
-                    <Receipt from={fund.currentYield} />
+                    <Receipt from={fund.currentYield} label="Rate set" />
                     <p className="mt-3 text-[12.5px]" style={{ color: C.muted }}>
                       No management or custody charge. Bought through a bank or
                       broker on the secondary market — Bank of Ghana&rsquo;s
@@ -700,27 +717,56 @@ export default async function ComparePage({
             style={{ color: C.muted }}
           >
             <li>
-              <strong style={{ color: C.ink }}>What comes next.</strong> Every
-              figure here is what a fund has already done, over the period
-              stated. Ghanaian rates have fallen hard — the 91-day Treasury bill
-              paid over 20% in early 2025 and under 6% by August 2026 — so a
-              return earned in one rate environment says little about the next.
+              <strong style={{ color: C.ink }}>What comes next.</strong>{" "}
+              {yieldLed ? (
+                <>
+                  A bill&rsquo;s rate is fixed when you buy it, but the next
+                  tender may price differently. Ghanaian rates have moved
+                  sharply — the 91-day bill paid over 20% in early 2025 and
+                  around 5% now — so today&rsquo;s rate is not a forecast.
+                </>
+              ) : (
+                <>
+                  Every figure here is what a fund has already done, over the
+                  period stated. Ghanaian rates have fallen hard — the 91-day
+                  Treasury bill paid over 20% in early 2025 and around 5% by
+                  August 2026 — so a return earned in one rate environment says
+                  little about the next.
+                </>
+              )}
             </li>
             <li>
-              <strong style={{ color: C.ink }}>Tax.</strong> Ghanaian withholding
-              on investment income hasn&rsquo;t been verified, so it&rsquo;s
-              missing here rather than assumed to be nil. You&rsquo;ll keep less
-              than these charges alone suggest.
+              <strong style={{ color: C.ink }}>Tax.</strong> Ghanaian
+              withholding on investment income hasn&rsquo;t been verified, so
+              it&rsquo;s missing here rather than assumed to be nil.{" "}
+              {yieldLed
+                ? "You will keep less than the rate above suggests."
+                : "You\u2019ll keep less than these charges alone suggest."}
             </li>
             <li>
-              <strong style={{ color: C.ink }}>Past returns.</strong> Each
-              provider publishes them. They don&rsquo;t predict what a fund does
-              next, and they&rsquo;re not shown here yet.
+              <strong style={{ color: C.ink }}>
+                {yieldLed ? "Getting your money out early." : "Everything else."}
+              </strong>{" "}
+              {yieldLed ? (
+                <>
+                  A bill runs to maturity. Selling before then means the
+                  secondary market, where the price depends on rates that day —
+                  you may get back less than you put in.
+                </>
+              ) : (
+                <>
+                  Holdings, asset allocation and credit quality all affect risk
+                  and are not shown here. Read the fund&rsquo;s own factsheet
+                  before deciding.
+                </>
+              )}
             </li>
-            <li>
-              <strong style={{ color: C.ink }}>Fee history</strong> starts when
-              our records start, not when the fee did.
-            </li>
+            {!yieldLed && (
+              <li>
+                <strong style={{ color: C.ink }}>Fee history</strong> starts when
+                our records start, not when the fee did.
+              </li>
+            )}
           </ul>
           <p className="mt-6 text-[11px] leading-relaxed" style={{ color: C.muted }}>
             {BRAND.legalStatus}
