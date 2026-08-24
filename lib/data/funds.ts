@@ -102,6 +102,8 @@ export interface FundRow {
 
   minimumGhs: Sourced<number> | null;
   dealingFrequency: string | null;
+  /** Fixed term in days, where a product has one. Bills do; funds do not. */
+  lockInDays: number | null;
 
   currentManagementFeePct: Sourced<number> | null;
   currentCustodyFeePct: Sourced<number> | null;
@@ -125,6 +127,15 @@ export interface FundRow {
   feeHistory: FeePeriod[];
   /** True when a fee changed within the observed window — worth surfacing. */
   feeChanged: boolean;
+
+  /**
+   * The most recent published yield, where the product quotes one. Distinct
+   * from headlineReturn, which is derived from a price series — this is a rate
+   * the issuer published, not something we calculated.
+   */
+  currentYield: Sourced<number> | null;
+  /** Change in the quoted yield since the earliest observation held. */
+  yieldChangePct: number | null;
 
   returns: FundReturn[];
   /** Longest window with a computed return — the headline figure. */
@@ -202,6 +213,19 @@ interface RawMetric {
 interface RawObs {
   as_of: string;
   nav: number | null;
+  /**
+   * A QUOTED RATE, not a computed return.
+   *
+   * Treasury bills and most Ghanaian money market funds publish a yield rather
+   * than a unit price. There is no series to measure — the rate for the week
+   * IS the figure, published by Bank of Ghana every Friday.
+   *
+   * Running it through a returns engine was the wrong instinct: 14 tenders of
+   * perfectly good rates produced zero windows, because the engine is built to
+   * derive returns from price movement and a rate series has none. The fix is
+   * not more data, it is reading what is already there.
+   */
+  yield_annualised: number | null;
   series_kind: string;
   sources: { title: string; content_sha256: string | null } | null;
 }
@@ -217,6 +241,7 @@ interface RawProduct {
   currency: string;
   distributes: boolean;
   dealing_frequency: string | null;
+  lock_in_days: number | null;
   min_initial_minor: number | null;
   min_verified_on: string | null;
   providers: { trading_name: string | null; legal_name: string; slug: string } | null;
@@ -227,11 +252,13 @@ interface RawProduct {
 
 const SELECT = `
   id, slug, name, share_class, share_class_label, asset_class, peer_group,
-  currency, distributes, dealing_frequency, min_initial_minor, min_verified_on,
+  currency, distributes, dealing_frequency, lock_in_days, min_initial_minor,
+  min_verified_on,
   providers ( trading_name, legal_name, slug ),
   product_fees ( fee_type, rate, effective_from, effective_to, verified_on,
                  conditions, sources ( title, content_sha256 ) ),
-  nav_observations ( as_of, nav, series_kind, sources ( title, content_sha256 ) ),
+  nav_observations ( as_of, nav, yield_annualised, series_kind,
+                     sources ( title, content_sha256 ) ),
   product_metrics ( window_code, as_of, total_return, annualised_return,
                     volatility, max_drawdown, real_return, excess_over_tbill,
                     observation_count, coverage )
@@ -295,6 +322,10 @@ function toFundRow(p: RawProduct): FundRow {
   const last = obs[obs.length - 1] ?? null;
   const kind = (last?.series_kind ?? "quoted") as FundRow["seriesKind"];
   const { staleness, days } = stalenessOf(last?.as_of ?? null);
+
+  const yields = obs.filter((o) => o.yield_annualised !== null);
+  const latestYield = yields[yields.length - 1] ?? null;
+  const firstYield = yields[0] ?? null;
 
   const mgmt = currentFee(p.product_fees ?? [], "management");
   const cust = currentFee(p.product_fees ?? [], "custody");
@@ -374,6 +405,7 @@ function toFundRow(p: RawProduct): FundRow {
         ? sourced(p.min_initial_minor / 100, p.min_verified_on, last?.sources)
         : null,
     dealingFrequency: p.dealing_frequency,
+    lockInDays: p.lock_in_days ?? null,
 
     currentManagementFeePct: mgmt
       ? sourced(
@@ -413,6 +445,22 @@ function toFundRow(p: RawProduct): FundRow {
       : null,
     feeHistory: history,
     feeChanged,
+    currentYield: latestYield
+      ? sourced(
+          Number((latestYield.yield_annualised! * 100).toFixed(4)),
+          latestYield.as_of,
+          latestYield.sources,
+        )
+      : null,
+    yieldChangePct:
+      latestYield && firstYield && yields.length > 1
+        ? Number(
+            (
+              (latestYield.yield_annualised! - firstYield.yield_annualised!) * 100
+            ).toFixed(2),
+          )
+        : null,
+
     returns,
     // The longest window with an actual figure. A fund with 25 months of data
     // says more with its 1-year number than its 1-month one.
@@ -512,6 +560,7 @@ const PEER_LABELS: Record<string, string> = {
   "balanced:GHS": "Cedi balanced funds",
   "equity:GHS": "Cedi equity funds",
   "deposit:GHS": "Cedi fixed deposits and savings accounts",
+  "government_security:GHS": "Government Treasury bills",
 };
 
 export const MIN_DISTINCT_FUNDS_TO_RANK = 3;

@@ -157,11 +157,43 @@ export default async function ComparePage({
   if (rows.length === 0) notFound();
 
   // Cheapest first. No published charge sorts LAST — absent is not free.
-  const funds = groupByFund(rows).sort((a, b) => {
+  const grouped = groupByFund(rows);
+  const allFree = grouped.every(
+    (f) => (f.primary.statedChargesPct?.value ?? -1) === 0,
+  );
+  const funds = grouped.sort((a, b) => {
+    if (allFree) {
+      // Highest yield first — the only thing that separates one bill from
+      // another. Cheapest-first would order them arbitrarily.
+      const ay = a.primary.currentYield?.value ?? -1;
+      const by = b.primary.currentYield?.value ?? -1;
+      return by - ay || a.primary.name.localeCompare(b.primary.name);
+    }
     const av = a.primary.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
     const bv = b.primary.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
     return av - bv || a.primary.name.localeCompare(b.primary.name);
   });
+
+  /**
+   * A ZERO-COST GROUP NEEDS A DIFFERENT PAGE.
+   *
+   * Treasury bills carry no charge, so a cost comparison of them reads
+   * "Cheapest 0.00%, Average 0.00%, Priciest 0.00%" and labels all three
+   * "Lowest here" — true, and completely useless. What distinguishes a 91-day
+   * bill from a 364-day one is yield and term, not price.
+   *
+   * So the page pivots: where nothing charges anything, the headline becomes
+   * the yield and cost drops to a footnote. Same components, inverted
+   * emphasis, decided by the data rather than by a hardcoded peer group.
+   */
+  const yieldLed =
+    funds.length > 0 &&
+    funds.every((f) => (f.primary.statedChargesPct?.value ?? -1) === 0) &&
+    funds.some((f) => f.primary.currentYield !== null);
+
+  const yields = funds
+    .map((f) => f.primary.currentYield?.value)
+    .filter((v): v is number => typeof v === "number");
 
   const charges = funds
     .map((f) => f.primary.statedChargesPct?.value)
@@ -235,12 +267,44 @@ export default async function ComparePage({
             className="mt-3 text-[2.1rem] font-bold leading-[1.08] sm:text-[3rem]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            What these funds
-            <br />
-            actually cost
+            {yieldLed ? (
+              <>
+                What these pay,
+                <br />
+                and for how long
+              </>
+            ) : (
+              <>
+                What these funds
+                <br />
+                actually cost
+              </>
+            )}
           </h1>
 
-          {cheapest !== null && (
+          {yieldLed && yields.length > 0 && (
+            <div className="mt-8 grid grid-cols-3 gap-4 sm:max-w-lg">
+              {[
+                { k: "Highest yield", v: Math.max(...yields), hi: true },
+                { k: "Lowest yield", v: Math.min(...yields) },
+                { k: "Charges", v: 0 },
+              ].map(({ k, v, hi }) => (
+                <div key={k}>
+                  <p className="text-[10px] uppercase tracking-wider opacity-75">
+                    {k}
+                  </p>
+                  <p
+                    className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none sm:text-[2rem]"
+                    style={{ color: hi ? C.gold : "#fff" }}
+                  >
+                    {v.toFixed(2)}%
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!yieldLed && cheapest !== null && (
             <div className="mt-8 grid grid-cols-3 gap-4 sm:max-w-lg">
               {[
                 { k: "Cheapest", v: cheapest, hi: true },
@@ -261,9 +325,21 @@ export default async function ComparePage({
           )}
 
           <p className="mt-7 max-w-xl text-[14px] leading-relaxed opacity-90">
-            Compared on the charges every provider publishes — annual management
-            fee plus custody. Not every fund discloses a total expense ratio, so
-            this is the figure that compares like with like.
+            {yieldLed ? (
+              <>
+                Rates set at Bank of Ghana&rsquo;s weekly tender, published every
+                Friday. There are no management or custody charges — you lend
+                directly to the government and your money is returned at
+                maturity, not on demand.
+              </>
+            ) : (
+              <>
+                Compared on the charges every provider publishes — annual
+                management fee plus custody. Not every fund discloses a total
+                expense ratio, so this is the figure that compares like with
+                like.
+              </>
+            )}
           </p>
         </section>
 
@@ -366,8 +442,50 @@ export default async function ComparePage({
                   </span>
                 </div>
 
-                <div className="mt-6">
-                  {charge ? (
+                {/*
+                  On a zero-cost group the yield IS the headline. Showing
+                  "0.00% a year" three times and badging every card "Lowest
+                  here" was accurate and told a reader nothing.
+                */}
+                {yieldLed && fund.currentYield ? (
+                  <div className="mt-6">
+                    <div className="flex flex-wrap items-baseline gap-x-2.5">
+                      <span
+                        className="text-[2.4rem] font-bold tabular-nums leading-none"
+                        style={{ color: C.deep }}
+                      >
+                        {fund.currentYield.value.toFixed(2)}%
+                      </span>
+                      <span className="text-[13px]" style={{ color: C.muted }}>
+                        a year, fixed for{" "}
+                        {fund.lockInDays ? `${fund.lockInDays} days` : "the term"}
+                      </span>
+                      {fund.yieldChangePct !== null &&
+                        Math.abs(fund.yieldChangePct) >= 0.05 && (
+                          <span
+                            className="ml-auto rounded-full px-3 py-1 text-[11px] font-bold"
+                            style={{
+                              background:
+                                fund.yieldChangePct < 0 ? `${C.clay}14` : `${C.good}14`,
+                              color: fund.yieldChangePct < 0 ? C.clay : C.good,
+                            }}
+                          >
+                            {fund.yieldChangePct > 0 ? "+" : ""}
+                            {fund.yieldChangePct.toFixed(2)}pp since May
+                          </span>
+                        )}
+                    </div>
+                    <Receipt from={fund.currentYield} />
+                    <p className="mt-3 text-[12.5px]" style={{ color: C.muted }}>
+                      No management or custody charge. Bought through a bank or
+                      broker on the secondary market — Bank of Ghana&rsquo;s
+                      weekly auction itself is open only to Primary Dealers.
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className={yieldLed ? "mt-5" : "mt-6"}>
+                  {yieldLed ? null : charge ? (
                     <>
                       <div className="flex items-baseline gap-2">
                         <span
@@ -469,8 +587,14 @@ export default async function ComparePage({
                 >
                   {[
                     {
-                      t: "Minimum",
-                      v: fund.minimumGhs ? GHS.format(fund.minimumGhs.value) : "—",
+                      t: yieldLed ? "Term" : "Minimum",
+                      v: yieldLed
+                        ? fund.lockInDays
+                          ? `${fund.lockInDays} days`
+                          : "—"
+                        : fund.minimumGhs
+                          ? GHS.format(fund.minimumGhs.value)
+                          : "—",
                     },
                     {
                       t: "Management",
@@ -485,10 +609,12 @@ export default async function ComparePage({
                         : "—",
                     },
                     {
-                      t: "Dealing",
+                      t: yieldLed ? "Money back" : "Dealing",
                       v: fund.dealingFrequency
-                        ? fund.dealingFrequency.charAt(0).toUpperCase() +
-                          fund.dealingFrequency.slice(1)
+                        ? fund.dealingFrequency === "at_maturity"
+                          ? "At maturity"
+                          : fund.dealingFrequency.charAt(0).toUpperCase() +
+                            fund.dealingFrequency.slice(1)
                         : "—",
                     },
                   ].map(({ t, v }) => (
@@ -587,9 +713,9 @@ export default async function ComparePage({
               than these charges alone suggest.
             </li>
             <li>
-              <strong style={{ color: C.ink }}>Everything else.</strong> Holdings,
-              asset allocation and credit quality all affect risk and are not
-              shown here. Read the fund&rsquo;s own factsheet before deciding.
+              <strong style={{ color: C.ink }}>Past returns.</strong> Each
+              provider publishes them. They don&rsquo;t predict what a fund does
+              next, and they&rsquo;re not shown here yet.
             </li>
             <li>
               <strong style={{ color: C.ink }}>Fee history</strong> starts when
