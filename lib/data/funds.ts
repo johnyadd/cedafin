@@ -514,6 +514,98 @@ export async function getDirectory(): Promise<DirectoryEntry[]> {
   }));
 }
 
+/**
+ * A lending product: one bank, one credit category, one tenor.
+ *
+ * TWO RATES, NOT A RANGE. Bank of Ghana publishes an average lending rate and
+ * an average APR per bank per table. The gap between them is fees —
+ * Agricultural Development Bank lends at 19.59% and costs 28.13%, an 8.5 point
+ * difference in charges alone, while Access Bank's gap is 0.03. A borrower
+ * comparing advertised rates would rank those two as near-identical.
+ *
+ * INDICATIVE, ALWAYS. BoG states that a typical customer may face a different
+ * APR after the bank assesses them. That caveat is stored per product and must
+ * appear wherever a rate does — publishing 11.03% as what a business WILL get
+ * would be wrong in the direction that costs someone money.
+ */
+export interface LendingRow {
+  id: string;
+  slug: string;
+  name: string;
+  category: "personal_credit" | "sme_credit" | "corporate_credit" | string;
+  tenorYears: number;
+  provider: { name: string; slug: string };
+  /** The advertised lending rate — what a bank leads with. */
+  lendingRatePct: number | null;
+  /** The APR — lending rate plus every charge. What it actually costs. */
+  aprPct: number | null;
+  /** aprPct - lendingRatePct. The fees a headline rate hides. */
+  feeGapPct: number | null;
+  /** BoG's own wording on why this is not a quote. */
+  caveat: string | null;
+  asOf: string | null;
+}
+
+const CREDIT_LABEL: Record<string, string> = {
+  personal_credit: "Personal",
+  sme_credit: "SME",
+  corporate_credit: "Corporate",
+};
+
+export function creditLabel(c: string): string {
+  return CREDIT_LABEL[c] ?? c;
+}
+
+export async function getLending(category?: string): Promise<LendingRow[]> {
+  let q = publicClient()
+    .from("products")
+    .select(
+      `id, slug, name, asset_class, lock_in_days, rate_min, rate_max,
+       eligibility_notes,
+       providers ( trading_name, legal_name, slug ),
+       product_fees ( verified_on )`,
+    )
+    .eq("market_side", "borrow")
+    .eq("status", "published");
+  if (category) q = q.eq("asset_class", category);
+
+  const { data, error } = await q;
+  if (error) throw new Error(`getLending: ${error.message}`);
+
+  const pct = (v: number | null | undefined) =>
+    v === null || v === undefined ? null : Number((v * 100).toFixed(2));
+
+  return (data ?? [])
+    .map((d: Record<string, unknown>) => {
+      const prov = d.providers as
+        | { trading_name: string | null; legal_name: string; slug: string }
+        | null;
+      const lending = pct(d.rate_min as number | null);
+      const apr = pct(d.rate_max as number | null);
+      const fees = (d.product_fees ?? []) as { verified_on: string }[];
+      return {
+        id: String(d.id),
+        slug: String(d.slug),
+        name: String(d.name),
+        category: String(d.asset_class),
+        tenorYears: Math.round(((d.lock_in_days as number) ?? 365) / 365),
+        provider: {
+          name: prov?.trading_name ?? prov?.legal_name ?? "Unknown",
+          slug: prov?.slug ?? "",
+        },
+        lendingRatePct: lending,
+        aprPct: apr,
+        feeGapPct:
+          lending !== null && apr !== null
+            ? Number((apr - lending).toFixed(2))
+            : null,
+        caveat: (d.eligibility_notes as string | null) ?? null,
+        asOf: fees[0]?.verified_on ?? null,
+      };
+    })
+    .sort((a, b) => (a.aprPct ?? 999) - (b.aprPct ?? 999));
+}
+
 export async function getPublishedFunds(): Promise<FundRow[]> {
   const { data, error } = await publicClient()
     .from("products")
