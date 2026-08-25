@@ -1,0 +1,25 @@
+bank,website,status,pages_found,best_page,facility_name,minimum,security,eligibility,turnaround,rate,tenor
+Absa Bank Ghana LTD,https://www.absa.com.gh,checked,1,https://www.absa.com.gh/business,yes,no,yes,no,no,no,no
+Access Bank (Ghana) Plc,http://www.ghana.accessbankplc.com,unreachable,0,,,,,,,,
+Agricultural Development Bank Plc,http://www.agricbank.com,checked,5,http://www.agricbank.com/business,yes,no,yes,no,no,no,no
+Bank of Africa Ghana Limited,http://www.boaghana.com,checked,5,http://www.boaghana.com/sme/,yes,no,yes,no,yes,yes,no
+CalBank PLC,http://www.calbank.net,checked,1,http://www.calbank.net/sme,no,yes,yes,yes,no,no,no
+Consolidated Bank Ghana Limited,http://www.cbg.com.gh,checked,1,http://www.cbg.com.gh/business/loans,yes,yes,yes,yes,no,no,yes
+Ecobank Ghana Plc,http://www.ecobank.com,unreachable,0,,,,,,,,
+Fidelity Bank (Ghana) LTD,http://www.fidelitybank.com.gh,unreachable,0,,,,,,,,
+First Atlantic Bank Limited,http://www.firstatlanticbank.com.gh,checked,1,http://www.firstatlanticbank.com.gh/corporate-banking/trade-facility/#invoice-discounting-facility,yes,no,yes,yes,no,no,no
+First Bank (Ghana) LTD,http://www.fbnbankghana.com,checked,5,http://www.fbnbankghana.com/business,no,no,yes,no,no,no,no
+First National Bank (Ghana) Limited,http://www.firstnationalbank.com.gh,no_page_found,0,,,,,,,,
+GCB Bank Plc,http://www.gcbbank.com.gh,unreachable,0,,,,,,,,
+Guaranty Trust Bank (Ghana) LTD,http://www.gtbghana.com,checked,5,https://www.gtbghana.com/business-banking/services/overdraft-facilities,yes,no,yes,yes,no,no,no
+National Investment Bank PLC,http://www.nib-ghana.com,checked,5,http://www.nib-ghana.com/business,no,no,no,no,no,no,no
+OmniBSIC Bank Ghana LTD,http://www.omnibsic.com.gh,checked,4,http://www.omnibsic.com.gh/sme-lcy.php,yes,yes,yes,yes,yes,yes,yes
+Prudential Bank Limited,http://www.prudentialbank.com.gh,no_page_found,0,,,,,,,,
+Republic Bank (Ghana) PLC,http://www.republicghana.com,checked,3,https://www.republicghana.com/products/corporate-banking/working-capital-finance/,yes,no,no,yes,no,no,yes
+Societe General Ghana Plc,http://www.societegenerale.com.gh,checked,6,http://www.societegenerale.com.gh/en/individual/promotions/sme-loan-promo/,yes,no,yes,no,no,no,no
+Stanbic Bank Ghana Limited,http://www.stanbicbank.com.gh,checked,6,http://www.stanbicbank.com.gh/gh/personal/products-and-services/borrow-for-your-needs/personal-loan,yes,yes,yes,no,no,no,yes
+Standard Chartered Bank Ghana Plc,http://www.sc.com/gh,checked,4,http://www.sc.com/gh/borrow/personal-loan/,yes,yes,yes,yes,yes,yes,yes
+United Bank for Africa (Ghana) Limited,http://www.ubagroup.com,checked,5,http://www.ubagroup.com/sme,no,no,yes,no,no,no,no
+Universal Merchant Bank Ghana LTD,http://www.myumbbank.com,checked,5,http://www.myumbbank.com/business,no,no,no,no,no,no,no
+Zenith Bank (Ghana) Limited,http://www.zenithbank.com.gh,checked,6,http://www.zenithbank.com.gh/personal/card-products/#section_406f3382-3361-48a4-8340-f5233f6d475a,yes,no,yes,yes,yes,no,no
+ARB Apex Bank Limited,http://www.arbapexbank.com,no_page_found,0,,,,,,,,

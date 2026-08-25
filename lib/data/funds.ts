@@ -606,6 +606,115 @@ export async function getLending(category?: string): Promise<LendingRow[]> {
     .sort((a, b) => (a.aprPct ?? 999) - (b.aprPct ?? 999));
 }
 
+/**
+ * A lender and everything held about them.
+ *
+ * WHAT THIS PAGE IS FOR: a bank opening it should see immediately that we
+ * publish their Bank of Ghana average and nothing about their actual products
+ * — no facility name, no minimum, no security requirement, no turnaround. All
+ * seven product fields are blank for all 23 banks, and saying so plainly is
+ * what makes the ask credible.
+ *
+ * A REGULATORY AVERAGE IS NOT A PRODUCT. GCB does not sell "one-year SME
+ * credit at 22.3%" — it sells named facilities with terms. The average is a
+ * supervisory statistic. A page implying otherwise would misrepresent both the
+ * bank and what a borrower can get.
+ */
+export interface LenderProfile {
+  slug: string;
+  name: string;
+  legalName: string;
+  website: string | null;
+  contactEmail: string | null;
+  officeAddress: string | null;
+  products: LendingRow[];
+  /** Cheapest all-in rate they report, across all categories. */
+  bestApr: number | null;
+  /** Largest gap between their advertised rate and true cost. */
+  widestFeeGap: number | null;
+  /** Of the product details a borrower needs, which we hold. */
+  disclosed: { field: string; has: boolean }[];
+  asOf: string | null;
+}
+
+/**
+ * Deliberately all-blank today. These are PRODUCT facts, and BoG's APR report
+ * contains none of them — it reports averages for supervision, not terms for
+ * sale. Listing them as missing is the entire point of the page.
+ */
+const LENDER_FIELDS = [
+  "Facility name",
+  "Minimum advance",
+  "Maximum advance",
+  "Security required",
+  "Who qualifies",
+  "Decision turnaround",
+  "Actual rate range",
+];
+
+export async function getLender(slug: string): Promise<LenderProfile | null> {
+  const { data, error } = await publicClient()
+    .from("providers")
+    .select(
+      `slug, trading_name, legal_name, website, contact_email, office_address`,
+    )
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) throw new Error(`getLender: ${error.message}`);
+  if (!data) return null;
+
+  const all = await getLending();
+  const mine = all.filter((r) => r.provider.slug === slug);
+  if (mine.length === 0) return null;
+
+  const aprs = mine.map((r) => r.aprPct).filter((v): v is number => v !== null);
+  const gaps = mine
+    .map((r) => r.feeGapPct)
+    .filter((v): v is number => v !== null);
+
+  return {
+    slug: String(data.slug),
+    name: String(data.trading_name ?? data.legal_name ?? slug),
+    legalName: String(data.legal_name ?? ""),
+    website: (data.website as string | null) ?? null,
+    contactEmail: (data.contact_email as string | null) ?? null,
+    officeAddress: (data.office_address as string | null) ?? null,
+    products: mine,
+    bestApr: aprs.length ? Math.min(...aprs) : null,
+    widestFeeGap: gaps.length ? Math.max(...gaps) : null,
+    // Every one false, until a lender tells us otherwise.
+    disclosed: LENDER_FIELDS.map((field) => ({ field, has: false })),
+    asOf: mine.find((r) => r.asOf)?.asOf ?? null,
+  };
+}
+
+export async function getLenderSlugs(): Promise<string[]> {
+  const all = await getLending();
+  return [...new Set(all.map((r) => r.provider.slug))].filter(Boolean);
+}
+
+/** Market average APR per category and tenor, for context on a lender page. */
+export async function getMarketAverages(): Promise<
+  Map<string, { avg: number; count: number }>
+> {
+  const all = await getLending();
+  const buckets = new Map<string, number[]>();
+  for (const r of all) {
+    if (r.aprPct === null) continue;
+    const k = `${r.category}:${r.tenorYears}`;
+    if (!buckets.has(k)) buckets.set(k, []);
+    buckets.get(k)!.push(r.aprPct);
+  }
+  const out = new Map<string, { avg: number; count: number }>();
+  for (const [k, vals] of buckets) {
+    out.set(k, {
+      avg: Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2)),
+      count: vals.length,
+    });
+  }
+  return out;
+}
+
 export async function getPublishedFunds(): Promise<FundRow[]> {
   const { data, error } = await publicClient()
     .from("products")
