@@ -70,10 +70,58 @@ SUMMARY_ROW = re.compile(
 # "3 Agricultural Development Bank Limited 10.03 9.56 19.59 N/A 2.00 ... 28.13"
 # Bank names wrap across lines in the source, so rows are rebuilt before this
 # is applied.
-BANK_ROW = re.compile(
-    r"^\s*(\d{1,2})\s+([A-Za-z][A-Za-z0-9 .,'()&\-]+?)\s+"
-    r"((?:(?:\d{1,3}\.\d{1,2}|N/A)\s+){5,10}(?:\d{1,3}\.\d{1,2}|N/A))\s*$"
-)
+# Bank rows are NOT matched with one regex spanning name and numbers. Two
+# attempts at that failed on real data:
+#
+#   negative spreads   "... 10.03 -1.26 ..."  the minus broke the boundary and
+#                      the name swallowed "10.03 -1.26"
+#   lost slashes       "N/A" sometimes extracts as "NL", so the numeric run
+#                      started later than expected and the name swallowed
+#                      whatever came before it
+#
+# Both produced provider names like "CalBank PLC 29.31 NL" — plausible-looking
+# rows that create duplicate banks in the database. So instead: find where the
+# numeric run BEGINS and split there. A token is numeric if it parses as a
+# number or is any spelling of not-applicable.
+NOT_APPLICABLE = {"N/A", "NA", "NL", "N\\A", "-", "--", "N/A."}
+
+
+def is_numeric_token(tok: str) -> bool:
+    if tok.upper() in NOT_APPLICABLE:
+        return True
+    return bool(re.fullmatch(r"-?\d{1,3}\.\d{1,2}", tok))
+
+
+def split_bank_row(line: str) -> tuple[str, list[float | None]] | None:
+    """
+    "3 Agricultural Development Bank Limited 10.03 9.56 19.59 N/A ... 28.13"
+    -> ("Agricultural Development Bank Limited", [10.03, 9.56, ...])
+
+    Splits at the first token that begins an unbroken numeric run reaching the
+    end of the line. Anything before it is the name, whatever it contains.
+    """
+    m = re.match(r"^\s*(\d{1,2})\s+(.+)$", line)
+    if not m:
+        return None
+    toks = m.group(2).split()
+    if len(toks) < 5:
+        return None
+
+    start = None
+    for i in range(len(toks)):
+        if all(is_numeric_token(t) for t in toks[i:]):
+            start = i
+            break
+    if start is None or start == 0:
+        return None
+
+    name = " ".join(toks[:start]).strip(" .,")
+    values = [None if t.upper() in NOT_APPLICABLE else float(t)
+              for t in toks[start:]]
+    if len(values) < 4 or len(name) < 4:
+        return None
+    return name, values
+
 
 TABLE_HEADER = re.compile(
     r"APRs?\s+for\s+Banks.{0,4}\s+Loans\s+to\s+(Households|SMEs?|Corporates?)",
@@ -172,17 +220,16 @@ def parse_banks(text: str) -> list[dict]:
         if not category or not tenor:
             continue
 
-        m = BANK_ROW.match(line)
-        if not m:
+        got = split_bank_row(line)
+        if not got:
             continue
-        name = re.sub(r"\s+", " ", m.group(2)).strip()
-        if len(name) < 4 or name.lower().startswith(("table", "tenor", "all rates")):
+        name, nums = got
+        name = re.sub(r"\s+", " ", name).strip()
+        if name.lower().startswith(("table", "tenor", "all rates")):
             continue
-        nums = [None if n.upper() == "N/A" else float(n)
-                for n in m.group(3).split()]
-        # Columns: GRR, spread, avg lending, then up to 5 fees, then APR.
-        # The APR is always last; the first three are always present.
-        if len(nums) < 4:
+        # A bank name never contains a digit. If one does, the split went
+        # wrong and the row is dropped rather than creating a phantom lender.
+        if re.search(r"\d", name):
             continue
         rows.append({
             "category": category,
