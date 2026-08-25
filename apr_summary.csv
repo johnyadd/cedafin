@@ -1,0 +1,10 @@
+category,tenor_years,highest_apr,highest_bank,lowest_apr,lowest_bank,as_of,source
+household,1,28.13,Agricultural Development Bank Limited,11.62,Stanbic Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+household,3,39.27,Universal Merchant Bank Limited,11.59,Stanbic Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+household,5,32.97,United Bank for Africa (Ghana) Limited,5.03,OmniBSIC Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+sme,1,33.58,Guaranty Trust Bank (Ghana) Limited,11.03,Standard Chartered Bank (Ghana) Limited,2026-05-31,apr-2026-05.pdf
+sme,3,31.09,Universal Merchant Bank Limited,13.34,Stanbic Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+sme,5,25.07,Agricultural Development Bank Limited,13.97,Ecobank Ghana Limited,2026-05-31,apr-2026-05.pdf
+corporate,1,24.67,Guaranty Trust Bank (Ghana) Limited,7.62,Absa Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+corporate,3,23.56,Agricultural Development Bank Limited,9.78,Absa Bank Ghana Limited,2026-05-31,apr-2026-05.pdf
+corporate,5,35.52,United Bank for Africa (Ghana) Limited,13.16,Ecobank Ghana Limited,2026-05-31,apr-2026-05.pdf
