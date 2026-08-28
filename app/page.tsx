@@ -82,9 +82,13 @@ export default async function HomePage() {
   const unique = [
     ...new Map(funds.map((f) => [`${f.provider.slug}::${f.name}`, f])).values(),
   ];
+  // Treasury bills charge nothing, so an unfiltered minimum reports 0.00% —
+  // true, and useless as a headline about what FUNDS cost. A saver reading
+  // "charges from 0.00%" would expect a free fund and find none.
   const charges = unique
+    .filter((f) => f.assetClass !== "government_security")
     .map((f) => f.statedChargesPct?.value)
-    .filter((v): v is number => typeof v === "number");
+    .filter((v): v is number => typeof v === "number" && v > 0);
   const cheapestFund = charges.length ? Math.min(...charges) : null;
   const lowestMin = unique
     .map((f) => f.minimumGhs?.value)

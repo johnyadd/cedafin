@@ -1,75 +1,65 @@
 /**
- * lib/brand.ts — every user-visible mention of the product name.
+ * lib/brand.ts — the only place the site's identity is written down.
  *
- * WHY THIS EXISTS: the name is a placeholder. "CediWise" came off the shortlist
- * in the strategy document and got baked into a scaffold script before anyone
- * decided anything. The plan is to name the thing once it is clear what it is,
- * which means a rename is coming.
+ * WHY THIS FILE EXISTS AT ALL
+ * The working name changed twice before launch. Had the name been typed into
+ * each page, a rename would have meant hunting it across a home page, a fund
+ * directory, four comparison pages, two provider page types, a funding page
+ * and a lender page — and missing one would have left a stale name in front of
+ * a fund manager or a bank. One import, one edit.
  *
- * On the previous project that rename left both pre- and post-rebrand copies of
- * most landing components in the repo, plus mojibake in a footer that appeared
- * on every page. None of it was serious; all of it was avoidable.
+ * THE EMAIL IS LOAD-BEARING
+ * dataEmail is not decoration. It appears on every provider and lender page
+ * beneath an invitation to send us corrections and factsheets, and it is the
+ * reply address for outreach to 23 banks and a dozen fund managers. A site
+ * that asks providers to write to an address which bounces is worse than one
+ * that asks nothing — it wastes their time and spends credibility that took
+ * real work to build.
  *
- * So: NO COMPONENT EVER HARDCODES THE NAME. Everything reads from here, and a
- * rebrand is this file plus a domain purchase.
+ * So: before any outreach goes out, send a test to this address and confirm it
+ * arrives. Deploying with it unrouted is fine; emailing anyone is not.
  *
- * Same principle as lib/scoring/config.ts holding the methodology: one source of
- * truth, and the places that display it derive from it rather than repeat it.
+ * THE LEGAL LINE IS NOT BOILERPLATE
+ * We hold no SEC licence and no credit broking licence. Every page carries
+ * legalStatus for that reason, and it is written to be true rather than
+ * defensive: we publish factual comparisons, we do not advise, hold money,
+ * arrange finance, or take payment for placement. If any of that ever stops
+ * being true, this string changes before the behaviour does.
  */
 
 export const BRAND = {
-  /** Display name. Provisional. */
-  name: "CediWise",
+  /** Display name, everywhere. */
+  name: "Cedafin",
 
-  /** Used where the name appears mid-sentence. */
-  nameLower: "CediWise",
+  /** Bare domain — no protocol, for display. */
+  domain: "cedafin.com",
 
-  /**
-   * The positioning in one line. Earns its place in the title tag and the
-   * header, so it should say what the product does, not what it aspires to.
-   */
-  tagline: "Before you invest, compare.",
+  /** Canonical origin, for metadata and absolute links. */
+  url: "https://cedafin.com",
 
   /**
-   * One sentence for meta descriptions and the provider outreach email.
-   * Deliberately factual: this is a comparison site, not an adviser, and the
-   * compliance boundary in lib/compliance/boundary.ts depends on that framing
-   * holding everywhere the product describes itself.
+   * Where providers send factsheets, rate cards and corrections.
+   * Appears on the home page, both provider page types, and the funding and
+   * lender pages. MUST receive mail before any outreach.
    */
-  description:
-    "Independent comparison of regulated Ghanaian investment funds — fees, " +
-    "returns after inflation, and access terms, every figure traced to the " +
-    "document it came from.",
+  dataEmail: "data@cedafin.com",
 
-  /** Not yet registered. Update together with the deployed domain. */
-  domain: "cediwise.com",
-  url: "https://cediwise.com",
+  /** General enquiries — readers rather than providers. */
+  contactEmail: "hello@cedafin.com",
 
-  contactEmail: "hello@cediwise.com",
-  dataEmail: "data@cediwise.com",
-
-  /**
-   * Rendered in the footer beside the disclaimer. States what the product is
-   * NOT, which matters more than what it is while COMPLIANCE_PHASE is 1 or 2.
-   */
+  /** One line, on every page. Accurate, not defensive. */
   legalStatus:
     "Not licensed by the Securities and Exchange Commission of Ghana. " +
-    "We publish factual comparisons of regulated products and do not provide " +
-    "investment advice, hold client money, or execute transactions.",
+    "We publish factual comparisons of regulated products and do not " +
+    "provide investment advice, hold client money, or execute transactions.",
 
-  launchYear: 2026,
+  /** What the site is, in one sentence. Used in metadata. */
+  tagline: "Ghana's money market, with the prices shown.",
+
+  description:
+    "Compare Ghanaian investment funds on the charges providers actually " +
+    "publish, and business credit on the rates Bank of Ghana reports. Every " +
+    "figure dated and sourced.",
 } as const;
 
-/** Page titles. Keeps the separator and ordering consistent across the site. */
-export function pageTitle(page?: string): string {
-  return page ? `${page} · ${BRAND.name}` : `${BRAND.name} — ${BRAND.tagline}`;
-}
-
-/** Footer copyright. Built from launchYear so it never goes stale by hand. */
-export function copyright(): string {
-  const now = new Date().getFullYear();
-  const span = now > BRAND.launchYear ? `${BRAND.launchYear}–${now}` : `${now}`;
-  // Escaped codepoint, not a pasted glyph: a pasted © arrived as mojibake on
-  // every page of the previous project and went unnoticed for weeks.
-  return `\u00A9 ${span} ${BRAND.name}`;
-}
+export type Brand = typeof BRAND;

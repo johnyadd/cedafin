@@ -501,6 +501,7 @@ export async function getDirectory(): Promise<DirectoryEntry[]> {
     .from("products")
     .select("id, slug, name, asset_class, objective, status")
     .eq("status", "draft")
+    .eq("market_side", "invest")
     .like("slug", "cat-%")
     .order("name");
   if (error) throw new Error(`getDirectory: ${error.message}`);
@@ -720,6 +721,11 @@ export async function getPublishedFunds(): Promise<FundRow[]> {
     .from("products")
     .select(SELECT)
     .eq("status", "published")
+    // Lending products live in the same table. Without this the fund
+    // counts absorb 157 bank facilities and the home page claims to
+    // track 232 funds when it tracks 72 — a false number sitting three
+    // inches above "gaps are shown, not hidden".
+    .eq("market_side", "invest")
     .order("name");
   if (error) throw new Error(`getPublishedFunds: ${error.message}`);
   return (data as unknown as RawProduct[]).map(toFundRow);
