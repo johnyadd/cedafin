@@ -193,6 +193,29 @@ export default async function FundsPage() {
         </section>
 
         {/* COVERED — grouped, carded, detailed */}
+        {/*
+          Seventy-five funds is a lot to read through, and someone who does not
+          already know what they want will bounce off a list this long. The
+          narrowing flow is offered here, beside the problem it solves, rather
+          than only on a home page they may never come back to.
+        */}
+        <Link
+          href="/match"
+          className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-5 py-4"
+          style={{ background: `${C.teal}0F`, border: `1px solid ${C.teal}40` }}
+        >
+          <span className="text-[13.5px]">
+            <strong>Too many to read through?</strong> Answer eight questions
+            and we&rsquo;ll show only what fits what you told us.
+          </span>
+          <span
+            className="shrink-0 rounded-full px-4 py-2 text-[12.5px] font-bold text-white"
+            style={{ background: C.deep }}
+          >
+            Narrow it down →
+          </span>
+        </Link>
+
         <h2
           className="mt-12 text-[24px] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
