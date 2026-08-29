@@ -159,33 +159,39 @@ export default async function HomePage() {
           anything first. Burying it below the cards would serve only the
           people who least need it.
         */}
-        <Link
-          href="/match"
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl px-6 py-5"
+        <div
+          className="mt-8 rounded-2xl px-6 py-5"
           style={{ background: C.card, border: `1px solid ${C.rule}` }}
         >
-          <div>
-            <p
-              className="text-[11px] font-semibold uppercase tracking-[0.16em]"
-              style={{ color: C.teal }}
-            >
-              Not sure where to start
-            </p>
-            <p className="mt-1.5 text-[15.5px] font-bold">
-              Answer eight questions, see what actually fits
-            </p>
-            <p className="mt-1 text-[12.5px]" style={{ color: C.muted }}>
-              How much you have, when you need it back, what you&rsquo;re
-              comfortable with. Nothing is saved.
-            </p>
-          </div>
-          <span
-            className="shrink-0 rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-            style={{ background: C.deep }}
+          <p
+            className="text-[11px] font-semibold uppercase tracking-[0.16em]"
+            style={{ color: C.teal }}
           >
-            Start →
-          </span>
-        </Link>
+            Not sure where to start
+          </p>
+          <p className="mt-1.5 text-[15.5px] font-bold">
+            Answer a few questions, see what actually fits
+          </p>
+          <p className="mt-1 text-[12.5px]" style={{ color: C.muted }}>
+            Nothing is saved, and nothing is sent to any provider.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/match"
+              className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
+              style={{ background: C.deep }}
+            >
+              I&rsquo;m investing →
+            </Link>
+            <Link
+              href="/funding/match"
+              className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
+              style={{ background: "#7A3E12" }}
+            >
+              I need funding →
+            </Link>
+          </div>
+        </div>
 
         {/* THE SPLIT. Two routes, equal weight, visitor self-selects. */}
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
@@ -404,6 +410,13 @@ export default async function HomePage() {
             style={{ background: C.deep }}
           >
             All {totalFunds} funds →
+          </Link>
+          <Link
+            href="/funding/match"
+            className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
+            style={{ background: C.gold, color: C.ink }}
+          >
+            What could I borrow? →
           </Link>
           <Link
             href="/funding"

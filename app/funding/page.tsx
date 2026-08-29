@@ -212,6 +212,28 @@ export default async function FundingPage({
           ))}
         </nav>
 
+        {/*
+          Placed above the rate list, because someone who has not yet worked out
+          what they need should not have to read 22 bank rows first. Someone who
+          knows exactly what they want will scroll past it.
+        */}
+        <Link
+          href="/funding/match"
+          className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-5 py-4"
+          style={{ background: `${C.gold}14`, border: `1px solid ${C.gold}` }}
+        >
+          <span className="text-[13.5px]">
+            <strong>Not sure which of these you&rsquo;d qualify for?</strong>{" "}
+            Answer nine questions and we&rsquo;ll show what each would cost you.
+          </span>
+          <span
+            className="shrink-0 rounded-full px-4 py-2 text-[12.5px] font-bold text-white"
+            style={{ background: "#7A3E12" }}
+          >
+            Work it out →
+          </span>
+        </Link>
+
         <p
           className="mt-5 rounded-2xl px-5 py-4 text-[13px] leading-relaxed"
           style={{ background: `${C.gold}1A` }}
