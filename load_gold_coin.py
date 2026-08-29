@@ -269,6 +269,8 @@ def main() -> int:
                 "basis": "single",
                 "series_kind": "quoted",
                 "source_id": source_id,
+                "reference_price": f(r["lbma_usd_oz"]),
+                "reference_fx": f(r["usd_ghs"]),
                 "note": f"LBMA ${r['lbma_usd_oz']}/oz, USDGHS {r['usd_ghs']}",
             })
         for i in range(0, len(obs), 100):

@@ -197,6 +197,18 @@ export default async function ComparePage({
    * the yield and cost drops to a footnote. Same components, inverted
    * emphasis, decided by the data rather than by a hardcoded peer group.
    */
+  /**
+   * "Funds" is wrong for a Treasury bill and wrong for a gold coin. The page
+   * hit this once already with bills; adding gold made it twice. So the noun
+   * follows the peer group instead of being assumed.
+   */
+  const noun =
+    group.startsWith("commodity")
+      ? "these coins"
+      : group.startsWith("government_security")
+        ? "these bills"
+        : "these funds";
+
   const yieldLed =
     funds.length > 0 &&
     funds.every((f) => (f.primary.statedChargesPct?.value ?? -1) === 0) &&
@@ -286,7 +298,7 @@ export default async function ComparePage({
               </>
             ) : (
               <>
-                What these funds
+                What {noun}
                 <br />
                 actually cost
               </>
@@ -512,7 +524,9 @@ export default async function ComparePage({
                           {charge.value.toFixed(2)}%
                         </span>
                         <span className="text-[13px]" style={{ color: C.muted }}>
-                          a year
+                          {fund.chargeBasis === "on_purchase"
+                            ? "once, on purchase"
+                            : "a year"}
                         </span>
                         {isCheapest && (
                           <span
@@ -598,6 +612,89 @@ export default async function ComparePage({
                     </div>
                   )}
 
+                {/*
+                  Gold's return is three numbers, and any one alone misleads.
+                  A single "-3.93%" makes gold look like a poor investment when
+                  what happened is that the metal held its value and the
+                  currency moved. And the premium has to come off, because a
+                  figure ignoring what the buyer paid to get in describes an
+                  investment nobody made.
+                */}
+                {fund.bullionReturn && (
+                  <div
+                    className="mt-5 rounded-xl px-4 py-4"
+                    style={{ background: C.bg }}
+                  >
+                    <p
+                      className="text-[11px] font-semibold uppercase tracking-wider"
+                      style={{ color: C.muted }}
+                    >
+                      What a buyer on {fmtDate(fund.bullionReturn.from)} has now
+                    </p>
+                    <p
+                      className="mt-2 text-[1.6rem] font-bold tabular-nums leading-none"
+                      style={{
+                        color:
+                          (fund.bullionReturn.netOfPremiumPct ?? 0) < 0
+                            ? C.clay
+                            : C.good,
+                      }}
+                    >
+                      {(fund.bullionReturn.netOfPremiumPct ?? 0) > 0 ? "+" : ""}
+                      {fund.bullionReturn.netOfPremiumPct?.toFixed(2)}%
+                    </p>
+                    <p className="mt-1 text-[11.5px]" style={{ color: C.muted }}>
+                      over {fund.bullionReturn.days} days, after the premium
+                      paid to buy in
+                    </p>
+                    <div
+                      className="mt-4 space-y-1.5 border-t pt-3 text-[12.5px]"
+                      style={{ borderColor: C.rule }}
+                    >
+                      {fund.bullionReturn.metalMovePct !== null && (
+                        <p style={{ color: C.muted }}>
+                          Gold itself, in dollars{" "}
+                          <strong style={{ color: C.ink }}>
+                            {fund.bullionReturn.metalMovePct > 0 ? "+" : ""}
+                            {fund.bullionReturn.metalMovePct.toFixed(2)}%
+                          </strong>
+                        </p>
+                      )}
+                      {fund.bullionReturn.fxMovePct !== null && (
+                        <p style={{ color: C.muted }}>
+                          The cedi against the dollar{" "}
+                          <strong style={{ color: C.ink }}>
+                            {fund.bullionReturn.fxMovePct > 0 ? "+" : ""}
+                            {fund.bullionReturn.fxMovePct.toFixed(2)}%
+                          </strong>
+                          {fund.bullionReturn.fxMovePct < 0 && (
+                            <> — the cedi strengthened, which works against you</>
+                          )}
+                        </p>
+                      )}
+                      <p style={{ color: C.muted }}>
+                        The coin, in cedis{" "}
+                        <strong style={{ color: C.ink }}>
+                          {fund.bullionReturn.priceMovePct > 0 ? "+" : ""}
+                          {fund.bullionReturn.priceMovePct.toFixed(2)}%
+                        </strong>
+                      </p>
+                      {fund.bullionReturn.premiumPct !== null && (
+                        <p style={{ color: C.muted }}>
+                          Less the {fund.bullionReturn.premiumPct.toFixed(2)}%
+                          premium paid on purchase
+                        </p>
+                      )}
+                    </div>
+                    <p className="mt-3 text-[11.5px]" style={{ color: C.muted }}>
+                      Gold is bought as protection against a falling currency.
+                      Over this period the cedi rose, so it protected against
+                      something that didn&rsquo;t happen — and the premium was
+                      paid either way.
+                    </p>
+                  </div>
+                )}
+
                 <dl
                   className="mt-6 grid grid-cols-2 gap-x-5 gap-y-4 border-t pt-5 text-[13px] sm:grid-cols-4"
                   style={{ borderColor: C.rule }}
@@ -628,10 +725,15 @@ export default async function ComparePage({
                     {
                       t: yieldLed ? "Money back" : "Dealing",
                       v: fund.dealingFrequency
-                        ? fund.dealingFrequency === "at_maturity"
-                          ? "At maturity"
-                          : fund.dealingFrequency.charAt(0).toUpperCase() +
-                            fund.dealingFrequency.slice(1)
+                        ? ({
+                            at_maturity: "At maturity",
+                            on_application: "On application",
+                            daily: "Daily",
+                            weekly: "Weekly",
+                            monthly: "Monthly",
+                            quarterly: "Quarterly",
+                          }[fund.dealingFrequency] ??
+                          fund.dealingFrequency.replace(/_/g, " "))
                         : "—",
                     },
                   ].map(({ t, v }) => (
@@ -735,6 +837,14 @@ export default async function ComparePage({
                 </>
               )}
             </li>
+            {funds.some((f) => f.primary.taxNote) && (
+              <li>
+                <strong style={{ color: C.ink }}>
+                  Tax, where the issuer states it.
+                </strong>{" "}
+                {funds.find((f) => f.primary.taxNote)!.primary.taxNote}
+              </li>
+            )}
             <li>
               <strong style={{ color: C.ink }}>Tax.</strong> Ghanaian
               withholding on investment income hasn&rsquo;t been verified, so

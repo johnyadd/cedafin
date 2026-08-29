@@ -67,6 +67,41 @@ export interface FundReturn {
   asOf: string;
 }
 
+/**
+ * WHAT A CEDI HOLDER ACTUALLY EARNED ON GOLD.
+ *
+ * A fund's return is one number. Gold's is three, and any one alone misleads:
+ *
+ *   the metal, in dollars      +0.5%   June to August 2026
+ *   the cedi against the USD   strengthened 11.735 -> 11.215
+ *   what the holder got, in cedis  -3.9%
+ *
+ * Show only the last and gold looks like a poor investment. Show only the
+ * first and it looks flat. What actually happened is that gold was fine and
+ * the currency moved against the holder — the opposite of what gold is sold
+ * to Ghanaians to do.
+ *
+ * AND THE PREMIUM COMES OFF THE TOP. Someone paying 7.75% above spot for a
+ * quarter-ounce coin is 7.75% down before the price moves at all. Over three
+ * months that dominates everything else, and a return figure ignoring it
+ * describes an investment nobody made.
+ */
+export interface BullionReturn {
+  from: string;
+  to: string;
+  /** Change in the cedi coin price — what the holder's coin is worth. */
+  priceMovePct: number;
+  /** Change in the dollar metal price — what gold itself did. */
+  metalMovePct: number | null;
+  /** Change in USD/GHS. Negative means the cedi strengthened. */
+  fxMovePct: number | null;
+  /** priceMovePct less the entry premium. What they are really up. */
+  netOfPremiumPct: number | null;
+  /** The premium used, so the arithmetic can be checked. */
+  premiumPct: number | null;
+  days: number;
+}
+
 export interface FeePeriod {
   feeType: "management" | "custody" | "ter" | string;
   ratePct: number;
@@ -113,6 +148,14 @@ export interface FundRow {
    * FAAM's stated charges would compare two different things.
    */
   statedChargesPct: Sourced<number> | null;
+  /** Present only for bullion. See BullionReturn. */
+  bullionReturn: BullionReturn | null;
+  /** "annual" | "on_purchase" | null — how statedChargesPct is levied. */
+  chargeBasis: string | null;
+  /** Tax treatment as the issuer publishes it. Not verified, not advice. */
+  taxNote: string | null;
+  /** NULL means not established — which is not the same as false. */
+  shariaCompliant: boolean | null;
   /** Latest FULL-YEAR expense ratio. Part-year figures never land here. */
   lastFullYearTerPct: Sourced<number> | null;
   lastFullYearTerYear: number | null;
@@ -226,6 +269,10 @@ interface RawObs {
    * not more data, it is reading what is already there.
    */
   yield_annualised: number | null;
+  /** LBMA gold in USD/oz for bullion — what the cedi price derives from. */
+  reference_price: number | null;
+  /** The USD/GHS rate used that day. */
+  reference_fx: number | null;
   series_kind: string;
   sources: { title: string; content_sha256: string | null } | null;
 }
@@ -244,6 +291,8 @@ interface RawProduct {
   lock_in_days: number | null;
   min_initial_minor: number | null;
   min_verified_on: string | null;
+  tax_note: string | null;
+  sharia_compliant: boolean | null;
   providers: { trading_name: string | null; legal_name: string; slug: string } | null;
   product_fees: RawFee[];
   nav_observations: RawObs[];
@@ -253,11 +302,12 @@ interface RawProduct {
 const SELECT = `
   id, slug, name, share_class, share_class_label, asset_class, peer_group,
   currency, distributes, dealing_frequency, lock_in_days, min_initial_minor,
-  min_verified_on,
+  min_verified_on, tax_note, sharia_compliant,
   providers ( trading_name, legal_name, slug ),
   product_fees ( fee_type, rate, effective_from, effective_to, verified_on,
                  conditions, sources ( title, content_sha256 ) ),
   nav_observations ( as_of, nav, yield_annualised, series_kind,
+                     reference_price, reference_fx,
                      sources ( title, content_sha256 ) ),
   product_metrics ( window_code, as_of, total_return, annualised_return,
                     volatility, max_drawdown, real_return, excess_over_tbill,
@@ -331,6 +381,39 @@ function toFundRow(p: RawProduct): FundRow {
   const cust = currentFee(p.product_fees ?? [], "custody");
   const ter = lastFullYearTer(p.product_fees ?? []);
   const stated = currentFee(p.product_fees ?? [], "stated_charges");
+
+  /**
+   * A COST IS A COST, WHATEVER IT IS CALLED.
+   *
+   * The Ghana Gold Coin has no management fee and no custody fee, so the usual
+   * management-plus-custody sum returns nothing and the comparison page said
+   * "Charges not published" — beside a fund at 1.75%, implying gold is free to
+   * own. It is not. Bank of Ghana sells an ounce for about 3.5% more than the
+   * metal is worth at LBMA spot times the day's exchange rate, and a
+   * quarter-ounce coin for 7.75% more. That is the cost of ownership; it is
+   * simply charged once on purchase rather than annually.
+   *
+   * The denomination penalty is added on top for the smaller coins, because
+   * the person buying a quarter ounce pays BOTH — the base premium and the
+   * extra for buying in pieces. Reporting only one would understate what the
+   * smallest buyer actually pays, which is the opposite of what this site is
+   * for.
+   *
+   * The distinction between a recurring charge and a one-off is real and
+   * matters, so it is carried in chargeBasis rather than hidden — but showing
+   * nothing at all was the worse error.
+   */
+  const premium = currentFee(p.product_fees ?? [], "premium_over_spot");
+  const denomPenalty = currentFee(p.product_fees ?? [], "denomination_penalty");
+  const bullionCost =
+    premium
+      ? {
+          rate: premium.rate + (denomPenalty?.rate ?? 0),
+          verified_on: premium.verified_on,
+          effective_from: premium.effective_from,
+          sources: premium.sources,
+        }
+      : null;
   const partial = partYearTer(p.product_fees ?? []);
 
   const history: FeePeriod[] = (p.product_fees ?? [])
@@ -406,6 +489,8 @@ function toFundRow(p: RawProduct): FundRow {
         : null,
     dealingFrequency: p.dealing_frequency,
     lockInDays: p.lock_in_days ?? null,
+    taxNote: (p.tax_note as string | null) ?? null,
+    shariaCompliant: (p.sharia_compliant as boolean | null) ?? null,
 
     currentManagementFeePct: mgmt
       ? sourced(
@@ -421,13 +506,65 @@ function toFundRow(p: RawProduct): FundRow {
           cust.sources,
         )
       : null,
+    bullionReturn: (() => {
+      // Only bullion carries a reference price, so this is null everywhere
+      // else without needing to test the asset class.
+      const withRef = obs.filter(
+        (o) => o.nav !== null && o.reference_price !== null,
+      );
+      if (withRef.length < 2) return null;
+      const a = withRef[0];
+      const b = withRef[withRef.length - 1];
+      const days = Math.round(
+        (new Date(b.as_of).getTime() - new Date(a.as_of).getTime()) / 86_400_000,
+      );
+      if (days < 14) return null;
+
+      const priceMove = ((b.nav! - a.nav!) / a.nav!) * 100;
+      const metalMove =
+        ((b.reference_price! - a.reference_price!) / a.reference_price!) * 100;
+      const fxMove =
+        a.reference_fx && b.reference_fx
+          ? ((b.reference_fx - a.reference_fx) / a.reference_fx) * 100
+          : null;
+      const prem = premium
+        ? (premium.rate + (denomPenalty?.rate ?? 0)) * 100
+        : null;
+
+      return {
+        from: a.as_of,
+        to: b.as_of,
+        priceMovePct: Number(priceMove.toFixed(2)),
+        metalMovePct: Number(metalMove.toFixed(2)),
+        fxMovePct: fxMove === null ? null : Number(fxMove.toFixed(2)),
+        // Straight subtraction, not compounding: the premium is paid once at
+        // entry, so it comes off the gain rather than accruing.
+        netOfPremiumPct:
+          prem === null ? null : Number((priceMove - prem).toFixed(2)),
+        premiumPct: prem === null ? null : Number(prem.toFixed(2)),
+        days,
+      };
+    })(),
     statedChargesPct: stated
       ? sourced(
           Number((stated.rate * 100).toFixed(4)),
           stated.verified_on ?? stated.effective_from,
           stated.sources,
         )
-      : null,
+      : bullionCost
+        ? sourced(
+            Number((bullionCost.rate * 100).toFixed(4)),
+            bullionCost.verified_on ?? bullionCost.effective_from,
+            bullionCost.sources,
+          )
+        : null,
+    /**
+     * How the cost above is levied. "annual" for a fund's management charge;
+     * "on_purchase" for a bullion premium paid once. A page that shows 7.75%
+     * beside 1.75% without saying one is annual and the other is not would
+     * mislead in the other direction.
+     */
+    chargeBasis: stated ? "annual" : bullionCost ? "on_purchase" : null,
     lastFullYearTerPct: ter
       ? sourced(
           Number((ter.fee.rate * 100).toFixed(4)),
@@ -998,6 +1135,7 @@ const PEER_LABELS: Record<string, string> = {
   "equity:GHS": "Cedi equity funds",
   "deposit:GHS": "Cedi fixed deposits and savings accounts",
   "government_security:GHS": "Government Treasury bills",
+  "commodity:GHS": "Gold",
 };
 
 export const MIN_DISTINCT_FUNDS_TO_RANK = 3;
