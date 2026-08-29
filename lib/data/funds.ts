@@ -716,6 +716,236 @@ export async function getMarketAverages(): Promise<
   return out;
 }
 
+/* ────────────────────────────────────────────────────────────────────────
+   MATCHING: what someone said they want, against what exists.
+
+   TWO OUTPUTS FROM ONE SET OF ANSWERS, and the line between them is
+   regulatory, not technical.
+
+     FILTER      narrows on criteria the user stated. "I have GH¢500, I may
+                 need it within a month, I want money market" excludes a fund
+                 with a GH¢1,000 minimum. That is arithmetic on facts they
+                 supplied, and needs no licence.
+
+     RECOMMENDER forms a judgement about the person — that their age implies a
+                 horizon, that their stated risk tolerance contradicts their
+                 asset preference, that one product suits them better. That is
+                 advice. It is built, and it stays behind COMPLIANCE_PHASE
+                 until there is a licence to give it.
+
+   The distinction is not cosmetic. Applying a user's own criteria is
+   different from telling them what they should do, and a site that blurs the
+   two while unlicensed is misrepresenting itself to people making decisions
+   about their savings.
+   ──────────────────────────────────────────────────────────────────────── */
+
+export interface InvestorAnswers {
+  ageBand?: "under25" | "25to34" | "35to49" | "50to64" | "65plus";
+  amountGhs?: number;
+  regularContribution?: boolean;
+  /** How soon they may need the money back. Drives dealing frequency. */
+  horizon?: "under3m" | "3to12m" | "1to3y" | "3to5y" | "over5y";
+  purpose?: "emergency" | "house" | "school" | "retirement" | "growth" | "other";
+  /**
+   * BEHAVIOURAL, NOT SELF-RATED. "How would you react if it fell 20%" gets a
+   * truer answer than "rate your risk appetite", which almost everyone
+   * overstates until it happens.
+   */
+  dropReaction?: "sell" | "worry" | "hold" | "buymore";
+  assetPreference?: string[];
+  hasExisting?: boolean;
+  currency?: "GHS" | "USD" | "other";
+}
+
+export interface MatchResult {
+  fund: FundRow;
+  /** Every criterion the user stated that this fund satisfies. */
+  meets: string[];
+  /** Criteria that could not be checked, and why. */
+  unchecked: string[];
+}
+
+export interface MatchOutcome {
+  matches: MatchResult[];
+  /** Funds excluded, with the reason — never silently dropped. */
+  excluded: { fund: FundRow; because: string }[];
+  /** What no product could be filtered on, because nobody publishes it. */
+  notFilterable: string[];
+  /** Contradictions in the answers themselves. Shown, not resolved for them. */
+  conflicts: string[];
+  totalConsidered: number;
+}
+
+/** Horizon in days, for comparing against dealing frequency and lock-ins. */
+const HORIZON_DAYS: Record<string, number> = {
+  under3m: 90,
+  "3to12m": 365,
+  "1to3y": 1095,
+  "3to5y": 1825,
+  over5y: 3650,
+};
+
+/** How quickly money can be taken out, in days. */
+const DEALING_DAYS: Record<string, number> = {
+  daily: 1,
+  weekly: 7,
+  monthly: 30,
+  quarterly: 90,
+  at_maturity: 365,
+  on_application: 30,
+};
+
+/** Rough volatility ordering, for flagging answer contradictions only. */
+const ASSET_RISK: Record<string, number> = {
+  government_security: 1,
+  money_market: 2,
+  fixed_income: 3,
+  deposit: 1,
+  balanced: 4,
+  equity: 5,
+  real_estate: 5,
+};
+
+const REACTION_CEILING: Record<string, number> = {
+  sell: 2,
+  worry: 3,
+  hold: 4,
+  buymore: 5,
+};
+
+export function matchFunds(
+  funds: FundRow[],
+  a: InvestorAnswers,
+): MatchOutcome {
+  const matches: MatchResult[] = [];
+  const excluded: { fund: FundRow; because: string }[] = [];
+  const conflicts: string[] = [];
+
+  // A stated asset preference and a stated reaction to a fall can contradict
+  // each other. Neither is overridden — the person is told, and decides.
+  if (a.dropReaction && a.assetPreference?.length) {
+    const ceiling = REACTION_CEILING[a.dropReaction] ?? 5;
+    const tooRisky = a.assetPreference.filter(
+      (c) => (ASSET_RISK[c] ?? 3) > ceiling,
+    );
+    if (tooRisky.length) {
+      conflicts.push(
+        `You said you'd ${
+          a.dropReaction === "sell" ? "sell" : "be worried"
+        } if your investment fell 20%, but you've asked to see ${tooRisky
+          .map((c) => c.replace(/_/g, " "))
+          .join(" and ")} funds, where falls like that are normal. Both are
+         shown — worth knowing they pull in different directions.`.replace(
+          /\s+/g,
+          " ",
+        ),
+      );
+    }
+  }
+  if (a.horizon === "under3m" && a.assetPreference?.includes("equity")) {
+    conflicts.push(
+      "Equity funds are usually held for years, not months. Over three months, " +
+        "what the market does matters more than what the fund does.",
+    );
+  }
+
+  for (const f of funds) {
+    const meets: string[] = [];
+    const unchecked: string[] = [];
+
+    if (a.currency && f.currency && f.currency !== a.currency) {
+      excluded.push({ fund: f, because: `priced in ${f.currency}` });
+      continue;
+    }
+
+    if (a.assetPreference?.length) {
+      if (!a.assetPreference.includes(f.assetClass ?? "")) {
+        excluded.push({
+          fund: f,
+          because: `${(f.assetClass ?? "unclassified").replace(/_/g, " ")}, not among the types you chose`,
+        });
+        continue;
+      }
+      meets.push("the type of fund you asked for");
+    }
+
+    if (a.amountGhs !== undefined) {
+      const min = f.minimumGhs?.value;
+      if (min === undefined || min === null) {
+        unchecked.push("minimum investment — this provider doesn't publish one");
+      } else if (min > a.amountGhs) {
+        excluded.push({
+          fund: f,
+          because: `needs at least ${GHS_MIN.format(min)} to start`,
+        });
+        continue;
+      } else {
+        meets.push(`takes ${GHS_MIN.format(a.amountGhs)} to start`);
+      }
+    }
+
+    if (a.horizon) {
+      const want = HORIZON_DAYS[a.horizon] ?? 365;
+      const lock = f.lockInDays ?? 0;
+      const dealing = f.dealingFrequency
+        ? (DEALING_DAYS[f.dealingFrequency] ?? 30)
+        : null;
+
+      if (lock > want) {
+        excluded.push({
+          fund: f,
+          because: `locks your money for ${lock} days, longer than you said`,
+        });
+        continue;
+      }
+      if (dealing === null) {
+        unchecked.push("how quickly you can withdraw — not published");
+      } else if (dealing <= want) {
+        meets.push(
+          dealing <= 1
+            ? "you can take money out any working day"
+            : `money back within about ${dealing} days`,
+        );
+      }
+    }
+
+    matches.push({ fund: f, meets, unchecked });
+  }
+
+  // Cheapest first. Cost is the one thing we can compare across every fund,
+  // and it is the only ordering that cannot be gamed by a provider.
+  matches.sort((x, y) => {
+    const a1 = x.fund.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
+    const b1 = y.fund.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
+    return a1 - b1 || x.fund.name.localeCompare(y.fund.name);
+  });
+
+  // Answers we collected but cannot act on, because no provider publishes
+  // anything to match them against. Saying so is more useful than pretending
+  // the question shaped the result.
+  const notFilterable: string[] = [];
+  if (a.ageBand) notFilterable.push("your age");
+  if (a.purpose) notFilterable.push("what you're saving for");
+  if (a.regularContribution !== undefined)
+    notFilterable.push("whether you'll add to it regularly");
+  if (a.hasExisting !== undefined)
+    notFilterable.push("what you already hold");
+
+  return {
+    matches,
+    excluded,
+    notFilterable,
+    conflicts,
+    totalConsidered: funds.length,
+  };
+}
+
+const GHS_MIN = new Intl.NumberFormat("en-GH", {
+  style: "currency",
+  currency: "GHS",
+  maximumFractionDigits: 0,
+});
+
 export async function getPublishedFunds(): Promise<FundRow[]> {
   const { data, error } = await publicClient()
     .from("products")
