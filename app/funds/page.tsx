@@ -115,6 +115,18 @@ export default async function FundsPage() {
 
   const total = coveredFunds.length + directory.length;
 
+  // The lowest minimum any verified fund actually accepts. Quoted in the
+  // audience section below, so it must come from the data rather than be
+  // typed in — a hardcoded "GH¢20" would go stale the day a cheaper fund is
+  // verified, and stale specifics are exactly what this site tells providers
+  // off for.
+  const minimums = coveredFunds
+    .map((f) => f.minimumGhs?.value)
+    .filter((v): v is number => typeof v === "number");
+  const cheapestMin = minimums.length
+    ? GHS.format(Math.min(...minimums))
+    : "small";
+
   return (
     <main
       className={`${display.variable} ${body.variable} min-h-screen`}
@@ -193,6 +205,95 @@ export default async function FundsPage() {
         </section>
 
         {/* COVERED — grouped, carded, detailed */}
+        {/*
+          Restored here rather than on the home page. It was written for the
+          investing side — Ghana Card routes, fund eligibility, who a provider
+          will accept as a subscriber — and none of that carries over to the
+          borrowing side, where a business needs registration and presence in
+          Ghana. Putting it on a page that serves both audiences would make it
+          wrong for half of them.
+
+          The honesty is the point: two of the three cards say what is still
+          unestablished. A diaspora Ghanaian who reads "we don't yet know which
+          funds accept you" has learned something true, which is better than a
+          confident answer we cannot support.
+        */}
+        <h2
+          className="mt-14 text-[24px] font-bold"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Who this is for
+        </h2>
+        <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: C.muted }}>
+          The funds here are regulated in Ghana. Who can buy them depends on each
+          provider&rsquo;s own rules, and those rules aren&rsquo;t published in
+          one place — so here&rsquo;s what we&rsquo;ve established and
+          what we&rsquo;re still working out.
+        </p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              title: "Living in Ghana",
+              state: "Everything here applies",
+              tone: C.good,
+              detail: `All the figures on this site are for you. The lowest minimum we've found is ${cheapestMin}, and most funds deal daily.`,
+              open: null,
+            },
+            {
+              title: "Ghanaian abroad",
+              state: "The route exists",
+              tone: C.teal,
+              detail:
+                "The Ghana Card is the key, and it's obtainable from abroad — the NIA runs a digital-first process through Ghana's missions, with biometrics captured at your nearest one.",
+              open:
+                "Still checking: which funds accept subscribers who live outside Ghana, and how money moves in and out.",
+            },
+            {
+              title: "Investing from outside",
+              state: "Least mapped",
+              tone: C.clay,
+              detail:
+                "Non-citizens need a different form of national ID, and fund eligibility rules vary by provider.",
+              open:
+                "Still checking: which funds are open to non-citizens at all, and what documentation they require.",
+            },
+          ].map((a) => (
+            <div
+              key={a.title}
+              className="rounded-2xl p-5"
+              style={{ background: C.card, border: `1px solid ${C.rule}` }}
+            >
+              <h3
+                className="text-[16px] font-bold"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {a.title}
+              </h3>
+              <span
+                className="mt-2 inline-block rounded-full px-2.5 py-1 text-[10.5px] font-semibold"
+                style={{ background: `${a.tone}14`, color: a.tone }}
+              >
+                {a.state}
+              </span>
+              <p
+                className="mt-3 text-[12.5px] leading-relaxed"
+                style={{ color: C.muted }}
+              >
+                {a.detail}
+              </p>
+              {a.open && (
+                <p
+                  className="mt-3 border-t pt-3 text-[12px] leading-relaxed"
+                  style={{ borderColor: C.rule, color: C.clay }}
+                >
+                  {a.open}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
         {/*
           Seventy-five funds is a lot to read through, and someone who does not
           already know what they want will bounce off a list this long. The
