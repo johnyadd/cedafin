@@ -50,7 +50,12 @@ export async function GET() {
         dealingFrequency: f.dealingFrequency ?? null,
         lockInDays: f.lockInDays ?? null,
         headlineReturn: f.headlineReturn
-          ? { pct: f.headlineReturn.value, window: f.headlineReturn.window }
+          ? {
+              // totalPct is what the fund actually returned over the window;
+              // annualisedPct would overstate a 6-month figure by doubling it.
+              pct: f.headlineReturn.totalPct ?? f.headlineReturn.annualisedPct ?? 0,
+              window: f.headlineReturn.windowLabel,
+            }
           : null,
       })),
     );
