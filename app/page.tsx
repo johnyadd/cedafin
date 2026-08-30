@@ -26,6 +26,8 @@
  */
 
 import Link from "next/link";
+
+import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { BRAND } from "@/lib/brand";
@@ -522,6 +524,7 @@ export default async function HomePage() {
           </p>
         </section>
       </div>
+      <Footer />
     </main>
   );
 }

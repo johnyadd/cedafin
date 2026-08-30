@@ -25,6 +25,8 @@
  */
 
 import Link from "next/link";
+
+import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 
@@ -362,6 +364,7 @@ export default async function LenderPage({
           </Link>
         </p>
       </div>
+      <Footer />
     </main>
   );
 }

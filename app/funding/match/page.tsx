@@ -33,6 +33,8 @@
  */
 
 import Link from "next/link";
+
+import Footer from "@/components/Footer";
 import { useMemo, useState } from "react";
 
 const C = {
@@ -808,6 +810,7 @@ export default function FundingMatchPage() {
           </>
         )}
       </div>
+      <Footer />
     </main>
   );
 }

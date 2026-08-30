@@ -36,6 +36,8 @@
  */
 
 import Link from "next/link";
+
+import Footer from "@/components/Footer";
 import { useMemo, useState } from "react";
 
 import Spark from "@/components/Spark";
@@ -1073,6 +1075,7 @@ export default function MatchPage() {
           </>
         )}
       </div>
+      <Footer />
     </main>
   );
 }
