@@ -421,6 +421,13 @@ export default function FundingMatchPage() {
             <p className="mt-2 text-[12.5px]" style={{ color: C.muted }}>
               {q.why}
             </p>
+            {/* The flow advances on click with no Next button. */}
+            <p
+              className="mt-3 text-[11px] font-semibold uppercase tracking-wider"
+              style={{ color: C.gold }}
+            >
+              Tap an answer to continue
+            </p>
 
             <div className="mt-6 space-y-2.5">
               {q.options.map((opt, oi) => {
@@ -456,7 +463,7 @@ export default function FundingMatchPage() {
                     )}
                     <button
                       onClick={() => answer(q.key, value)}
-                      className="w-full rounded-2xl px-5 py-4 text-left text-[14.5px] font-medium"
+                      className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-5 py-4 text-left text-[14.5px] font-medium transition-colors"
                       style={{
                         background: chosen ? `${C.gold}1A` : C.card,
                         border: `1px solid ${chosen ? C.gold : C.rule}`,

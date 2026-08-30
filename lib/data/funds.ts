@@ -1283,11 +1283,7 @@ export async function getPublishedFunds(): Promise<FundRow[]> {
     .from("products")
     .select(SELECT)
     .eq("status", "published")
-    // Individual shares are excluded from the comparison pages. They carry no
-    // management charge, so a cost ranking would place all 39 above every
-    // fund — while the real cost is unpublished brokerage and the real
-    // difference is single-company risk. They have their own page at /shares.
-    .neq("asset_class", "equity")
+
     // Lending products live in the same table. Without this the fund
     // counts absorb 157 bank facilities and the home page claims to
     // track 232 funds when it tracks 72 — a false number sitting three

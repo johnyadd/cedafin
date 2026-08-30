@@ -38,6 +38,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import Spark from "@/components/Spark";
+
 const C = {
   ink: "#0C1C22",
   deep: "#0B4F6C",
@@ -69,6 +71,8 @@ interface Fund {
   dealingFrequency: string | null;
   lockInDays: number | null;
   headlineReturn: { pct: number; window: string } | null;
+  /** Monthly observations, oldest first — for the sparkline on each card. */
+  priceSeries?: number[];
 }
 
 type Answers = {
@@ -368,7 +372,15 @@ export default function MatchPage() {
         });
         continue;
       }
-      if (activeAssets.length) meets.push("the kind of fund you asked for");
+      // A listed share is not a fund, and describing one in fund language
+      // made three of the four claims on its card false.
+      const isShare = f.assetClass === "equity";
+      if (activeAssets.length)
+        meets.push(
+          isShare
+            ? "a listed company, not a fund — one business, not a spread"
+            : "the kind of fund you asked for",
+        );
 
       const effectiveAmount = tryAmount ?? answers.amountGhs;
       if (effectiveAmount !== undefined) {
@@ -381,7 +393,21 @@ export default function MatchPage() {
           });
           continue;
         } else {
-          meets.push(`takes ${GHS.format(effectiveAmount)} to start`);
+          // A share has no minimum — you buy one at its price. Telling
+          // someone AADS "takes GH¢5,000 to start" when it costs 42 pesewas
+          // is the opposite of true.
+          meets.push(
+            isShare
+              ? // GHS.format rounds to whole cedis, which is right for a fund
+                // minimum of GH¢5,000 and useless for a share at GH¢0.42 —
+                // it printed "costs GH¢0". Pesewas matter below ten cedis.
+                `one share costs ${
+                  f.minimumGhs < 10
+                    ? `GH\u20B5${f.minimumGhs.toFixed(2)}`
+                    : GHS.format(f.minimumGhs)
+                }`
+              : `takes ${GHS.format(effectiveAmount)} to start`,
+          );
         }
       }
 
@@ -398,7 +424,14 @@ export default function MatchPage() {
         if (d === null || d === undefined) {
           unchecked.push("how quickly you can withdraw — not published");
         } else if (d <= 1) {
-          meets.push("money out any working day");
+          // Shares trade daily in principle. Whether YOUR shares sell at the
+          // quoted price on a small exchange is another matter, and claiming
+          // fund-style liquidity would overstate it.
+          meets.push(
+            isShare
+              ? "traded daily, though a small market may move on your order"
+              : "money out any working day",
+          );
         } else if (d <= want) {
           meets.push(`money back within about ${d} days`);
         }
@@ -449,6 +482,56 @@ export default function MatchPage() {
       <div className="mx-auto max-w-2xl px-5 py-8">
         {!done && q && (
           <>
+            {/*
+              A trail of what has been answered. The flow advances the moment
+              an option is clicked and the previous screen vanishes, so without
+              this someone eight questions in has no record of what they said
+              and no way to correct one answer short of starting over.
+
+              Every answered question is listed rather than the last few: by
+              the end that is eight short lines, and someone who has just told
+              a website their age, their savings and their horizon is owed a
+              view of it.
+            */}
+            {step > 0 && (
+              <ol className="mb-5 space-y-1">
+                {QUESTIONS.slice(0, step).map((prev, i) => {
+                  // The amount question stores under amountGhs, not amount —
+                  // it is converted to a number on the way in. Looking up by
+                  // question key alone silently dropped that row from the
+                  // trail, which is the one answer a saver most wants to see.
+                  const field = prev.key === "amount" ? "amountGhs" : prev.key;
+                  const raw = (answers as Record<string, unknown>)[field];
+                  const vals = Array.isArray(raw) ? raw : [raw];
+                  const labels = vals
+                    .map(
+                      (v) =>
+                        prev.options.find((o) => o[0] === String(v))?.[1] ??
+                        (v === undefined || v === null ? null : String(v)),
+                    )
+                    .filter(Boolean) as string[];
+                  if (!labels.length) return null;
+                  return (
+                    <li
+                      key={prev.key}
+                      className="flex flex-wrap items-baseline gap-x-2 text-[12.5px]"
+                    >
+                      <span style={{ color: C.muted }}>{prev.q}</span>
+                      <strong>{labels.join(", ")}</strong>
+                      <button
+                        type="button"
+                        onClick={() => setStep(i)}
+                        className="cursor-pointer underline underline-offset-2"
+                        style={{ color: C.teal }}
+                      >
+                        change
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+
             <div className="flex items-center gap-2">
               {QUESTIONS.map((_, i) => (
                 <span
@@ -468,6 +551,17 @@ export default function MatchPage() {
             <p className="mt-2 text-[12.5px]" style={{ color: C.muted }}>
               {q.why}
             </p>
+            {/* The flow advances on click with no Next button, which is not
+                obvious. Said once per screen rather than left to be
+                discovered. */}
+            <p
+              className="mt-3 text-[11px] font-semibold uppercase tracking-wider"
+              style={{ color: C.teal }}
+            >
+              {"multi" in q && q.multi
+                ? "Choose any that apply, then continue"
+                : "Tap an answer to continue"}
+            </p>
 
             <div className="mt-6 space-y-2.5">
               {q.options.map(([value, label]) => {
@@ -481,14 +575,48 @@ export default function MatchPage() {
                   <button
                     key={value}
                     onClick={() => answer(q.key, value, "multi" in q && q.multi)}
-                    className="w-full rounded-2xl px-5 py-4 text-left text-[14.5px] font-medium transition-colors"
+                    className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-5 py-4 text-left text-[14.5px] font-medium transition-colors hover:border-current"
                     style={{
                       background: chosen ? `${C.teal}14` : C.card,
                       border: `1px solid ${chosen ? C.teal : C.rule}`,
                       color: C.ink,
                     }}
                   >
-                    {label}
+                    {/* A marker, so a row reads as a choice before it is
+                        touched. The cards elsewhere on this site look the
+                        same and are not clickable, which made these ambiguous
+                        to anyone who had seen a comparison page first. */}
+                    {/*
+                      A circle means one choice; a square means several. The
+                      assets question takes many answers, and a radio there
+                      told the user the opposite of what the form accepts.
+                    */}
+                    <span
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center border-2 ${
+                        "multi" in q && q.multi ? "rounded-[4px]" : "rounded-full"
+                      }`}
+                      style={{
+                        borderColor: chosen ? C.teal : C.rule,
+                        background: chosen ? C.teal : "transparent",
+                      }}
+                    >
+                      {chosen &&
+                        ("multi" in q && q.multi ? (
+                          <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                            <path
+                              d="M1.5,5 L4,7.5 L8.5,2.5"
+                              fill="none"
+                              stroke="white"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ) : (
+                          <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                        ))}
+                    </span>
+                    <span>{label}</span>
                   </button>
                 );
               })}
@@ -718,6 +846,23 @@ export default function MatchPage() {
                           </p>
                         </div>
                       </div>
+
+                      {/*
+                        What it has actually done. On a share card this is the
+                        only performance figure there is — shares carry no
+                        return calculation here, so without it a card says
+                        what a share costs and nothing about how it has moved.
+                      */}
+                      {m.f.priceSeries && m.f.priceSeries.length >= 4 && (
+                        <div className="mt-3">
+                          <Spark
+                            points={m.f.priceSeries}
+                            width={200}
+                            height={52}
+                            minPoints={4}
+                          />
+                        </div>
+                      )}
 
                       {m.meets.length > 0 && (
                         <ul className="mt-3 space-y-1">

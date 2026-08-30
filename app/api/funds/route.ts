@@ -49,6 +49,12 @@ export async function GET() {
         minimumGhs: f.minimumGhs?.value ?? null,
         dealingFrequency: f.dealingFrequency ?? null,
         lockInDays: f.lockInDays ?? null,
+        // The observation series, for the sparkline on each result card. On a
+        // share card it is the only performance figure there is — shares have
+        // no headlineReturn here, so without it a card says what one costs and
+        // nothing about how it has moved. Capped at the last 24 points: a
+        // sparkline cannot show more, and the gold coins carry 56 each.
+        priceSeries: (f.priceSeries ?? []).slice(-24),
         headlineReturn: f.headlineReturn
           ? {
               // totalPct is what the fund actually returned over the window;
