@@ -1120,6 +1120,17 @@ export interface BrokerRow {
   monthsObserved: number | null;
   firstSeen: string | null;
   lastSeen: string | null;
+  /**
+   * From the SEC's broker-dealer register. A page listing who trades most and
+   * giving no way to reach any of them tells a saver the least useful half of
+   * what it knows.
+   */
+  website: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  officeAddress: string | null;
+  /** The SEC's name for the firm, which differs from the exchange's. */
+  legalName: string | null;
 }
 
 export async function getBrokers(): Promise<BrokerRow[]> {
@@ -1128,7 +1139,8 @@ export async function getBrokers(): Promise<BrokerRow[]> {
     .select(
       `slug, trading_name, legal_name, broker_share_avg_pct,
        broker_share_min_pct, broker_share_max_pct, broker_months_observed,
-       broker_first_seen, broker_last_seen`,
+       broker_first_seen, broker_last_seen,
+       website, contact_email, contact_phone, office_address`,
     )
     .like("slug", "broker-%")
     .eq("status", "published");
@@ -1144,6 +1156,11 @@ export async function getBrokers(): Promise<BrokerRow[]> {
       monthsObserved: (d.broker_months_observed as number | null) ?? null,
       firstSeen: (d.broker_first_seen as string | null) ?? null,
       lastSeen: (d.broker_last_seen as string | null) ?? null,
+      website: (d.website as string | null) ?? null,
+      contactEmail: (d.contact_email as string | null) ?? null,
+      contactPhone: (d.contact_phone as string | null) ?? null,
+      officeAddress: (d.office_address as string | null) ?? null,
+      legalName: (d.legal_name as string | null) ?? null,
     }))
     .sort((a, b) => (b.avgSharePct ?? -1) - (a.avgSharePct ?? -1));
 }

@@ -236,6 +236,54 @@ export default async function BrokersPage() {
                   />
                 </div>
 
+                {/*
+                  Where to actually reach them. The page previously ranked
+                  twenty-four firms by activity and gave no address, phone or
+                  website for any of them — telling a saver who is busiest and
+                  nothing they could act on. These come from the SEC's
+                  broker-dealer register: what each firm filed with its
+                  regulator, which is not proof anyone answers the phone.
+                */}
+                {(b.contactPhone || b.website || b.contactEmail) && (
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px]">
+                    {b.contactPhone && (
+                      <a
+                        href={`tel:${b.contactPhone.split(/[\/ ]/)[0]}`}
+                        style={{ color: C.deep }}
+                        className="underline underline-offset-2"
+                      >
+                        {b.contactPhone}
+                      </a>
+                    )}
+                    {b.website && (
+                      <a
+                        href={b.website}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        style={{ color: C.deep }}
+                        className="underline underline-offset-2"
+                      >
+                        {b.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                      </a>
+                    )}
+                    {b.contactEmail && (
+                      <a
+                        href={`mailto:${b.contactEmail}`}
+                        style={{ color: C.deep }}
+                        className="underline underline-offset-2"
+                      >
+                        {b.contactEmail}
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {b.officeAddress && (
+                  <p className="mt-1.5 text-[12px]" style={{ color: C.muted }}>
+                    {b.officeAddress}
+                  </p>
+                )}
+
                 <p className="mt-2.5 text-[12px]" style={{ color: C.muted }}>
                   {b.minSharePct !== null && b.maxSharePct !== null && (
                     <>
@@ -279,7 +327,8 @@ export default async function BrokersPage() {
               Not one of the {brokers.length} publishes a commission rate,
               minimum account size, or fee schedule. An international platform
               quotes 0.75% for Ghanaian shares; what a member firm in Accra
-              charges is unknown.
+              charges is unknown. The SEC publishes where each firm is and how
+              to reach it — not what it costs to use.
             </li>
             <li>
               <strong style={{ color: C.ink }}>
