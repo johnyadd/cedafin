@@ -198,7 +198,10 @@ export default function Footer() {
             className="mt-5 text-[11px] leading-relaxed"
             style={{ color: C.muted }}
           >
-            {BRAND.legalStatus}
+            {BRAND.legalStatus} We use Google Analytics to count page views —
+            no advertising profiles, no personalisation signals, and nothing is
+            recorded from the matching flows: those answers stay in your
+            browser, as those pages say.
           </p>
           <p className="mt-2 text-[11px]" style={{ color: C.muted }}>
             © {new Date().getFullYear()} {BRAND.name}
