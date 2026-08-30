@@ -61,10 +61,14 @@ MONTHS = {m.lower(): i + 1 for i, m in enumerate(
      "August", "September", "October", "November", "December"])}
 
 # Sector headings that introduce an equity table.
+# The nine headings the reports ACTUALLY use, read off all fifteen PDFs rather
+# than assumed. The first version of this list guessed at "BANKING", "OIL AND
+# GAS" and "REAL ESTATE" — none of which appear — and omitted "FINANCE", which
+# is where every bank sits. GCB was published as an Education company for that
+# reason: with no heading matched, each row inherited the last one recognised.
 SECTORS = [
-    "FOOD AND BEVERAGE", "ICT", "MINING", "AGRICULTURE", "MANUFACTURING",
-    "BANKING", "INSURANCE", "OIL AND GAS", "DISTRIBUTION", "EDUCATION",
-    "EXCHANGE TRADED FUND", "ETF", "REAL ESTATE", "EXCHANGE TRADED FUNDS",
+    "AGRICULTURE", "DISTRIBUTION", "EDUCATION", "FINANCE",
+    "FOOD AND BEVERAGE", "ICT", "INSURANCE", "MANUFACTURING", "MINING",
 ]
 
 # "AGA 37.00 37.00 ... 506.77 18,750.39 0.29"
@@ -174,8 +178,12 @@ def parse_equities(pages: list[str]) -> list[dict]:
         for line in t.splitlines():
             stripped = line.strip()
             upper = re.sub(r"\s+", " ", stripped).upper()
+            # Anchored on "Closing Price" because a sector heading only ever
+            # introduces a price table. Matching the bare word would let a
+            # mention anywhere on the page silently reassign every row after
+            # it to the wrong sector.
             for s in SECTORS:
-                if upper.startswith(s):
+                if upper.startswith(s) and "CLOSING PRICE" in upper:
                     sector = s.title()
                     break
             if stripped.upper().startswith("TOTALS"):

@@ -324,6 +324,40 @@ export default async function HomePage() {
           </Link>
         </div>
 
+        {/*
+          The invest side started as funds and is now five kinds of thing:
+          funds, Treasury bills, gold, listed shares, and the brokers you need
+          to buy the last of those. One "Compare funds" link on a card hid four
+          of them, and a page nobody can reach may as well not exist — the
+          matching flows sat unreachable for a day for exactly this reason.
+
+          Kept under the invest card rather than promoted to the top level,
+          because shares and brokers are ways of investing, not a third choice
+          alongside investing and borrowing.
+        */}
+        <nav className="mt-5 flex flex-wrap gap-2">
+          {[
+            ["/funds", "All funds"],
+            ["/compare/government_security-GHS", "Treasury bills"],
+            ["/compare/commodity-GHS", "Gold"],
+            ["/shares", "Listed shares"],
+            ["/brokers", "Brokers"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-full px-4 py-2 text-[13px] font-semibold"
+              style={{
+                background: C.card,
+                color: C.ink,
+                border: `1px solid ${C.rule}`,
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+
         {/* The finding. Computed, not asserted. */}
         {biggestGap && biggestGap.feeGapPct !== null && biggestGap.feeGapPct > 3 && (
           <section
@@ -424,6 +458,17 @@ export default async function HomePage() {
             style={{ background: "#7A3E12" }}
           >
             Business credit →
+          </Link>
+          <Link
+            href="/shares"
+            className="rounded-full px-4 py-2.5 text-[13px] font-semibold"
+            style={{
+              background: C.card,
+              color: C.ink,
+              border: `1px solid ${C.rule}`,
+            }}
+          >
+            Listed shares →
           </Link>
           {groups.slice(0, 2).map((g) => (
             <Link
