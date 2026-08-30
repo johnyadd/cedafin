@@ -80,6 +80,81 @@ const GHS = new Intl.NumberFormat("en-GH", {
   maximumFractionDigits: 0,
 });
 
+/**
+ * A sparkline from the observations held. Deliberately small and unlabelled:
+ * it shows shape, not values, and the figures sit beside it.
+ *
+ * Ten points minimum. Platinum Debt Income Fund has six, and a line through
+ * six readings implies a trend the data cannot carry — better to draw nothing
+ * than to suggest a shape that is mostly gaps.
+ */
+function Spark({ points, unit }: { points: number[]; unit?: string }) {
+  if (points.length < 10) return null;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const span = max - min || 1;
+  const w = 220;
+  const h = 64;
+  const pad = 4;
+  const iw = w - pad * 2;
+  const ih = h - pad * 2;
+  const first = points[0];
+  const last = points[points.length - 1];
+  const up = last >= first;
+  const colour = up ? C.good : C.clay;
+
+  const xy = (p: number, i: number) => [
+    pad + (i / (points.length - 1)) * iw,
+    pad + ih - ((p - min) / span) * ih,
+  ];
+
+  const line = points
+    .map((p, i) => {
+      const [x, y] = xy(p, i);
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  // Filled to the baseline so the shape reads as a quantity rather than a
+  // squiggle. The 96x26 version conveyed nothing at a glance, which made it
+  // decoration — and decoration on a page about honest figures is worse than
+  // nothing.
+  const [lx, ly] = xy(last, points.length - 1);
+  const area = `${line} L${(pad + iw).toFixed(1)},${(pad + ih).toFixed(1)} L${pad},${(pad + ih).toFixed(1)} Z`;
+  const fmt = (v: number) =>
+    unit === "%" ? `${v.toFixed(2)}%` : v >= 100 ? v.toFixed(0) : v.toFixed(2);
+
+  return (
+    <div>
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img">
+        <path d={area} fill={colour} opacity="0.08" />
+        <path
+          d={line}
+          fill="none"
+          stroke={colour}
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx={lx} cy={ly} r="2.75" fill={colour} />
+      </svg>
+      {/* The line shows shape; these two give it a scale. Without them a
+          reader cannot tell a 2% move from a 200% one. */}
+      <div
+        className="mt-0.5 flex justify-between text-[10px] tabular-nums"
+        style={{ color: C.muted }}
+      >
+        <span>{fmt(first)}</span>
+        <span style={{ color: colour, fontWeight: 600 }}>
+          {up ? "+" : ""}
+          {(((last - first) / (first || 1)) * 100).toFixed(1)}%
+        </span>
+        <span>{fmt(last)}</span>
+      </div>
+    </div>
+  );
+}
+
 function fmtDate(iso: string): string {
   return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
     day: "numeric",
@@ -580,6 +655,17 @@ export default async function ComparePage({
                         )}
                     </div>
                     <Receipt from={fund.currentYield} label="Rate set" />
+                    {/*
+                      The bills were the only products on the site without a
+                      chart, because this branch returns before reaching the
+                      one on the charge card. Their series is the RATE rather
+                      than a price — which is the thing that moves, and it has
+                      moved a long way: the 91-day went from 4.88% in May to
+                      5.87% in July and back to 5.08%.
+                    */}
+                    <div className="mt-4">
+                      <Spark points={fund.priceSeries} unit="%" />
+                    </div>
                     <p className="mt-3 text-[12.5px]" style={{ color: C.muted }}>
                       No management or custody charge. Bought through a bank or
                       broker on the secondary market — Bank of Ghana&rsquo;s
@@ -602,6 +688,15 @@ export default async function ComparePage({
                           {fund.chargeBasis === "on_purchase"
                             ? "once, on purchase"
                             : "a year"}
+                        </span>
+                        {/*
+                          Shape of the price series, beside the cost. Drawn
+                          only where there are ten or more observations — a
+                          line through six readings suggests a trend the data
+                          cannot carry.
+                        */}
+                        <span className="ml-auto">
+                          <Spark points={fund.priceSeries} />
                         </span>
                         {isCheapest && (
                           <span

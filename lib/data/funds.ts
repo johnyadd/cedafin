@@ -158,6 +158,16 @@ export interface FundRow {
    * FAAM's stated charges would compare two different things.
    */
   statedChargesPct: Sourced<number> | null;
+  /**
+   * Monthly closes, oldest first — for a sparkline, not for precision.
+   *
+   * A fund's NAV moves with performance AND distributions: a fund that pays
+   * out drops on the distribution date, and the chart shows a fall that is not
+   * a loss. The card says so beside it. Series shorter than ten points draw
+   * nothing, because a line through six readings implies a trend the data
+   * cannot carry.
+   */
+  priceSeries: number[];
   /** Present only for bullion. See BullionReturn. */
   bullionReturn: BullionReturn | null;
   /** "annual" | "on_purchase" | null — how statedChargesPct is levied. */
@@ -516,6 +526,19 @@ function toFundRow(p: RawProduct): FundRow {
           cust.sources,
         )
       : null,
+    // Treasury bills quote a yield, not a price — their observations carry
+    // yield_annualised and no nav, so a nav-only series left them blank while
+    // every other product on the page had a line. Same chart, different
+    // quantity: for a bill it plots the rate, which is what moves.
+    priceSeries: obs
+      .map((o) =>
+        o.nav !== null
+          ? o.nav
+          : o.yield_annualised !== null
+            ? o.yield_annualised * 100
+            : null,
+      )
+      .filter((v): v is number => v !== null),
     bullionReturn: (() => {
       // Only bullion carries a reference price, so this is null everywhere
       // else without needing to test the asset class.

@@ -32,6 +32,7 @@ import Link from "next/link";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { BRAND } from "@/lib/brand";
+import Spark from "@/components/Spark";
 import { getEquities, type EquityRow } from "@/lib/data/funds";
 
 const display = Fraunces({
@@ -79,34 +80,6 @@ function fmtDate(iso: string): string {
  * beside it, and a chart pretending to more precision than fifteen monthly
  * points support would be decoration rather than information.
  */
-function Spark({ points, up }: { points: number[]; up: boolean }) {
-  if (points.length < 2) return null;
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const span = max - min || 1;
-  const w = 120;
-  const h = 32;
-  const d = points
-    .map((p, i) => {
-      const x = (i / (points.length - 1)) * w;
-      const y = h - ((p - min) / span) * h;
-      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
-      <path
-        d={d}
-        fill="none"
-        stroke={up ? C.good : C.clay}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export const revalidate = 3600;
 
 export default async function SharesPage() {
@@ -267,7 +240,7 @@ export default async function SharesPage() {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <Spark points={s.prices} up={up} />
+                    <Spark points={s.prices} caption={false} minPoints={4} />
                     <div className="text-right">
                       <p
                         className="text-[1.15rem] font-bold tabular-nums leading-none"
