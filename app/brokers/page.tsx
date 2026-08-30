@@ -1,6 +1,19 @@
 /**
  * app/brokers/page.tsx — who trades on the Ghana Stock Exchange.
  *
+ * THE CENTRAL CLAIM IS NOW CHECKED, NOT ASSUMED
+ * This page said none of the twenty-four publishes a commission rate. That
+ * rested on the GSE reports and the SEC register — neither of which would
+ * carry a rate even if a broker published one on its own site.
+ *
+ * All twenty-four sites have since been visited. Eighteen were reachable; none
+ * published a rate; one, Republic Securities, published a minimum to open an
+ * account; three said "competitive rates" without a figure. Six sites did not
+ * respond at all.
+ *
+ * The claim survived the test, which is the only reason it stays on the page.
+ * Had one broker published a rate, this would have named them.
+ *
  * WHY THIS PAGE EXISTS AT ALL
  * Someone wanting to buy NewGold ETF, or any listed share, must go through a
  * licensed dealing member. There are twenty-four of them. Not one publishes a
@@ -92,8 +105,8 @@ export default async function BrokersPage() {
         className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
         style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        {brokers.length} licensed dealing members · none publishes a commission
-        rate
+        {brokers.length} licensed dealing members · we checked every website ·
+        none publishes a commission rate
       </div>
 
       <header className="mx-auto max-w-4xl px-5 pt-6 sm:px-8">
@@ -372,11 +385,22 @@ export default async function BrokersPage() {
           >
             <li>
               <strong style={{ color: C.ink }}>What any of them charge.</strong>{" "}
-              Not one of the {brokers.length} publishes a commission rate,
-              minimum account size, or fee schedule. An international platform
-              quotes 0.75% for Ghanaian shares; what a member firm in Accra
-              charges is unknown. The SEC publishes where each firm is and how
-              to reach it — not what it costs to use.
+              We visited all {brokers.length} websites. Not one publishes a
+              commission rate. One — Republic Securities — publishes a minimum
+              to open an account. Three describe their rates as
+              &ldquo;competitive&rdquo; without giving a figure. An
+              international platform quotes 0.75% for Ghanaian shares; what a
+              member firm in Accra charges is not published anywhere.
+            </li>
+            <li>
+              <strong style={{ color: C.ink }}>
+                Six of them have no working website.
+              </strong>{" "}
+              Bullion Securities, CDH Securities, FirstBanc Brokerage, Petra
+              Securities, Sarpong Capital Markets and Strategic African
+              Securities did not respond when we checked. All six hold current
+              SEC licences. For someone trying to open an account, that is a
+              barrier before any question of cost.
             </li>
             <li>
               <strong style={{ color: C.ink }}>
@@ -400,8 +424,10 @@ export default async function BrokersPage() {
           >
             <strong style={{ color: C.ink }}>If you run one of these firms:</strong>{" "}
             send us your commission schedule and we&rsquo;ll publish it beside
-            your name, cited and dated. You would be the first Ghanaian broker
-            whose costs a saver could actually check.
+            your name, cited and dated. We checked all {brokers.length} sites
+            and found no rate on any of them, so you would be the first
+            Ghanaian broker whose costs a saver could check before opening an
+            account — which is a reason to be listed rather than a risk.
           </p>
           <p className="mt-3 text-[14px] font-semibold">
             <a
