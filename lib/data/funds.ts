@@ -95,8 +95,18 @@ export interface BullionReturn {
   metalMovePct: number | null;
   /** Change in USD/GHS. Negative means the cedi strengthened. */
   fxMovePct: number | null;
-  /** priceMovePct less the entry premium. What they are really up. */
+  /** priceMovePct less the entry premium. What a CEDI holder is really up. */
   netOfPremiumPct: number | null;
+  /**
+   * metalMovePct less the entry premium — the same purchase judged in dollars.
+   *
+   * Both figures are true and they differ by the exchange rate. Someone paid
+   * in cedis who will spend cedis has the first number. A diaspora Ghanaian
+   * sending money home, or anyone holding gold because they distrust the
+   * currency, has the second. Showing only one silently answers a question the
+   * reader did not necessarily ask.
+   */
+  netOfPremiumUsdPct: number | null;
   /** The premium used, so the arithmetic can be checked. */
   premiumPct: number | null;
   days: number;
@@ -380,6 +390,14 @@ function toFundRow(p: RawProduct): FundRow {
   const mgmt = currentFee(p.product_fees ?? [], "management");
   const cust = currentFee(p.product_fees ?? [], "custody");
   const ter = lastFullYearTer(p.product_fees ?? []);
+  // An ETF's TER is a STATED ongoing charge, not a measured historical one.
+  // lastFullYearTer deliberately requires a closed period, because a fund's
+  // part-year TER understates the annual figure — that rule exists because
+  // Stanbic publishes year-to-date. NewGold's 0.30% is open-ended by nature,
+  // so it needs its own lookup rather than loosening a rule that is correct.
+  const ongoingTer = (p.product_fees ?? [])
+    .filter((f) => f.fee_type === "ter" && !f.effective_to)
+    .sort((a, b) => b.effective_from.localeCompare(a.effective_from))[0] ?? null;
   const stated = currentFee(p.product_fees ?? [], "stated_charges");
 
   /**
@@ -541,6 +559,8 @@ function toFundRow(p: RawProduct): FundRow {
         // entry, so it comes off the gain rather than accruing.
         netOfPremiumPct:
           prem === null ? null : Number((priceMove - prem).toFixed(2)),
+        netOfPremiumUsdPct:
+          prem === null ? null : Number((metalMove - prem).toFixed(2)),
         premiumPct: prem === null ? null : Number(prem.toFixed(2)),
         days,
       };
@@ -551,6 +571,12 @@ function toFundRow(p: RawProduct): FundRow {
           stated.verified_on ?? stated.effective_from,
           stated.sources,
         )
+      : ongoingTer
+        ? sourced(
+            Number((ongoingTer.rate * 100).toFixed(4)),
+            ongoingTer.verified_on ?? ongoingTer.effective_from,
+            ongoingTer.sources,
+          )
       : bullionCost
         ? sourced(
             Number((bullionCost.rate * 100).toFixed(4)),
@@ -564,7 +590,12 @@ function toFundRow(p: RawProduct): FundRow {
      * beside 1.75% without saying one is annual and the other is not would
      * mislead in the other direction.
      */
-    chargeBasis: stated ? "annual" : bullionCost ? "on_purchase" : null,
+    chargeBasis:
+      stated || ter || ongoingTer
+        ? "annual"
+        : bullionCost
+          ? "on_purchase"
+          : null,
     lastFullYearTerPct: ter
       ? sourced(
           Number((ter.fee.rate * 100).toFixed(4)),
@@ -694,7 +725,10 @@ export function creditLabel(c: string): string {
   return CREDIT_LABEL[c] ?? c;
 }
 
-export async function getLending(category?: string): Promise<LendingRow[]> {
+export async function getLending(
+  category?: string,
+  providerSlug?: string,
+): Promise<LendingRow[]> {
   let q = publicClient()
     .from("products")
     .select(
@@ -706,6 +740,9 @@ export async function getLending(category?: string): Promise<LendingRow[]> {
     .eq("market_side", "borrow")
     .eq("status", "published");
   if (category) q = q.eq("asset_class", category);
+  // A lender page needs its own rows, not all 157. Fetching everything 23
+  // times during a static build truncated the response and failed the build.
+  if (providerSlug) q = q.eq("providers.slug", providerSlug);
 
   const { data, error } = await q;
   if (error) throw new Error(`getLending: ${error.message}`);
@@ -801,8 +838,9 @@ export async function getLender(slug: string): Promise<LenderProfile | null> {
   if (error) throw new Error(`getLender: ${error.message}`);
   if (!data) return null;
 
-  const all = await getLending();
-  const mine = all.filter((r) => r.provider.slug === slug);
+  // Only this lender rows. Fetching all 157 products on each of 23 lender
+  // pages truncated the response mid-build and failed the whole export.
+  const mine = await getLending(undefined, slug);
   if (mine.length === 0) return null;
 
   const aprs = mine.map((r) => r.aprPct).filter((v): v is number => v !== null);
@@ -835,7 +873,24 @@ export async function getLenderSlugs(): Promise<string[]> {
 export async function getMarketAverages(): Promise<
   Map<string, { avg: number; count: number }>
 > {
-  const all = await getLending();
+  // Averages need every product, but only three fields of each. Reusing the
+  // full getLending query — with its nested providers and fees — meant 23
+  // lender pages each pulled the whole joined payload during the build, and
+  // the response came back truncated. This asks for what it actually needs.
+  const { data: rows, error: avgErr } = await publicClient()
+    .from("products")
+    .select("asset_class, lock_in_days, rate_max")
+    .eq("market_side", "borrow")
+    .eq("status", "published");
+  if (avgErr) throw new Error(`getMarketAverages: ${avgErr.message}`);
+  const all = (rows ?? []).map((d: Record<string, unknown>) => ({
+    category: String(d.asset_class),
+    tenorYears: Math.round((((d.lock_in_days as number) ?? 365)) / 365),
+    aprPct:
+      d.rate_max === null || d.rate_max === undefined
+        ? null
+        : Number(((d.rate_max as number) * 100).toFixed(2)),
+  }));
   const buckets = new Map<string, number[]>();
   for (const r of all) {
     if (r.aprPct === null) continue;

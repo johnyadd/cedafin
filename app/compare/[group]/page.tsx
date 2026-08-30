@@ -209,6 +209,41 @@ export default async function ComparePage({
         ? "these bills"
         : "these funds";
 
+  /**
+   * A ONE-OFF PREMIUM AND AN ANNUAL FEE CANNOT BE COMPARED WITHOUT A PERIOD.
+   *
+   * The gold page carries both shapes at once: the Ghana Gold Coin charges
+   * 3.58% to 7.75% once on purchase, NewGold ETF charges 0.30% every year.
+   * Ranking them in one list by percentage puts 0.30% cheapest and implies the
+   * coin costs twenty-five times more — true in the first year, false after
+   * twelve.
+   *
+   * So the crossover is stated: premium divided by annual fee is the year at
+   * which they cross. Below it the annual product is cheaper; above it the
+   * one-off is. Arithmetic on two published figures, and the only honest way
+   * to put them on one page.
+   */
+  const annualCheapest = funds
+    .filter((f) => f.primary.chargeBasis !== "on_purchase")
+    .map((f) => f.primary.statedChargesPct?.value)
+    .filter((v): v is number => typeof v === "number" && v > 0)
+    .sort((a, b) => a - b)[0];
+
+  const oneOffs = funds
+    .filter((f) => f.primary.chargeBasis === "on_purchase")
+    .map((f) => ({
+      name: f.primary.name,
+      pct: f.primary.statedChargesPct?.value,
+    }))
+    .filter((x): x is { name: string; pct: number } => typeof x.pct === "number");
+
+  const crossovers =
+    annualCheapest !== undefined && oneOffs.length > 0
+      ? oneOffs
+          .map((o) => ({ ...o, years: o.pct / annualCheapest }))
+          .sort((a, b) => a.years - b.years)
+      : [];
+
   const yieldLed =
     funds.length > 0 &&
     funds.every((f) => (f.primary.statedChargesPct?.value ?? -1) === 0) &&
@@ -397,6 +432,46 @@ export default async function ComparePage({
             {summary.fundCount}. A cheaper fund is not automatically the right
             one for your goal.
           </p>
+        )}
+
+        {crossovers.length > 0 && annualCheapest !== undefined && (
+          <section
+            className="mt-6 rounded-2xl p-5 sm:p-6"
+            style={{ background: C.card, border: `1px solid ${C.gold}` }}
+          >
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.16em]"
+              style={{ color: C.clay }}
+            >
+              These are charged in different shapes
+            </p>
+            <p className="mt-2 max-w-2xl text-[13.5px] leading-relaxed">
+              One of these costs{" "}
+              <strong>{annualCheapest.toFixed(2)}% every year</strong>. The
+              others cost a premium <strong>once, when you buy</strong>. Which
+              works out cheaper depends entirely on how long you hold it.
+            </p>
+
+            <ul className="mt-4 space-y-2">
+              {crossovers.map((c) => (
+                <li key={c.name} className="text-[13px] leading-relaxed">
+                  <strong>{c.name}</strong> at {c.pct.toFixed(2)}% once becomes
+                  the cheaper choice after{" "}
+                  <strong style={{ color: C.deep }}>
+                    {c.years.toFixed(0)} years
+                  </strong>
+                  . Before that, paying {annualCheapest.toFixed(2)}% a year
+                  costs less.
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-4 text-[12.5px]" style={{ color: C.muted }}>
+              Most people hold gold for a few years, not decades. And neither
+              figure includes what a broker charges to buy the annual-fee
+              product — no Ghanaian licensed dealing member publishes a rate.
+            </p>
+          </section>
         )}
 
         <ol className="mt-6 space-y-4">
@@ -631,21 +706,72 @@ export default async function ComparePage({
                     >
                       What a buyer on {fmtDate(fund.bullionReturn.from)} has now
                     </p>
-                    <p
-                      className="mt-2 text-[1.6rem] font-bold tabular-nums leading-none"
-                      style={{
-                        color:
-                          (fund.bullionReturn.netOfPremiumPct ?? 0) < 0
-                            ? C.clay
-                            : C.good,
-                      }}
-                    >
-                      {(fund.bullionReturn.netOfPremiumPct ?? 0) > 0 ? "+" : ""}
-                      {fund.bullionReturn.netOfPremiumPct?.toFixed(2)}%
-                    </p>
-                    <p className="mt-1 text-[11.5px]" style={{ color: C.muted }}>
-                      over {fund.bullionReturn.days} days, after the premium
-                      paid to buy in
+                    {/*
+                      TWO ANSWERS, BOTH TRUE, BECAUSE TWO PEOPLE ARE ASKING.
+
+                      Someone paid in cedis who will spend cedis is down 7.50%.
+                      Someone who thinks in dollars — a diaspora Ghanaian, or
+                      anyone holding gold precisely because they distrust the
+                      currency — is down 3.07%. The difference is entirely the
+                      cedi's strength over the period.
+
+                      Leading with only the cedi figure would tell a diaspora
+                      reader their gold did far worse than it did. Leading with
+                      only the dollar figure would tell a Ghanaian saver their
+                      loss was smaller than it was. So both, side by side, at
+                      the same size.
+                    */}
+                    <div className="mt-3 grid grid-cols-2 gap-4">
+                      <div>
+                        <p
+                          className="text-[1.5rem] font-bold tabular-nums leading-none"
+                          style={{
+                            color:
+                              (fund.bullionReturn.netOfPremiumPct ?? 0) < 0
+                                ? C.clay
+                                : C.good,
+                          }}
+                        >
+                          {(fund.bullionReturn.netOfPremiumPct ?? 0) > 0 ? "+" : ""}
+                          {fund.bullionReturn.netOfPremiumPct?.toFixed(2)}%
+                        </p>
+                        <p
+                          className="mt-1 text-[11px] font-semibold uppercase tracking-wider"
+                          style={{ color: C.muted }}
+                        >
+                          in cedis
+                        </p>
+                        <p className="mt-0.5 text-[11px]" style={{ color: C.muted }}>
+                          if you earn and spend in Ghana
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          className="text-[1.5rem] font-bold tabular-nums leading-none"
+                          style={{
+                            color:
+                              (fund.bullionReturn.netOfPremiumUsdPct ?? 0) < 0
+                                ? C.clay
+                                : C.good,
+                          }}
+                        >
+                          {(fund.bullionReturn.netOfPremiumUsdPct ?? 0) > 0 ? "+" : ""}
+                          {fund.bullionReturn.netOfPremiumUsdPct?.toFixed(2)}%
+                        </p>
+                        <p
+                          className="mt-1 text-[11px] font-semibold uppercase tracking-wider"
+                          style={{ color: C.muted }}
+                        >
+                          in dollars
+                        </p>
+                        <p className="mt-0.5 text-[11px]" style={{ color: C.muted }}>
+                          if you think in foreign currency
+                        </p>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-[11.5px]" style={{ color: C.muted }}>
+                      over {fund.bullionReturn.days} days, both after the
+                      premium paid to buy in
                     </p>
                     <div
                       className="mt-4 space-y-1.5 border-t pt-3 text-[12.5px]"
@@ -687,10 +813,11 @@ export default async function ComparePage({
                       )}
                     </div>
                     <p className="mt-3 text-[11.5px]" style={{ color: C.muted }}>
-                      Gold is bought as protection against a falling currency.
-                      Over this period the cedi rose, so it protected against
-                      something that didn&rsquo;t happen — and the premium was
-                      paid either way.
+                      Both figures are the same purchase. They differ only by
+                      what the cedi did against the dollar. Gold is bought as
+                      protection against a falling currency; over this period
+                      the cedi rose, so it guarded against something that
+                      didn&rsquo;t happen — and the premium was paid either way.
                     </p>
                   </div>
                 )}
