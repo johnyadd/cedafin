@@ -58,15 +58,15 @@ const body = Plus_Jakarta_Sans({
 });
 
 const C = {
-  ink: "#0C1F1C",
-  deep: "#0A5D52",
-  teal: "#128B7A",
+  ink: "#0C1C22",
+  deep: "#0B4F6C",
+  teal: "#1B8BC0",
   gold: "#E8A33D",
   clay: "#C0492B",
-  bg: "#F3F6F3",
+  bg: "#F2F6F9",
   card: "#FFFFFF",
-  rule: "#DCE5E0",
-  muted: "#5F726C",
+  rule: "#DAE4EB",
+  muted: "#5F6E78",
   good: "#0E8F62",
 };
 

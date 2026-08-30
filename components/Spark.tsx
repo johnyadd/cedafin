@@ -28,7 +28,7 @@
 const COLOURS = {
   good: "#0E8F62",
   clay: "#C0492B",
-  muted: "#5F726C",
+  muted: "#5F6E78",
 };
 
 export interface SparkProps {
