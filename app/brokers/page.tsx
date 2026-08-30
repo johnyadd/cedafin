@@ -57,6 +57,13 @@ const C = {
   good: "#0E8F62",
 };
 
+const GHS = new Intl.NumberFormat("en-GH", {
+  style: "currency",
+  currency: "GHS",
+  maximumFractionDigits: 0,
+  notation: "compact",
+});
+
 function fmtDate(iso: string): string {
   return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
     month: "short",
@@ -223,6 +230,36 @@ export default async function BrokersPage() {
                   </span>
                 </div>
 
+                {/*
+                  Value share and volume share point different ways, and the
+                  gap is the most useful thing on this page. A firm doing more
+                  of the cedis than the shares is handling fewer, larger
+                  trades — institutional block business. One doing more of the
+                  shares than the cedis is taking smaller orders.
+
+                  No Ghanaian broker publishes whether it wants a GH¢5,000
+                  client. This is the nearest the public data gets, and it
+                  contradicts the value ranking: Databank sits third on value
+                  and second on volume.
+                */}
+                {b.volumeSharePct !== null && b.avgSharePct !== null && (
+                  <p className="mt-1 text-[12.5px]" style={{ color: C.muted }}>
+                    {b.volumeSharePct.toFixed(2)}% of shares traded
+                    {b.avgSharePct > b.volumeSharePct * 1.15 && (
+                      <span style={{ color: C.clay }}>
+                        {" "}
+                        — fewer, larger trades
+                      </span>
+                    )}
+                    {b.volumeSharePct > b.avgSharePct * 1.15 && (
+                      <span style={{ color: C.good }}>
+                        {" "}
+                        — more trades, smaller ones
+                      </span>
+                    )}
+                  </p>
+                )}
+
                 <div
                   className="mt-3 h-1.5 w-full overflow-hidden rounded-full"
                   style={{ background: C.rule }}
@@ -303,6 +340,17 @@ export default async function BrokersPage() {
                   )}
                   . Commission not published.
                 </p>
+
+                {b.valueTradedGhs !== null && b.latestMonth && (
+                  <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+                    In {fmtDate(b.latestMonth)} they traded{" "}
+                    {GHS.format(b.valueTradedGhs)}
+                    {b.volumeTraded !== null && (
+                      <> across {b.volumeTraded.toLocaleString()} shares</>
+                    )}
+                    .
+                  </p>
+                )}
               </li>
             );
           })}

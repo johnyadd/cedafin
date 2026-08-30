@@ -651,6 +651,7 @@ export async function getDirectory(): Promise<DirectoryEntry[]> {
     .select("id, slug, name, asset_class, objective, status")
     .eq("status", "draft")
     .eq("market_side", "invest")
+
     .like("slug", "cat-%")
     .order("name");
   if (error) throw new Error(`getDirectory: ${error.message}`);
@@ -1131,6 +1132,22 @@ export interface BrokerRow {
   officeAddress: string | null;
   /** The SEC's name for the firm, which differs from the exchange's. */
   legalName: string | null;
+  /**
+   * Share of VOLUME, read against share of value.
+   *
+   * IC Securities: 78.82% of value, 62.16% of volume — fewer, larger trades.
+   * Databank: 3.32% of value, 7.77% of volume — more trades, smaller ones.
+   *
+   * Nobody publishes whether a Ghanaian broker wants a GH¢5,000 order. This is
+   * the closest the public data comes to answering it, and it points the
+   * opposite way to the value ranking — which is exactly why showing value
+   * alone was inadequate.
+   */
+  volumeSharePct: number | null;
+  /** Cedis and shares traded in the latest month, so a percentage has a size. */
+  valueTradedGhs: number | null;
+  volumeTraded: number | null;
+  latestMonth: string | null;
 }
 
 export async function getBrokers(): Promise<BrokerRow[]> {
@@ -1140,6 +1157,8 @@ export async function getBrokers(): Promise<BrokerRow[]> {
       `slug, trading_name, legal_name, broker_share_avg_pct,
        broker_share_min_pct, broker_share_max_pct, broker_months_observed,
        broker_first_seen, broker_last_seen,
+       broker_volume_share_avg_pct, broker_value_traded_ghs,
+       broker_volume_traded, broker_latest_month,
        website, contact_email, contact_phone, office_address`,
     )
     .like("slug", "broker-%")
@@ -1161,8 +1180,79 @@ export async function getBrokers(): Promise<BrokerRow[]> {
       contactPhone: (d.contact_phone as string | null) ?? null,
       officeAddress: (d.office_address as string | null) ?? null,
       legalName: (d.legal_name as string | null) ?? null,
+      volumeSharePct: (d.broker_volume_share_avg_pct as number | null) ?? null,
+      valueTradedGhs: (d.broker_value_traded_ghs as number | null) ?? null,
+      volumeTraded: (d.broker_volume_traded as number | null) ?? null,
+      latestMonth: (d.broker_latest_month as string | null) ?? null,
     }))
     .sort((a, b) => (b.avgSharePct ?? -1) - (a.avgSharePct ?? -1));
+}
+
+/**
+ * A listed Ghanaian share, with its monthly closing prices.
+ *
+ * PRICE MOVE, NOT TOTAL RETURN. Dividends are excluded because the exchange
+ * does not publish them — its glossary defines dividend yield and prints it
+ * for no company. So every figure here understates what a holder received,
+ * and the page says so rather than presenting a partial number as complete.
+ */
+export interface EquityRow {
+  slug: string;
+  ticker: string;
+  sector: string;
+  latestPrice: number | null;
+  /** Monthly closes, oldest first — enough for shape, not for precision. */
+  prices: number[];
+  priceMovePct: number | null;
+  months: number;
+  firstSeen: string | null;
+  lastSeen: string | null;
+  marketCapGhsMil: number | null;
+  peRatio: number | null;
+}
+
+export async function getEquities(): Promise<EquityRow[]> {
+  const { data, error } = await publicClient()
+    .from("products")
+    .select(
+      `slug, name, asset_class,
+       nav_observations ( as_of, nav )`,
+    )
+    .eq("market_side", "invest")
+
+    .eq("asset_class", "equity")
+    .eq("status", "published");
+  if (error) throw new Error(`getEquities: ${error.message}`);
+
+  return (data ?? [])
+    .map((d: Record<string, unknown>) => {
+      const obs = [...((d.nav_observations ?? []) as { as_of: string; nav: number | null }[])]
+        .filter((o) => o.nav !== null)
+        .sort((a, b) => a.as_of.localeCompare(b.as_of));
+      const prices = obs.map((o) => o.nav as number);
+      const name = String(d.name);
+      // Stored as "TICKER · Sector".
+      const [ticker, sector] = name.split("·").map((x) => x.trim());
+      const move =
+        prices.length >= 2 && prices[0] > 0
+          ? Number(((prices[prices.length - 1] / prices[0] - 1) * 100).toFixed(2))
+          : null;
+      return {
+        slug: String(d.slug),
+        ticker: ticker || name,
+        sector: sector || "Listed",
+        latestPrice: prices.length ? prices[prices.length - 1] : null,
+        prices,
+        priceMovePct: move,
+        months: prices.length,
+        firstSeen: obs[0]?.as_of ?? null,
+        lastSeen: obs[obs.length - 1]?.as_of ?? null,
+        // Not stored per-observation; left null rather than invented.
+        marketCapGhsMil: null,
+        peRatio: null,
+      };
+    })
+    .sort((a, b) => (b.priceMovePct ?? -999) - (a.priceMovePct ?? -999));
 }
 
 export async function getPublishedFunds(): Promise<FundRow[]> {
@@ -1170,11 +1260,17 @@ export async function getPublishedFunds(): Promise<FundRow[]> {
     .from("products")
     .select(SELECT)
     .eq("status", "published")
+    // Individual shares are excluded from the comparison pages. They carry no
+    // management charge, so a cost ranking would place all 39 above every
+    // fund — while the real cost is unpublished brokerage and the real
+    // difference is single-company risk. They have their own page at /shares.
+    .neq("asset_class", "equity")
     // Lending products live in the same table. Without this the fund
     // counts absorb 157 bank facilities and the home page claims to
     // track 232 funds when it tracks 72 — a false number sitting three
     // inches above "gaps are shown, not hidden".
     .eq("market_side", "invest")
+
     .order("name");
   if (error) throw new Error(`getPublishedFunds: ${error.message}`);
   return (data as unknown as RawProduct[]).map(toFundRow);

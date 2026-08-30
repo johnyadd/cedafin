@@ -108,19 +108,41 @@ def main() -> int:
     # merged by name, but their shares must be ADDED within a month, not
     # averaged, or a merged firm's share is halved.
     by_month: dict[tuple[str, str], float] = {}
+    vol_month: dict[tuple[str, str], float] = {}
+    # Absolute figures for the most recent month, so a percentage can be read
+    # against the size of the market it is a share of.
+    latest = max(r["as_of"] for r in rows)
+    abs_latest: dict[str, dict] = {}
+
     for r in rows:
-        try:
-            v = float(r["value_share_pct"])
-        except (TypeError, ValueError):
-            continue
         key = (r["broker"], r["as_of"])
-        by_month[key] = by_month.get(key, 0.0) + v
+        try:
+            by_month[key] = by_month.get(key, 0.0) + float(r["value_share_pct"])
+        except (TypeError, ValueError):
+            pass
+        try:
+            vol_month[key] = vol_month.get(key, 0.0) + float(r["volume_share_pct"])
+        except (TypeError, ValueError):
+            pass
+        if r["as_of"] == latest:
+            a = abs_latest.setdefault(r["broker"], {"value": 0.0, "volume": 0.0})
+            try:
+                a["value"] += float(r["value_traded_ghs"])
+            except (TypeError, ValueError):
+                pass
+            try:
+                a["volume"] += float(r["volume_traded"])
+            except (TypeError, ValueError):
+                pass
 
     stats: dict[str, dict] = {}
     for (broker, as_of), v in by_month.items():
-        s = stats.setdefault(broker, {"vals": [], "dates": []})
+        s = stats.setdefault(broker, {"vals": [], "dates": [], "vols": []})
         s["vals"].append(v)
         s["dates"].append(as_of)
+    for (broker, _), v in vol_month.items():
+        stats.setdefault(broker, {"vals": [], "dates": [], "vols": []})
+        stats[broker].setdefault("vols", []).append(v)
 
     ranked = sorted(
         stats.items(),
@@ -131,10 +153,22 @@ def main() -> int:
           f"{len({d for s in stats.values() for d in s['dates']})} month(s)\n")
     for name, s in ranked:
         vals = s["vals"]
+        vols = s.get("vols") or []
         avg = sum(vals) / len(vals)
-        print(f"  {name[:34]:<36} {avg:>6.2f}%  "
-              f"({min(vals):>5.2f}–{max(vals):>5.2f}%)  "
-              f"{len(vals):>2} month(s)")
+        vavg = sum(vols) / len(vols) if vols else None
+        # Value above volume means fewer, larger trades — the closest this
+        # data comes to saying whether a firm handles retail business.
+        tilt = ""
+        if vavg is not None and vavg > 0:
+            if avg > vavg * 1.15:
+                tilt = "  larger trades"
+            elif vavg > avg * 1.15:
+                tilt = "  smaller trades"
+        print(f"  {name[:30]:<32} value {avg:>6.2f}%  "
+              f"volume {vavg:>6.2f}%" if vavg is not None
+              else f"  {name[:30]:<32} value {avg:>6.2f}%  volume      —")
+        if tilt:
+            print(f"      {tilt.strip()}")
 
     top = ranked[0]
     tvals = top[1]["vals"]
@@ -152,7 +186,16 @@ def main() -> int:
         slug = "broker-" + slugify(name)
         vals, dates = s["vals"], sorted(s["dates"])
         try:
+            vols = s.get("vols") or []
+            ab = abs_latest.get(name, {})
             rest("PATCH", f"/providers?slug=eq.{slug}", {
+                "broker_volume_share_avg_pct":
+                    round(sum(vols) / len(vols), 2) if vols else None,
+                "broker_value_traded_ghs":
+                    round(ab["value"], 2) if ab.get("value") else None,
+                "broker_volume_traded":
+                    int(ab["volume"]) if ab.get("volume") else None,
+                "broker_latest_month": latest,
                 "broker_share_avg_pct": round(sum(vals) / len(vals), 2),
                 "broker_share_min_pct": round(min(vals), 2),
                 "broker_share_max_pct": round(max(vals), 2),
