@@ -49,6 +49,25 @@ const C = {
   muted: "#5F6E78",
 };
 
+/**
+ * Tags carry their subject's colour, so someone scanning the list sees what a
+ * piece is about before reading a word of it. Anything unlisted falls back to
+ * grey rather than getting an arbitrary colour — a tag that looks meaningful
+ * and is not would be worse than a plain one.
+ */
+const TAG_COLOURS: Record<string, string> = {
+  gold: "#B8860B",
+  brokers: "#0B4F6C",
+  shares: "#0B4F6C",
+  GSE: "#0B4F6C",
+  lending: "#8A4B1F",
+  banks: "#8A4B1F",
+  SME: "#8A4B1F",
+  costs: "#C0492B",
+  returns: "#0E8F62",
+  "Bank of Ghana": "#5F6E78",
+};
+
 function fmtDate(iso: string): string {
   return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
     day: "numeric",
@@ -86,70 +105,111 @@ export default function InsightsPage() {
       </header>
 
       <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-10">
-        <h1
-          className="text-[2rem] font-bold leading-[1.1] sm:text-[2.6rem]"
-          style={{ fontFamily: "var(--font-display)" }}
+        <section
+          className="overflow-hidden rounded-3xl p-7 text-white sm:p-10"
+          style={{
+            background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+          }}
         >
-          What the numbers show
-        </h1>
-        <p
-          className="mt-4 max-w-xl text-[15px] leading-relaxed"
-          style={{ color: C.muted }}
-        >
-          Findings from the same data as the comparison pages — every figure
-          traceable to a document its issuer published. Where something
-          isn&rsquo;t known, these say so rather than filling the gap.
-        </p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
+            Insights
+          </p>
+          <h1
+            className="mt-3 text-[2.2rem] font-bold leading-[1.08] sm:text-[3rem]"
+            style={{
+              fontFamily: "var(--font-display)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            What the numbers
+            <br />
+            show
+          </h1>
+          <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-90">
+            Findings from the same data as the comparison pages — every figure
+            traceable to a document its issuer published. Where something
+            isn&rsquo;t known, these say so rather than filling the gap.
+          </p>
+        </section>
 
         {articles.length === 0 ? (
           <p className="mt-10 text-[14px]" style={{ color: C.muted }}>
             Nothing published yet.
           </p>
         ) : (
-          <ol className="mt-10 space-y-4">
+          <ol className="mt-10 space-y-5">
             {articles.map((a) => (
               <li key={a.slug}>
                 <Link
                   href={`/insights/${a.slug}`}
-                  className="block rounded-2xl p-5 transition-colors sm:p-6"
+                  className="group block overflow-hidden rounded-2xl transition-shadow hover:shadow-lg"
                   style={{ background: C.card, border: `1px solid ${C.rule}` }}
                 >
-                  <div
-                    className="flex flex-wrap items-center gap-x-3 text-[11px] font-semibold uppercase tracking-wider"
-                    style={{ color: C.gold }}
-                  >
-                    <span>{fmtDate(a.date)}</span>
-                    <span style={{ color: C.muted }}>
-                      {a.readingMinutes} min read
-                    </span>
-                  </div>
-                  <h2
-                    className="mt-2 text-[19px] font-bold leading-snug sm:text-[22px]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    {a.title}
-                  </h2>
-                  {a.summary && (
-                    <p
-                      className="mt-2 text-[14px] leading-relaxed"
-                      style={{ color: C.muted }}
-                    >
-                      {a.summary}
-                    </p>
-                  )}
-                  {a.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {a.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full px-3 py-1 text-[11px] font-semibold"
-                          style={{ background: C.bg, color: C.muted }}
-                        >
-                          {t}
+                  {/* A gold bar down the left edge — the only ornament, and it
+                      marks the card as one thing rather than a block of text. */}
+                  <div className="flex">
+                    <div
+                      className="w-1 shrink-0"
+                      style={{ background: C.gold }}
+                    />
+                    <div className="flex-1 p-5 sm:p-6">
+                      <div className="flex flex-wrap items-center gap-x-2.5 text-[11px] font-semibold uppercase tracking-[0.12em]">
+                        <span style={{ color: C.gold }}>{fmtDate(a.date)}</span>
+                        <span aria-hidden="true" style={{ color: C.rule }}>
+                          ·
                         </span>
-                      ))}
+                        <span style={{ color: C.muted }}>
+                          {a.readingMinutes} min read
+                        </span>
+                      </div>
+
+                      <h2
+                        className="mt-2.5 text-[21px] font-bold leading-[1.2] sm:text-[25px]"
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {a.title}
+                      </h2>
+
+                      {a.summary && (
+                        <p
+                          className="mt-2.5 text-[14.5px] leading-relaxed"
+                          style={{ color: C.muted, maxWidth: "60ch" }}
+                        >
+                          {a.summary}
+                        </p>
+                      )}
+
+                      {a.tags.length > 0 && (
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                          {a.tags.map((t) => {
+                            const colour = TAG_COLOURS[t] ?? C.muted;
+                            return (
+                              <span
+                                key={t}
+                                className="rounded-full px-3 py-1 text-[11px] font-bold"
+                                style={{
+                                  background: `${colour}15`,
+                                  color: colour,
+                                  border: `1px solid ${colour}30`,
+                                }}
+                              >
+                                {t}
+                              </span>
+                            );
+                          })}
+                          <span
+                            className="ml-auto text-[13px] font-bold opacity-0 transition-opacity group-hover:opacity-100"
+                            style={{ color: C.deep }}
+                          >
+                            Read →
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </Link>
               </li>
             ))}

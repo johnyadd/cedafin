@@ -88,10 +88,8 @@ export default async function Home() {
     Promise.resolve(getArticles()),
   ]);
 
-  // PeerGroupSummary carries counts, not charges, so the range is computed
-  // here from the funds themselves. Shares are excluded: they have no
-  // management charge, so including them would make "cheapest fund" 0.00%
-  // and say nothing about what a fund costs.
+  // Shares excluded: no management charge, so including them would make
+  // "cheapest fund" 0.00% and say nothing about what a fund costs.
   const charges = funds
     .filter((f) => f.assetClass !== "equity")
     .map((f) => f.statedChargesPct?.value)
@@ -99,7 +97,6 @@ export default async function Home() {
   const cheapest = charges.length ? Math.min(...charges) : null;
   const dearest = charges.length ? Math.max(...charges) : null;
 
-  // Cheapest charge within each peer group, for the cards below.
   const cheapestIn = new Map<string, number>();
   for (const f of funds) {
     const v = f.statedChargesPct?.value;
@@ -113,7 +110,10 @@ export default async function Home() {
       className={`${display.variable} ${body.variable} min-h-screen`}
       style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-body)" }}
     >
-      <SiteHeader name={BRAND.name} />
+      <SiteHeader
+        name={BRAND.name}
+        articles={articles.slice(0, 4).map((a) => ({ slug: a.slug, title: a.title }))}
+      />
       <Ticker items={ticker} />
 
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
@@ -337,7 +337,7 @@ export default async function Home() {
               <p className="mt-2 text-[12px] font-semibold">
                 <a
                   href={`mailto:${BRAND.dataEmail}`}
-                  className="break-all underline underline-offset-4"
+                  className="underline underline-offset-4"
                   style={{ color: C.deep }}
                 >
                   {BRAND.dataEmail}

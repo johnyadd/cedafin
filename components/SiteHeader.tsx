@@ -67,7 +67,18 @@ const MENUS: { label: string; items: Item[] }[] = [
   },
 ];
 
-export default function SiteHeader({ name }: { name: string }) {
+export default function SiteHeader({
+  name,
+  articles = [],
+}: {
+  name: string;
+  /*
+    The three or four most recent, passed in from the server. Capped
+    deliberately: four articles in a menu is helpful, forty is a wall, and a
+    menu that grows without limit is one nobody maintains.
+  */
+  articles?: { slug: string; title: string }[];
+}) {
   const [open, setOpen] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
 
@@ -108,9 +119,27 @@ export default function SiteHeader({ name }: { name: string }) {
 
               {open === m.label && (
                 <div
-                  className="absolute right-0 top-full w-72 rounded-2xl p-2 shadow-lg"
+                  className="absolute right-0 top-full w-80 rounded-2xl p-2 shadow-lg"
                   style={{ background: C.card, border: `1px solid ${C.rule}` }}
                 >
+                  {m.label === "Insights" &&
+                    articles.slice(0, 4).map((a) => (
+                      <Link
+                        key={a.slug}
+                        href={`/insights/${a.slug}`}
+                        className="block rounded-xl px-3 py-2.5 hover:bg-[#F2F6F9]"
+                      >
+                        <span className="text-[13px] font-semibold leading-snug">
+                          {a.title}
+                        </span>
+                      </Link>
+                    ))}
+                  {m.label === "Insights" && articles.length > 0 && (
+                    <div
+                      className="my-1.5 border-t"
+                      style={{ borderColor: C.rule }}
+                    />
+                  )}
                   {m.items.map(([href, label, note]) => (
                     <Link
                       key={href}
