@@ -1,42 +1,37 @@
 /**
- * app/page.tsx — the split home page.
+ * app/page.tsx — the home page.
  *
- * TWO AUDIENCES WHO WANT OPPOSITE THINGS
- * A saver with GH¢1,000 choosing a fund, and a business seeking GH¢200,000 of
- * credit. Same market, same regulator-published data, entirely different
- * question. The previous version of this page addressed only the first and
- * never mentioned the second — someone landing here would not have known the
- * funding side existed.
+ * WHY THREE COLUMNS
+ * Modelled on how a market-data site is usually laid out: a ticker across the
+ * top, latest writing on the left, the main proposition in the centre, and
+ * tools on the right.
  *
- * So: two routes above the fold, equal weight, and the visitor self-selects.
- * That is what two-sided comparison sites do, and pretending there is one
- * audience would serve neither.
+ * The right column carries this site's own pages — the matching flows, shares,
+ * brokers — rather than advertising. That is deliberate. A comparison site
+ * that sells space beside its own rankings has nothing left to sell, and the
+ * only reason to visit is that the figures are not for sale. Sponsorship lives
+ * on the articles, labelled, and nowhere else.
  *
- * EVERY NUMBER HERE COMES FROM THE DATABASE.
- * No hardcoded claims. If coverage changes, the page changes. The spread that
- * headlines the funding route is computed from the loaded products, not typed
- * in — because a marketing figure that drifts from the data is exactly the
- * failure this whole site is built against.
+ * WHAT IS THIN HERE AND WILL FILL
+ * The left column shows one article, because one is written. The ticker shows
+ * whatever series have data. Both grow without changing the layout, which is
+ * the point of building it now rather than twice.
  *
- * THE COVERAGE GAP IS STATED, NOT HIDDEN.
- * "7 of 72 verified" and "banks only" both appear. Most comparison sites bury
- * that. Leading with it costs something with a first-time visitor and buys the
- * thing that matters more: a fund manager or a bank reading this can see
- * immediately that we describe our own limits accurately.
+ * WHAT THE CENTRE HAS TO DO
+ * Say what this is inside five seconds. Not "financial comparison platform" —
+ * a specific figure a visitor cannot get elsewhere, which is why the cheapest
+ * and dearest fund charge sit at the top rather than a slogan.
  */
 
 import Link from "next/link";
-
-import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
+import Footer from "@/components/Footer";
+import SiteHeader from "@/components/SiteHeader";
+import Ticker from "@/components/Ticker";
 import { BRAND } from "@/lib/brand";
-import {
-  getDirectory,
-  getLending,
-  getPeerGroups,
-  getPublishedFunds,
-} from "@/lib/data/funds";
+import { getPeerGroups, getPublishedFunds, getTicker } from "@/lib/data/funds";
+import { getArticles } from "@/lib/insights";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -60,470 +55,287 @@ const C = {
   card: "#FFFFFF",
   rule: "#DAE4EB",
   muted: "#5F6E78",
-  good: "#0E8F62",
 };
 
-const GHS = new Intl.NumberFormat("en-GH", {
-  style: "currency",
-  currency: "GHS",
-  maximumFractionDigits: 0,
-});
+const TOOLS: [href: string, title: string, note: string][] = [
+  ["/match", "Find what fits you", "Eight questions. Answers stay in your browser."],
+  ["/shares", "39 listed shares", "Price history from the exchange's own reports."],
+  ["/brokers", "24 stockbrokers", "Not one publishes a commission rate. We checked."],
+  ["/compare/commodity-GHS", "Gold, four ways", "The small coin costs twice what the big one does."],
+  ["/funding", "Business credit", "22 banks. Advertised rate against what they charge."],
+];
 
-const toUrl = (peerGroup: string) => peerGroup.replace(/:([^:]*)$/, "-$1");
+function fmtDate(iso: string): string {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+function toUrl(peerGroup: string): string {
+  return peerGroup.replace(":", "-");
+}
 
 export const revalidate = 3600;
 
-export default async function HomePage() {
-  const [funds, directory, groups, sme] = await Promise.all([
-    getPublishedFunds(),
-    getDirectory(),
+export default async function Home() {
+  const [groups, funds, ticker, articles] = await Promise.all([
     getPeerGroups(),
-    getLending("sme_credit"),
+    getPublishedFunds(),
+    getTicker(),
+    Promise.resolve(getArticles()),
   ]);
 
-  const unique = [
-    ...new Map(funds.map((f) => [`${f.provider.slug}::${f.name}`, f])).values(),
-  ];
-  // Treasury bills charge nothing, so an unfiltered minimum reports 0.00% —
-  // true, and useless as a headline about what FUNDS cost. A saver reading
-  // "charges from 0.00%" would expect a free fund and find none.
-  const charges = unique
-    .filter((f) => f.assetClass !== "government_security")
+  // PeerGroupSummary carries counts, not charges, so the range is computed
+  // here from the funds themselves. Shares are excluded: they have no
+  // management charge, so including them would make "cheapest fund" 0.00%
+  // and say nothing about what a fund costs.
+  const charges = funds
+    .filter((f) => f.assetClass !== "equity")
     .map((f) => f.statedChargesPct?.value)
     .filter((v): v is number => typeof v === "number" && v > 0);
-  const cheapestFund = charges.length ? Math.min(...charges) : null;
-  const lowestMin = unique
-    .map((f) => f.minimumGhs?.value)
-    .filter((v): v is number => typeof v === "number")
-    .sort((a, b) => a - b)[0];
-  const totalFunds = unique.length + directory.length;
+  const cheapest = charges.length ? Math.min(...charges) : null;
+  const dearest = charges.length ? Math.max(...charges) : null;
 
-  // One-year SME credit: the sharpest comparison the site can make.
-  const oneYear = sme.filter((r) => r.tenorYears === 1);
-  const aprs = oneYear.map((r) => r.aprPct).filter((v): v is number => v !== null);
-  const loLoan = aprs.length ? Math.min(...aprs) : null;
-  const hiLoan = aprs.length ? Math.max(...aprs) : null;
-  const lenderCount = new Set(sme.map((r) => r.provider.slug)).size;
-
-  // The single most useful fact on the site: a bank whose advertised rate is
-  // far below what it actually charges. Found, not asserted.
-  const biggestGap = [...oneYear]
-    .filter((r) => r.feeGapPct !== null)
-    .sort((a, b) => (b.feeGapPct ?? 0) - (a.feeGapPct ?? 0))[0];
+  // Cheapest charge within each peer group, for the cards below.
+  const cheapestIn = new Map<string, number>();
+  for (const f of funds) {
+    const v = f.statedChargesPct?.value;
+    if (!f.peerGroup || typeof v !== "number" || v <= 0) continue;
+    const cur = cheapestIn.get(f.peerGroup);
+    if (cur === undefined || v < cur) cheapestIn.set(f.peerGroup, v);
+  }
 
   return (
     <main
       className={`${display.variable} ${body.variable} min-h-screen`}
       style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-body)" }}
     >
-      <div
-        className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
-        style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
-      >
-        {totalFunds} funds and {sme.length} bank credit facilities tracked ·
-        every figure dated and sourced
-      </div>
+      <SiteHeader name={BRAND.name} />
+      <Ticker items={ticker} />
 
-      <header className="mx-auto max-w-5xl px-5 pt-6 sm:px-8">
-        <span
-          className="text-[19px] font-bold tracking-tight"
-          style={{ fontFamily: "var(--font-display)", color: C.deep }}
-        >
-          {BRAND.name}
-        </span>
-      </header>
-
-      <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
-        <h1
-          className="max-w-3xl text-[2.1rem] font-bold leading-[1.06] sm:text-[3.2rem]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Ghana&rsquo;s money market,
-          <br />
-          with the prices shown.
-        </h1>
-        <p
-          className="mt-5 max-w-2xl text-[15px] leading-relaxed"
-          style={{ color: C.muted }}
-        >
-          We read what providers and Bank of Ghana publish, and put the numbers
-          side by side — charges, rates, minimums, and the date each figure was
-          confirmed. Whether you&rsquo;re putting money in or taking it out.
-        </p>
-
-        {/*
-          Entry to the matching flow, above the two route cards.
-
-          Placed here deliberately: a visitor who already knows they want to
-          compare fund charges will scroll straight to the cards. A visitor who
-          does not know what they are looking for — which is most first-time
-          savers — needs a way in that does not require them to have decided
-          anything first. Burying it below the cards would serve only the
-          people who least need it.
-        */}
-        <div
-          className="mt-8 rounded-2xl px-6 py-5"
-          style={{ background: C.card, border: `1px solid ${C.rule}` }}
-        >
-          <p
-            className="text-[11px] font-semibold uppercase tracking-[0.16em]"
-            style={{ color: C.teal }}
-          >
-            Not sure where to start
-          </p>
-          <p className="mt-1.5 text-[15.5px] font-bold">
-            Answer a few questions, see what actually fits
-          </p>
-          <p className="mt-1 text-[12.5px]" style={{ color: C.muted }}>
-            Nothing is saved, and nothing is sent to any provider.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href="/match"
-              className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-              style={{ background: C.deep }}
-            >
-              I&rsquo;m investing →
-            </Link>
-            <Link
-              href="/funding/match"
-              className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-              style={{ background: "#7A3E12" }}
-            >
-              I need funding →
-            </Link>
-          </div>
-        </div>
-
-        {/* THE SPLIT. Two routes, equal weight, visitor self-selects. */}
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          {/* Invest */}
-          <Link
-            href="/funds"
-            className="group overflow-hidden rounded-3xl p-7 text-white transition-transform sm:p-8"
-            style={{
-              background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 75%)`,
-            }}
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
-              I have money to invest
-            </p>
+      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+        <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)_260px]">
+          {/* LEFT — what we have written. */}
+          <aside className="order-2 lg:order-1">
             <h2
-              className="mt-3 text-[1.7rem] font-bold leading-tight sm:text-[2.1rem]"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+              style={{ color: C.gold }}
             >
-              What funds
-              <br />
-              really cost
+              Insights
             </h2>
-            <p className="mt-4 text-[13.5px] leading-relaxed opacity-90">
-              Money market, fixed income and balanced funds compared on the
-              charges every provider publishes — plus Treasury bills, which
-              charge nothing at all.
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-6">
-              {cheapestFund !== null && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider opacity-70">
-                    Charges from
-                  </p>
-                  <p
-                    className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none"
-                    style={{ color: C.gold }}
+            {articles.length === 0 ? (
+              <p className="mt-3 text-[13px]" style={{ color: C.muted }}>
+                Nothing published yet.
+              </p>
+            ) : (
+              <ul className="mt-3 space-y-3">
+                {articles.slice(0, 5).map((a) => (
+                  <li
+                    key={a.slug}
+                    className="rounded-2xl p-4"
+                    style={{ background: C.card, border: `1px solid ${C.rule}` }}
                   >
-                    {cheapestFund.toFixed(2)}%
-                  </p>
-                </div>
-              )}
-              {lowestMin !== undefined && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider opacity-70">
-                    Start from
-                  </p>
-                  <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
-                    {GHS.format(lowestMin)}
-                  </p>
-                </div>
-              )}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-70">
-                  Funds tracked
-                </p>
-                <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
-                  {totalFunds}
-                  <span className="text-[0.95rem] opacity-60">
-                    {" "}
-                    · {unique.length} verified
-                  </span>
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-7 text-[13.5px] font-bold underline underline-offset-4">
-              Compare funds →
+                    <p className="text-[10.5px]" style={{ color: C.muted }}>
+                      {fmtDate(a.date)} · {a.readingMinutes} min
+                    </p>
+                    <Link
+                      href={`/insights/${a.slug}`}
+                      className="mt-1 block text-[13.5px] font-bold leading-snug"
+                    >
+                      {a.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-3 text-[12.5px]">
+              <Link
+                href="/insights"
+                className="underline underline-offset-4"
+                style={{ color: C.deep }}
+              >
+                All insights →
+              </Link>
             </p>
-          </Link>
+          </aside>
 
-          {/* Borrow */}
-          <Link
-            href="/funding"
-            className="group overflow-hidden rounded-3xl p-7 text-white transition-transform sm:p-8"
-            style={{
-              background: `linear-gradient(135deg, #7A3E12 0%, ${C.gold} 145%)`,
-            }}
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
-              My business needs funding
-            </p>
-            <h2
-              className="mt-3 text-[1.7rem] font-bold leading-tight sm:text-[2.1rem]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              What credit
-              <br />
-              really costs
-            </h2>
-            <p className="mt-4 text-[13.5px] leading-relaxed opacity-90">
-              Every licensed bank&rsquo;s lending rates, published by Bank of
-              Ghana — with the fees that a headline rate leaves out.
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-6">
-              {loLoan !== null && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider opacity-70">
-                    SME credit from
-                  </p>
-                  <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
-                    {loLoan.toFixed(2)}%
-                  </p>
-                </div>
-              )}
-              {hiLoan !== null && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider opacity-70">
-                    Up to
-                  </p>
-                  <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
-                    {hiLoan.toFixed(2)}%
-                  </p>
-                </div>
-              )}
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-70">
-                  Banks compared
-                </p>
-                <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
-                  {lenderCount}
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-7 text-[13.5px] font-bold underline underline-offset-4">
-              Compare business credit →
-            </p>
-          </Link>
-        </div>
-
-        {/*
-          The invest side started as funds and is now five kinds of thing:
-          funds, Treasury bills, gold, listed shares, and the brokers you need
-          to buy the last of those. One "Compare funds" link on a card hid four
-          of them, and a page nobody can reach may as well not exist — the
-          matching flows sat unreachable for a day for exactly this reason.
-
-          Kept under the invest card rather than promoted to the top level,
-          because shares and brokers are ways of investing, not a third choice
-          alongside investing and borrowing.
-        */}
-        <nav className="mt-5 flex flex-wrap gap-2">
-          {[
-            ["/funds", "All funds"],
-            ["/compare/government_security-GHS", "Treasury bills"],
-            ["/compare/commodity-GHS", "Gold"],
-            ["/shares", "Listed shares"],
-            ["/brokers", "Brokers"],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className="rounded-full px-4 py-2 text-[13px] font-semibold"
+          {/* CENTRE — what this is, in one figure. */}
+          <div className="order-1 lg:order-2">
+            <section
+              className="overflow-hidden rounded-3xl p-7 text-white sm:p-9"
               style={{
-                background: C.card,
-                color: C.ink,
-                border: `1px solid ${C.rule}`,
+                background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
               }}
             >
-              {label}
-            </Link>
-          ))}
-        </nav>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
+                Ghana
+              </p>
+              <h1
+                className="mt-3 text-[2rem] font-bold leading-[1.1] sm:text-[2.7rem]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                What your money
+                <br />
+                actually costs you
+              </h1>
 
-        {/* The finding. Computed, not asserted. */}
-        {biggestGap && biggestGap.feeGapPct !== null && biggestGap.feeGapPct > 3 && (
-          <section
-            className="mt-10 rounded-3xl p-6 sm:p-8"
-            style={{ background: C.card, border: `1px solid ${C.rule}` }}
-          >
-            <p
-              className="text-[11px] font-semibold uppercase tracking-[0.16em]"
-              style={{ color: C.clay }}
-            >
-              Why the headline rate isn&rsquo;t the price
-            </p>
-            <p
-              className="mt-3 max-w-3xl text-[16px] leading-relaxed"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {biggestGap.provider.name} advertises{" "}
-              <strong>{biggestGap.lendingRatePct?.toFixed(2)}%</strong> on a
-              one-year business loan. Once its charges are counted, the real cost
-              is <strong>{biggestGap.aprPct?.toFixed(2)}%</strong> — a gap of{" "}
-              {biggestGap.feeGapPct.toFixed(1)} percentage points that no
-              advertised rate shows you.
-            </p>
-            <p className="mt-4 text-[13px]" style={{ color: C.muted }}>
-              Bank of Ghana publishes both figures. We put them next to each
-              other.
-            </p>
-          </section>
-        )}
+              {cheapest !== null && dearest !== null && (
+                <div className="mt-7 grid grid-cols-2 gap-4 sm:max-w-sm">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider opacity-75">
+                      Cheapest fund
+                    </p>
+                    <p
+                      className="mt-1 text-[1.8rem] font-bold tabular-nums leading-none"
+                      style={{ color: C.gold }}
+                    >
+                      {cheapest.toFixed(2)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider opacity-75">
+                      Dearest
+                    </p>
+                    <p className="mt-1 text-[1.8rem] font-bold tabular-nums leading-none">
+                      {dearest.toFixed(2)}%
+                    </p>
+                  </div>
+                </div>
+              )}
 
-        {/* Why trust it */}
-        <h2
-          className="mt-14 text-[22px] font-bold"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Why trust these numbers
-        </h2>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {[
-            {
-              t: "Every figure is dated",
-              d: "Each charge and rate shows the document it came from and when it was last confirmed. If a number is six months old, we say so.",
-            },
-            {
-              t: "Like compared with like",
-              d: "Not every provider publishes the same fields, so we compare on what they all disclose — and name what's missing.",
-            },
-            {
-              t: "Nobody can pay for position",
-              d: "We don't charge to be listed and no provider can buy a ranking. We say when a group is too small to rank at all.",
-            },
-            {
-              t: "Gaps are shown, not hidden",
-              d: `${directory.length} funds are listed with no figures, and our credit data covers banks only. Leaving either out would make our coverage look better than it is.`,
-            },
-          ].map((x) => (
-            <div
-              key={x.t}
-              className="rounded-2xl p-5"
+              <p className="mt-6 max-w-lg text-[14px] leading-relaxed opacity-90">
+                Fund charges, Treasury bill rates, bank lending APRs, gold
+                premiums and listed shares — from the documents providers
+                publish themselves. Every figure dated, every source named.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  href="/match"
+                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
+                  style={{ background: C.gold, color: C.ink }}
+                >
+                  Find what fits you →
+                </Link>
+                <Link
+                  href="/funds"
+                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
+                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                >
+                  Every fund
+                </Link>
+              </div>
+            </section>
+
+            <h2
+              className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em]"
+              style={{ color: C.gold }}
+            >
+              Compare by kind
+            </h2>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {groups.map((g) => (
+                <Link
+                  key={g.peerGroup}
+                  href={`/compare/${toUrl(g.peerGroup)}`}
+                  className="rounded-2xl p-4"
+                  style={{ background: C.card, border: `1px solid ${C.rule}` }}
+                >
+                  <p className="text-[13.5px] font-bold">{g.label}</p>
+                  <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+                    {g.fundCount} {g.fundCount === 1 ? "fund" : "funds"}
+                    {cheapestIn.has(g.peerGroup) && (
+                      <> · from {cheapestIn.get(g.peerGroup)!.toFixed(2)}%</>
+                    )}
+                  </p>
+                </Link>
+              ))}
+            </div>
+
+            <section
+              className="mt-8 rounded-2xl p-5"
               style={{ background: C.card, border: `1px solid ${C.rule}` }}
             >
-              <h3 className="text-[14.5px] font-bold">{x.t}</h3>
+              <h2 className="text-[14px] font-bold">
+                Where these figures come from
+              </h2>
               <p
-                className="mt-1.5 text-[12.5px] leading-relaxed"
+                className="mt-2 text-[13px] leading-relaxed"
                 style={{ color: C.muted }}
               >
-                {x.d}
+                Bank of Ghana&rsquo;s tender results and daily circulars, the
+                Ghana Stock Exchange&rsquo;s monthly reports, the SEC&rsquo;s
+                registers, and fund managers&rsquo; own factsheets. Nothing here
+                is estimated, and where a provider publishes nothing, the page
+                says so rather than filling the gap.
               </p>
-            </div>
-          ))}
-        </div>
+            </section>
+          </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/match"
-            className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-            style={{ background: C.teal }}
-          >
-            Find what fits →
-          </Link>
-          <Link
-            href="/funds"
-            className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-            style={{ background: C.deep }}
-          >
-            All {totalFunds} funds →
-          </Link>
-          <Link
-            href="/funding/match"
-            className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-            style={{ background: C.gold, color: C.ink }}
-          >
-            What could I borrow? →
-          </Link>
-          <Link
-            href="/funding"
-            className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
-            style={{ background: "#7A3E12" }}
-          >
-            Business credit →
-          </Link>
-          <Link
-            href="/shares"
-            className="rounded-full px-4 py-2.5 text-[13px] font-semibold"
-            style={{
-              background: C.card,
-              color: C.ink,
-              border: `1px solid ${C.rule}`,
-            }}
-          >
-            Listed shares →
-          </Link>
-          {groups.slice(0, 2).map((g) => (
-            <Link
-              key={g.peerGroup}
-              href={`/compare/${toUrl(g.peerGroup)}`}
-              className="rounded-full px-4 py-2.5 text-[13px] font-semibold"
-              style={{
-                background: C.card,
-                color: C.ink,
-                border: `1px solid ${C.rule}`,
-              }}
+          {/* RIGHT — our own tools, not advertising. */}
+          <aside className="order-3">
+            <h2
+              className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+              style={{ color: C.gold }}
             >
-              {g.label}
-            </Link>
-          ))}
-        </div>
+              Tools
+            </h2>
+            <ul className="mt-3 space-y-3">
+              {TOOLS.map(([href, title, note]) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="block rounded-2xl p-4"
+                    style={{ background: C.card, border: `1px solid ${C.rule}` }}
+                  >
+                    <p className="text-[13.5px] font-bold">{title}</p>
+                    <p
+                      className="mt-1 text-[11.5px] leading-relaxed"
+                      style={{ color: C.muted }}
+                    >
+                      {note}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
 
-        <section
-          className="mt-14 rounded-3xl p-6 sm:p-8"
-          style={{ background: C.card, border: `1px solid ${C.rule}` }}
-        >
-          <h2
-            className="text-[18px] font-bold"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            If you run a fund or a lending book
-          </h2>
-          <p
-            className="mt-3 max-w-2xl text-[13.5px] leading-relaxed"
-            style={{ color: C.muted }}
-          >
-            We publish from your own documents and cite them beside every
-            figure. If your product is listed with blanks against it, send your
-            factsheet or rate card and we&rsquo;ll show your figures instead of
-            our gaps. Corrections are free and applied the same day.
-          </p>
-          <p className="mt-4 text-[14px] font-semibold">
-            <a
-              href={`mailto:${BRAND.dataEmail}`}
-              className="underline underline-offset-4"
-              style={{ color: C.deep }}
+            {/*
+              The ask, on the busiest page. Most of what is missing from this
+              site is missing because nobody publishes it, and a provider
+              landing here should find the invitation without hunting.
+            */}
+            <section
+              className="mt-6 rounded-2xl p-4"
+              style={{ background: C.card, border: `1px solid ${C.gold}` }}
             >
-              {BRAND.dataEmail}
-            </a>
-          </p>
-          <p className="mt-6 text-[11px] leading-relaxed" style={{ color: C.muted }}>
-            {BRAND.legalStatus} We are not a credit broker and do not arrange
-            finance. Past performance does not predict future returns, and the
-            value of an investment can fall as well as rise. Lending rates shown
-            are indicative and not offers.
-          </p>
-        </section>
+              <p className="text-[12.5px] font-bold">
+                If you run one of these firms
+              </p>
+              <p
+                className="mt-1.5 text-[11.5px] leading-relaxed"
+                style={{ color: C.muted }}
+              >
+                Send us what you publish and we will show it beside your name,
+                cited and dated. We would rather be corrected than wrong.
+              </p>
+              <p className="mt-2 text-[12px] font-semibold">
+                <a
+                  href={`mailto:${BRAND.dataEmail}`}
+                  className="underline underline-offset-4"
+                  style={{ color: C.deep }}
+                >
+                  {BRAND.dataEmail}
+                </a>
+              </p>
+            </section>
+          </aside>
+        </div>
       </div>
+
       <Footer />
     </main>
   );

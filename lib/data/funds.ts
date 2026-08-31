@@ -1581,3 +1581,123 @@ export function buildYieldBridge(
   }
   return steps;
 }
+
+/**
+ * getTicker — the live numbers for the bar across the top of the home page.
+ *
+ * Five figures, each from a document its issuer published, and no other
+ * Ghanaian site carries them together. A visitor seeing them learns what this
+ * site is in two seconds without reading a word.
+ *
+ * EVERY ITEM CARRIES ITS DATE. A ticker implies "now", and most of these are
+ * not: the GSE index is from a monthly report that may be six weeks old, the
+ * Treasury bill rate from the last tender. Presenting a July figure as today's
+ * would be exactly the unstated staleness this site criticises elsewhere.
+ */
+export interface TickerItem {
+  label: string;
+  value: string;
+  direction?: "up" | "down";
+  asOf?: string;
+}
+
+export async function getTicker(): Promise<TickerItem[]> {
+  const out: TickerItem[] = [];
+  const shortDate = (iso: string) =>
+    new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      timeZone: "UTC",
+    });
+
+  try {
+    // Treasury bills: the two tenors a saver actually meets.
+    const { data: bills } = await publicClient()
+      .from("products")
+      .select("name, nav_observations ( as_of, yield_annualised )")
+      .eq("asset_class", "government_security")
+      .eq("status", "published");
+
+    for (const want of ["91", "364"]) {
+      const p = (bills ?? []).find((b: Record<string, unknown>) =>
+        String(b.name).includes(want),
+      );
+      if (!p) continue;
+      const obs = [
+        ...((p.nav_observations ?? []) as {
+          as_of: string;
+          yield_annualised: number | null;
+        }[]),
+      ]
+        .filter((o) => o.yield_annualised !== null)
+        .sort((a, b) => a.as_of.localeCompare(b.as_of));
+      if (!obs.length) continue;
+      const last = obs[obs.length - 1];
+      const prev = obs[obs.length - 2];
+      out.push({
+        label: `${want}-day bill`,
+        value: `${(last.yield_annualised! * 100).toFixed(2)}%`,
+        direction: prev
+          ? last.yield_annualised! >= prev.yield_annualised!
+            ? "up"
+            : "down"
+          : undefined,
+        asOf: shortDate(last.as_of),
+      });
+    }
+  } catch {
+    // A ticker is not worth failing a page load over.
+  }
+
+  try {
+    const { data: idx } = await publicClient()
+      .from("macro_series")
+      .select("as_of, value")
+      .eq("series_code", "GSE_COMPOSITE_INDEX")
+      .order("as_of", { ascending: false })
+      .limit(2);
+    if (idx?.length) {
+      out.push({
+        label: "GSE index",
+        value: Number(idx[0].value).toLocaleString("en-GB", {
+          maximumFractionDigits: 0,
+        }),
+        direction:
+          idx[1] && Number(idx[0].value) >= Number(idx[1].value) ? "up" : "down",
+        asOf: shortDate(String(idx[0].as_of)),
+      });
+    }
+  } catch {
+    /* as above */
+  }
+
+  try {
+    const { data: gold } = await publicClient()
+      .from("products")
+      .select("nav_observations ( as_of, nav )")
+      .eq("slug", "ghana-gold-coin-1-00oz")
+      .single();
+    const obs = [
+      ...(((gold as Record<string, unknown>)?.nav_observations ?? []) as {
+        as_of: string;
+        nav: number | null;
+      }[]),
+    ]
+      .filter((o) => o.nav !== null)
+      .sort((a, b) => a.as_of.localeCompare(b.as_of));
+    if (obs.length) {
+      const last = obs[obs.length - 1];
+      const prev = obs[obs.length - 2];
+      out.push({
+        label: "Gold coin, 1oz",
+        value: `GH\u20B5${Math.round(last.nav!).toLocaleString("en-GB")}`,
+        direction: prev ? (last.nav! >= prev.nav! ? "up" : "down") : undefined,
+        asOf: shortDate(last.as_of),
+      });
+    }
+  } catch {
+    /* as above */
+  }
+
+  return out;
+}
