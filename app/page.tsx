@@ -337,7 +337,7 @@ export default async function Home() {
               <p className="mt-2 text-[12px] font-semibold">
                 <a
                   href={`mailto:${BRAND.dataEmail}`}
-                  className="underline underline-offset-4"
+                  className="break-all underline underline-offset-4"
                   style={{ color: C.deep }}
                 >
                   {BRAND.dataEmail}
