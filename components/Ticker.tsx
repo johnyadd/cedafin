@@ -154,7 +154,7 @@ export default function Ticker({ items }: { items: TickerItem[] }) {
         /* Was #1E3A4A on a #0B2733 background — technically present and
            invisible. Lightened so the items actually read as separate. */
         .cedafin-ticker-item + .cedafin-ticker-item {
-          border-left: 1px solid #33566B;
+          border-left: 1px solid #5A7D91;
         }
         @media (prefers-reduced-motion: reduce) {
           .cedafin-ticker-track { animation: none; }
