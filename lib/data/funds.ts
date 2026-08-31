@@ -1599,6 +1599,8 @@ export interface TickerItem {
   value: string;
   direction?: "up" | "down";
   asOf?: string;
+  /** Recent observations, oldest first, for the inline sparkline. */
+  series?: number[];
 }
 
 export async function getTicker(): Promise<TickerItem[]> {
@@ -1643,6 +1645,7 @@ export async function getTicker(): Promise<TickerItem[]> {
             : "down"
           : undefined,
         asOf: shortDate(last.as_of),
+        series: obs.slice(-14).map((o) => o.yield_annualised! * 100),
       });
     }
   } catch {
@@ -1655,7 +1658,7 @@ export async function getTicker(): Promise<TickerItem[]> {
       .select("as_of, value")
       .eq("series_code", "GSE_COMPOSITE_INDEX")
       .order("as_of", { ascending: false })
-      .limit(2);
+      .limit(15);
     if (idx?.length) {
       out.push({
         label: "GSE index",
@@ -1665,6 +1668,7 @@ export async function getTicker(): Promise<TickerItem[]> {
         direction:
           idx[1] && Number(idx[0].value) >= Number(idx[1].value) ? "up" : "down",
         asOf: shortDate(String(idx[0].as_of)),
+        series: [...idx].reverse().map((r) => Number(r.value)),
       });
     }
   } catch {
@@ -1693,10 +1697,61 @@ export async function getTicker(): Promise<TickerItem[]> {
         value: `GH\u20B5${Math.round(last.nav!).toLocaleString("en-GB")}`,
         direction: prev ? (last.nav! >= prev.nav! ? "up" : "down") : undefined,
         asOf: shortDate(last.as_of),
+        series: obs.slice(-20).map((o) => o.nav!),
       });
     }
   } catch {
     /* as above */
+  }
+
+  try {
+    // Four listed shares, chosen by SIZE rather than performance.
+    //
+    // Whatever sits in a ticker gets seen, so the choice is editorial. Ranking
+    // by return would put Clydestone first at +15,733% — true, and thoroughly
+    // misleading for a share that started at three pesewas. Market
+    // capitalisation is neutral: nobody can call the biggest companies a
+    // cherry-pick, and it is the same rule an index uses.
+    const { data: shares } = await publicClient()
+      .from("products")
+      .select("name, nav_observations ( as_of, nav )")
+      .eq("asset_class", "equity")
+      .eq("status", "published");
+
+    const sized = (shares ?? [])
+      .map((s: Record<string, unknown>) => {
+        const obs = [
+          ...((s.nav_observations ?? []) as { as_of: string; nav: number | null }[]),
+        ]
+          .filter((o) => o.nav !== null)
+          .sort((a, b) => a.as_of.localeCompare(b.as_of));
+        const ticker = String(s.name).split("\u00B7")[0].trim();
+        return { ticker, obs };
+      })
+      .filter((s) => s.obs.length >= 3);
+
+    // Market cap is not stored per product, so the largest four by PRICE
+    // stand in. Not the same thing — a high price does not mean a big
+    // company — but it is at least not a performance ranking, and the
+    // alternative is showing none.
+    sized.sort(
+      (a, b) =>
+        (b.obs[b.obs.length - 1].nav ?? 0) - (a.obs[a.obs.length - 1].nav ?? 0),
+    );
+
+    for (const s of sized.slice(0, 4)) {
+      const last = s.obs[s.obs.length - 1];
+      const prev = s.obs[s.obs.length - 2];
+      out.push({
+        label: s.ticker,
+        value: `GH\u20B5${last.nav!.toFixed(2)}`,
+        direction: prev ? (last.nav! >= prev.nav! ? "up" : "down") : undefined,
+        asOf: shortDate(last.as_of),
+        series: s.obs.slice(-15).map((o) => o.nav!),
+      });
+    }
+  } catch {
+    /* a ticker is not worth failing a page load over */
   }
 
   return out;
