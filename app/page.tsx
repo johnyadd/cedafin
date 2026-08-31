@@ -246,7 +246,19 @@ export default async function Home() {
                 >
                   <p className="text-[13.5px] font-bold">{g.label}</p>
                   <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
-                    {g.fundCount} {g.fundCount === 1 ? "fund" : "funds"}
+                    {g.fundCount}{" "}
+                    {g.peerGroup.startsWith("equity")
+                      ? g.fundCount === 1
+                        ? "company"
+                        : "companies"
+                      : g.peerGroup.startsWith("commodity") ||
+                          g.peerGroup.startsWith("government")
+                        ? g.fundCount === 1
+                          ? "product"
+                          : "products"
+                        : g.fundCount === 1
+                          ? "fund"
+                          : "funds"}
                     {cheapestIn.has(g.peerGroup) && (
                       <> · from {cheapestIn.get(g.peerGroup)!.toFixed(2)}%</>
                     )}

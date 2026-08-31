@@ -1329,7 +1329,7 @@ const PEER_LABELS: Record<string, string> = {
   "money_market:GHS": "Cedi money market funds",
   "fixed_income:GHS": "Cedi fixed income funds",
   "balanced:GHS": "Cedi balanced funds",
-  "equity:GHS": "Cedi equity funds",
+  "equity:GHS": "Listed shares",
   "deposit:GHS": "Cedi fixed deposits and savings accounts",
   "government_security:GHS": "Government Treasury bills",
   "commodity:GHS": "Gold",
