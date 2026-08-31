@@ -14,7 +14,7 @@ gold price and the Bloomberg USD/GHS rate. On 28 August 2026 they read:
 |---|---|
 | 1.00 oz | GH₵53,013.65 |
 | 0.50 oz | GH₵26,857.84 |
-| 0.25 oz | GH₵13,802.71 |
+| **0.25 oz** | GH₵13,802.71 |
 
 Nothing there looks unusual. Half an ounce costs about half; a quarter costs
 about a quarter. The circular prints no commentary and no comparison, and there
@@ -30,7 +30,7 @@ them and an ounce of gold was worth about **GH₵51,241** that day.
 |---|---|---|---|
 | 1.00 oz | GH₵53,013.65 | GH₵51,240.77 | **3.46%** |
 | 0.50 oz | GH₵26,857.84 | GH₵25,620.38 | **4.83%** |
-| 0.25 oz | GH₵13,802.71 | GH₵12,810.19 | **7.75%** |
+| **0.25 oz** | GH₵13,802.71 | GH₵12,810.19 | **7.75%** |
 
 The premium is what pays for minting, the central bank's guarantee and
 distribution. It is a real and reasonable cost. What is less obvious is that it
@@ -74,7 +74,7 @@ It is charged differently, though, and that matters more than it first appears.
 | | Cost |
 |---|---|
 | Ghana Gold Coin, 1 oz | 3.58% once, on purchase |
-| Ghana Gold Coin, ¼ oz | 7.75% once, on purchase |
+| **Ghana Gold Coin, ¼ oz** | 7.75% once, on purchase |
 | NewGold ETF | 0.30% every year |
 
 These cannot be compared without a holding period. Divide one by the other and

@@ -1,23 +1,37 @@
 /**
- * components/Markdown.tsx — enough markdown for the writing this site does.
+ * components/Markdown.tsx — article typography.
  *
- * WHAT IT HANDLES
- * Headings, paragraphs, bullet and numbered lists, tables, bold, italic,
- * inline code, links, blockquotes and horizontal rules. That covers every
- * article this site has needed so far, and tables matter more here than in
- * most blogs — a piece about what gold costs is mostly figures.
+ * WHY THIS WAS RESTYLED
+ * The first version rendered correct markup at 15px with no measure control,
+ * so lines ran the full container width and every paragraph carried the same
+ * weight. It read like a document rather than something published — which
+ * matters, because a reader deciding whether to trust figures about their
+ * money is partly deciding whether this looks like a serious publication.
  *
- * WHAT IT DOES NOT
- * Images, footnotes, nested lists, code blocks with syntax highlighting, HTML
- * passthrough. If an article needs one of those, that is the signal to install
- * a real markdown library rather than to add another case here. A parser that
- * grows one special case at a time becomes the thing nobody dares touch.
+ * WHAT CHANGED AND WHY
  *
- * WHY NOT dangerouslySetInnerHTML
- * The obvious shortcut is to build an HTML string and inject it. Article
- * content is written by us, so the injection risk is low — but "low" is not a
- * standard, and a site that lectures providers about rigour should not take
- * shortcuts it would criticise. Everything below returns React elements.
+ *   Size — 17px, up from 15. Below about 16px sustained reading gets tiring,
+ *   and these pieces are four minutes long.
+ *
+ *   Measure — capped at 68 characters. Unconstrained lines force the eye to
+ *   hunt for the start of the next one, which is the single most common
+ *   typographic failure on the web.
+ *
+ *   Tables — these articles are mostly figures, so tables are the main visual
+ *   element rather than an afterthought. Right-aligned numerals, tabular
+ *   figures so digits line up in columns, zebra striping, and the last column
+ *   emphasised because in every table here it carries the finding.
+ *
+ *   Headings — Fraunces at a larger size with real space above, so a reader
+ *   scanning can find the structure without reading.
+ *
+ *   Blockquotes — set as pull quotes rather than indented text, because in
+ *   these pieces a quote is always the sentence that carries the point.
+ *
+ * WHAT IT STILL DOES NOT HANDLE
+ * Images, footnotes, nested lists, code blocks. If an article needs one, that
+ * is the signal to install a real markdown library rather than add another
+ * case here.
  */
 
 import Link from "next/link";
@@ -26,17 +40,19 @@ import { Fragment, type ReactNode } from "react";
 const C = {
   ink: "#0C1C22",
   deep: "#0B4F6C",
+  teal: "#1B8BC0",
   gold: "#E8A33D",
+  clay: "#C0492B",
   rule: "#DAE4EB",
   muted: "#5F6E78",
   bg: "#F2F6F9",
+  card: "#FFFFFF",
 };
 
-/** Bold, italic, inline code and links, inside a line of text. */
+/** Bold, italic, inline code and links, within a line of text. */
 function inline(text: string, keyBase: string): ReactNode[] {
   const out: ReactNode[] = [];
-  const rx =
-    /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(\[[^\]]+\]\([^)]+\))/g;
+  const rx = /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(\[[^\]]+\]\([^)]+\))/g;
   let last = 0;
   let m: RegExpExecArray | null;
   let i = 0;
@@ -47,12 +63,16 @@ function inline(text: string, keyBase: string): ReactNode[] {
     const k = `${keyBase}-${i++}`;
 
     if (tok.startsWith("**")) {
-      out.push(<strong key={k}>{tok.slice(2, -2)}</strong>);
+      out.push(
+        <strong key={k} style={{ color: C.ink, fontWeight: 700 }}>
+          {tok.slice(2, -2)}
+        </strong>,
+      );
     } else if (tok.startsWith("`")) {
       out.push(
         <code
           key={k}
-          className="rounded px-1 py-0.5 text-[0.9em]"
+          className="rounded px-1.5 py-0.5 text-[0.88em] tabular-nums"
           style={{ background: C.bg }}
         >
           {tok.slice(1, -1)}
@@ -63,14 +83,15 @@ function inline(text: string, keyBase: string): ReactNode[] {
       if (lm) {
         const [, label, href] = lm;
         const internal = href.startsWith("/");
+        const style = {
+          color: C.deep,
+          textDecorationColor: C.gold,
+          textUnderlineOffset: "3px",
+          textDecorationThickness: "1.5px",
+        };
         out.push(
           internal ? (
-            <Link
-              key={k}
-              href={href}
-              className="underline underline-offset-4"
-              style={{ color: C.deep }}
-            >
+            <Link key={k} href={href} className="underline" style={style}>
               {label}
             </Link>
           ) : (
@@ -79,8 +100,8 @@ function inline(text: string, keyBase: string): ReactNode[] {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-4"
-              style={{ color: C.deep }}
+              className="underline"
+              style={style}
             >
               {label}
             </a>
@@ -98,6 +119,11 @@ function inline(text: string, keyBase: string): ReactNode[] {
   return out;
 }
 
+/**
+ * These articles are mostly figures, so the table is the main visual element.
+ * Numbers right-aligned and tabular so digits line up down a column; the last
+ * column emphasised because in every table on this site it carries the point.
+ */
 function Table({ rows }: { rows: string[] }) {
   const cells = rows.map((r) =>
     r
@@ -105,20 +131,47 @@ function Table({ rows }: { rows: string[] }) {
       .split("|")
       .map((c) => c.trim()),
   );
-  // Row two is the |---|---| separator; it carries alignment we ignore.
   const head = cells[0];
-  const body = cells.slice(2);
+
+  /*
+    A row wrapped in ** is the point of the table.
+
+    The renderer cannot know which figure matters — 7.75% is only remarkable
+    beside 3.46%, and no rule derives that. So the article says so, by bolding
+    the first cell of the row that carries the finding, and it is set apart
+    here. Marking it in the source keeps the editorial judgement where it
+    belongs: with whoever wrote the piece.
+  */
+  const body = cells.slice(2).map((row) => {
+    const marked = /^\*\*.*\*\*$/.test(row[0]);
+    return {
+      cells: marked ? [row[0].replace(/^\*\*|\*\*$/g, ""), ...row.slice(1)] : row,
+      marked,
+    };
+  });
+
+  const isNum = (v: string) =>
+    /^[+\-−]?[\d,.]+\s*%?$/.test(v.replace(/GH₵|GH¢/g, "").trim());
 
   return (
-    <div className="my-6 overflow-x-auto">
-      <table className="w-full border-collapse text-[13.5px]">
+    <div className="my-8 overflow-x-auto">
+      <table
+        className="w-full border-collapse overflow-hidden rounded-xl text-[14px]"
+        style={{ background: C.card, border: `1px solid ${C.rule}` }}
+      >
+        {/* Deep blue header — frames it as a data table rather than text. */}
         <thead>
-          <tr>
+          <tr
+            style={{
+              background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 90%)`,
+            }}
+          >
             {head.map((h, i) => (
               <th
                 key={i}
-                className="border-b-2 px-3 py-2 text-left font-semibold"
-                style={{ borderColor: C.rule }}
+                className={`px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-white ${
+                  i === 0 ? "text-left" : "text-right"
+                }`}
               >
                 {inline(h, `th-${i}`)}
               </th>
@@ -127,16 +180,39 @@ function Table({ rows }: { rows: string[] }) {
         </thead>
         <tbody>
           {body.map((row, r) => (
-            <tr key={r}>
-              {row.map((c, i) => (
-                <td
-                  key={i}
-                  className="border-b px-3 py-2 tabular-nums"
-                  style={{ borderColor: C.rule }}
-                >
-                  {inline(c, `td-${r}-${i}`)}
-                </td>
-              ))}
+            <tr
+              key={r}
+              style={{
+                background: row.marked
+                  ? "rgba(232,163,61,0.13)"
+                  : r % 2
+                    ? C.bg
+                    : C.card,
+              }}
+            >
+              {row.cells.map((c, i) => {
+                const lastCol = i === row.cells.length - 1 && row.cells.length > 2;
+                return (
+                  <td
+                    key={i}
+                    className={`px-4 py-3 ${
+                      i === 0 ? "text-left" : "text-right tabular-nums"
+                    } ${lastCol || row.marked ? "font-bold" : ""}`}
+                    style={{
+                      borderBottom:
+                        r === body.length - 1 ? "none" : `1px solid ${C.rule}`,
+                      borderLeft:
+                        row.marked && i === 0 ? `3px solid ${C.gold}` : "none",
+                      // The finding column in the brand blue, so the eye lands
+                      // on the number the table exists to show.
+                      color: lastCol && isNum(c) ? C.deep : C.ink,
+                      fontSize: lastCol ? "15px" : undefined,
+                    }}
+                  >
+                    {inline(c, `td-${r}-${i}`)}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
@@ -150,6 +226,7 @@ export default function Markdown({ body }: { body: string }) {
   const out: ReactNode[] = [];
   let i = 0;
   let key = 0;
+  let firstPara = true;
 
   while (i < lines.length) {
     const line = lines[i];
@@ -159,7 +236,6 @@ export default function Markdown({ body }: { body: string }) {
       continue;
     }
 
-    // Table: a pipe row followed by a separator row.
     if (line.trim().startsWith("|") && lines[i + 1]?.includes("---")) {
       const rows: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
@@ -174,13 +250,18 @@ export default function Markdown({ body }: { body: string }) {
     if (h) {
       const level = h[1].length;
       const text = h[2];
-      const sizes = ["text-[26px]", "text-[21px]", "text-[17px]", "text-[15px]"];
       const Tag = (["h1", "h2", "h3", "h4"] as const)[level - 1];
+      const size = ["2rem", "1.5rem", "1.2rem", "1.05rem"][level - 1];
       out.push(
         <Tag
           key={key++}
-          className={`mt-8 mb-3 font-bold leading-tight ${sizes[level - 1]}`}
-          style={{ color: C.ink }}
+          className="mt-12 mb-4 font-bold leading-[1.2]"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: size,
+            color: C.ink,
+            letterSpacing: "-0.01em",
+          }}
         >
           {inline(text, `h-${key}`)}
         </Tag>,
@@ -191,12 +272,18 @@ export default function Markdown({ body }: { body: string }) {
 
     if (/^(---|\*\*\*)\s*$/.test(line.trim())) {
       out.push(
-        <hr key={key++} className="my-8" style={{ borderColor: C.rule }} />,
+        <hr
+          key={key++}
+          className="mx-auto my-10 w-16"
+          style={{ borderColor: C.gold, borderTopWidth: "2px" }}
+        />,
       );
       i++;
       continue;
     }
 
+    // Set as a pull quote, not indented text — in these pieces a quote is
+    // always the sentence carrying the point.
     if (line.trim().startsWith(">")) {
       const quote: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith(">")) {
@@ -206,8 +293,12 @@ export default function Markdown({ body }: { body: string }) {
       out.push(
         <blockquote
           key={key++}
-          className="my-6 border-l-4 pl-4 text-[15px] italic"
-          style={{ borderColor: C.gold, color: C.muted }}
+          className="my-9 border-l-[3px] py-1 pl-6 text-[19px] leading-[1.5]"
+          style={{
+            borderColor: C.gold,
+            color: C.ink,
+            fontFamily: "var(--font-display)",
+          }}
         >
           {inline(quote.join(" "), `q-${key}`)}
         </blockquote>,
@@ -229,19 +320,21 @@ export default function Markdown({ body }: { body: string }) {
       out.push(
         <List
           key={key++}
-          className={`my-4 space-y-2 pl-6 text-[15px] leading-relaxed ${
+          className={`my-6 space-y-2.5 pl-6 text-[17px] leading-[1.65] ${
             ordered ? "list-decimal" : "list-disc"
           }`}
+          style={{ maxWidth: "68ch", color: C.ink }}
         >
           {items.map((it, n) => (
-            <li key={n}>{inline(it, `li-${key}-${n}`)}</li>
+            <li key={n} className="pl-1.5">
+              {inline(it, `li-${key}-${n}`)}
+            </li>
           ))}
         </List>,
       );
       continue;
     }
 
-    // Paragraph: consecutive non-blank lines that are not something else.
     const para: string[] = [];
     while (
       i < lines.length &&
@@ -255,8 +348,25 @@ export default function Markdown({ body }: { body: string }) {
       para.push(lines[i]);
       i++;
     }
+
+    // The opening paragraph is set larger. A reader deciding whether to
+    // continue reads this one, and nothing else on the page competes with it.
+    const lead = firstPara;
+    firstPara = false;
     out.push(
-      <p key={key++} className="my-4 text-[15px] leading-relaxed">
+      <p
+        key={key++}
+        className={
+          lead
+            ? "mb-6 text-[20px] leading-[1.55]"
+            : "my-6 text-[17px] leading-[1.7]"
+        }
+        style={{
+          maxWidth: "68ch",
+          color: lead ? C.ink : C.ink,
+          fontWeight: lead ? 500 : 400,
+        }}
+      >
         {inline(para.join(" "), `p-${key}`)}
       </p>,
     );

@@ -91,27 +91,36 @@ export default function Subscribe({
   if (state === "done") {
     return (
       <div
-        className="rounded-2xl p-5"
-        style={{ background: C.card, border: `1px solid ${C.good}` }}
+        className="rounded-2xl p-6 text-white"
+        style={{
+          background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+        }}
       >
-        <p className="text-[14px] font-bold" style={{ color: C.good }}>
-          {message}
-        </p>
+        <p className="text-[15px] font-bold">{message}</p>
       </div>
     );
   }
 
   return (
+    /*
+      The gradient rather than a white card with a gold border. On a page of
+      white cards the box asking for something has to look different from the
+      boxes giving something, or a reader's eye slides past it as more article.
+    */
     <section
-      className={compact ? "rounded-2xl p-4" : "rounded-2xl p-5 sm:p-6"}
-      style={{ background: C.card, border: `1px solid ${C.gold}` }}
+      className={`text-white ${compact ? "rounded-2xl p-5" : "rounded-3xl p-6 sm:p-8"}`}
+      style={{
+        background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+      }}
     >
-      <h2 className={compact ? "text-[13.5px] font-bold" : "text-[16px] font-bold"}>
+      <h2
+        className={compact ? "text-[15px] font-bold" : "text-[22px] font-bold"}
+        style={{ fontFamily: "var(--font-display)" }}
+      >
         Get the next one
       </h2>
       <p
-        className={`mt-2 leading-relaxed ${compact ? "text-[11.5px]" : "text-[13.5px]"}`}
-        style={{ color: C.muted }}
+        className={`mt-2 leading-relaxed opacity-90 ${compact ? "text-[12px]" : "text-[14.5px]"}`}
       >
         {/*
           Says what it is, not what it could be sold as. We publish
@@ -136,16 +145,19 @@ export default function Subscribe({
           onKeyDown={(e) => {
             if (e.key === "Enter") submit();
           }}
-          className={`rounded-full px-4 py-2.5 text-[13.5px] ${
+          className={`rounded-full px-4 py-3 text-[14px] text-white placeholder:text-white/55 ${
             compact ? "w-full" : "min-w-[14rem] flex-1"
           }`}
-          style={{ border: `1px solid ${C.rule}`, background: C.bg }}
+          style={{
+            border: "1px solid rgba(255,255,255,0.35)",
+            background: "rgba(255,255,255,0.12)",
+          }}
         />
         <button
           type="button"
           onClick={submit}
           disabled={state === "sending"}
-          className={`cursor-pointer rounded-full px-5 py-2.5 text-[13.5px] font-bold ${
+          className={`cursor-pointer rounded-full px-6 py-3 text-[14px] font-bold ${
             compact ? "mt-2 w-full" : ""
           }`}
           style={{
@@ -159,7 +171,7 @@ export default function Subscribe({
       </div>
 
       {state === "error" && (
-        <p className="mt-2 text-[12.5px]" style={{ color: C.clay }}>
+        <p className="mt-2 text-[13px] font-semibold" style={{ color: "#FFD9CF" }}>
           {message}
         </p>
       )}
@@ -170,8 +182,7 @@ export default function Subscribe({
         button, not after.
       */}
       <p
-        className={`mt-3 leading-relaxed ${compact ? "text-[10.5px]" : "text-[11.5px]"}`}
-        style={{ color: C.muted }}
+        className={`mt-4 leading-relaxed opacity-75 ${compact ? "text-[11px]" : "text-[12px]"}`}
       >
         Your address is used to send you these and nothing else. Never sold,
         never shared, and one click unsubscribes. We don&rsquo;t track whether

@@ -102,7 +102,12 @@ export default async function ArticlePage({
         </Link>
       </header>
 
-      <article className="mx-auto max-w-2xl px-5 py-8 sm:px-8 sm:py-10">
+      {/*
+        Narrower than the rest of the site. Comparison pages are tables and
+        want width; an article wants a measure the eye can track, and 42rem
+        with 68ch paragraphs inside it is about right.
+      */}
+      <article className="mx-auto max-w-[42rem] px-5 py-10 sm:px-8 sm:py-14">
         <p className="text-[13px]">
           <Link
             href="/insights"
@@ -114,35 +119,49 @@ export default async function ArticlePage({
         </p>
 
         <div
-          className="mt-6 flex flex-wrap items-center gap-x-3 text-[11px] font-semibold uppercase tracking-wider"
+          className="mt-8 flex flex-wrap items-center gap-x-2.5 text-[11px] font-semibold uppercase tracking-[0.14em]"
           style={{ color: C.gold }}
         >
           <span>{fmtDate(article.date)}</span>
+          <span aria-hidden="true" style={{ color: C.rule }}>
+            ·
+          </span>
           <span style={{ color: C.muted }}>
             {article.readingMinutes} min read
           </span>
         </div>
 
         <h1
-          className="mt-2 text-[2rem] font-bold leading-[1.12] sm:text-[2.5rem]"
-          style={{ fontFamily: "var(--font-display)" }}
+          className="mt-3 text-[2.3rem] font-bold leading-[1.08] sm:text-[3.1rem]"
+          style={{
+            fontFamily: "var(--font-display)",
+            letterSpacing: "-0.02em",
+          }}
         >
           {article.title}
         </h1>
 
+        {/*
+          The standfirst. Set large and in the display face, because it is
+          doing the same job as the opening paragraph of a newspaper piece —
+          telling a reader in one breath whether this is for them.
+        */}
         {article.summary && (
           <p
-            className="mt-4 text-[16px] leading-relaxed"
-            style={{ color: C.muted }}
+            className="mt-5 text-[19px] leading-[1.5]"
+            style={{ color: C.muted, fontFamily: "var(--font-display)" }}
           >
             {article.summary}
           </p>
         )}
 
-        <div
-          className="mt-8 border-t pt-6"
-          style={{ borderColor: C.rule }}
-        >
+        {/* A gold rule rather than a grey one — the only ornament on the page. */}
+        <hr
+          className="mt-8 w-14"
+          style={{ borderColor: C.gold, borderTopWidth: "3px" }}
+        />
+
+        <div className="mt-2">
           <Markdown body={article.body} />
         </div>
 
@@ -163,7 +182,7 @@ export default async function ArticlePage({
 
         {article.sources.length > 0 && (
           <section
-            className="mt-10 rounded-2xl p-5"
+            className="mt-12 rounded-2xl p-5 sm:p-6"
             style={{ background: C.card, border: `1px solid ${C.rule}` }}
           >
             <h2
