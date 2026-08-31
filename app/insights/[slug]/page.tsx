@@ -19,6 +19,8 @@ import { notFound } from "next/navigation";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import AdSlot from "@/components/AdSlot";
+import Share from "@/components/Share";
+import Subscribe from "@/components/Subscribe";
 import Footer from "@/components/Footer";
 import Markdown from "@/components/Markdown";
 import { BRAND } from "@/lib/brand";
@@ -143,6 +145,19 @@ export default async function ArticlePage({
         >
           <Markdown body={article.body} />
         </div>
+
+        {/*
+          The subscribe box sits AFTER the article, not before it and not in a
+          pop-up. Someone who has read to the end has demonstrated interest;
+          someone interrupted at the second paragraph has demonstrated nothing
+          except that they were reading. Conversion bought by interrupting is
+          conversion from people who will unsubscribe.
+        */}
+        <div className="mt-10">
+          <Subscribe source={`insights/${slug}`} />
+        </div>
+
+        <Share title={article.title} slug={slug} />
 
         <AdSlot placement={`article-${slug}`} />
 
