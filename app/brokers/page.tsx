@@ -210,6 +210,42 @@ export default async function BrokersPage() {
           </section>
         )}
 
+        {/*
+          Said before the list, because it changes how the whole page reads.
+          Someone new to investing would reasonably assume brokers specialise —
+          the way estate agents cover particular areas — and go looking for the
+          one that handles the share they want. They do not. The GSE monthly
+          reports name no market makers and no sponsoring brokers per listing,
+          so any licensed dealing member can trade any listed security.
+
+          Knowing that removes a search that would otherwise waste time, and
+          moves the question to what actually differs between these firms:
+          cost, which none publishes, and whether they want retail business.
+        */}
+        <section
+          className="mt-6 rounded-2xl p-5 sm:p-6"
+          style={{ background: C.card, border: `1px solid ${C.rule}` }}
+        >
+          <h2 className="text-[15px] font-bold">
+            Any of these can buy any listed share
+          </h2>
+          <p
+            className="mt-2 max-w-2xl text-[13.5px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Ghanaian brokers do not specialise by company or sector. The
+            exchange&rsquo;s monthly reports name no market makers and no
+            sponsoring broker for any listing, so there is no need to find the
+            right firm for a particular share — every licensed dealing member
+            can trade all of them, and the NewGold ETF.
+          </p>
+          <p className="mt-2 text-[13.5px]" style={{ color: C.muted }}>
+            What differs between them is cost, whether they want retail
+            business, and how easily an account can be opened. None of the
+            twenty-four publishes the first, and we have asked all of them.
+          </p>
+        </section>
+
         <h2
           className="mt-12 text-[24px] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
