@@ -78,10 +78,12 @@ figures, and they should agree. Stanbic publishes stated charges of 2.25% and a
 TER of 1.86% — the TER is normally the fuller figure, so seeing it 39 basis
 points *below* is odd. We have asked them why.
 
-**What nobody tells you.** These are often described as low risk. That is not a
-claim anyone can make honestly in Ghana. Money market funds held instruments
-caught in the 2022–23 domestic debt restructuring and investors took real
-losses. Low volatility is not the same as low risk.
+**What to ask about.** Two funds with the same name can hold very different
+things — one may be almost entirely Treasury bills, another may hold bank
+deposits and commercial paper. That difference matters more than the label the
+fund carries, and it is the question worth asking before you commit. Most
+Ghanaian managers do not publish their holdings, so you will usually have to
+ask directly.
 
 ### 2. Treasury bills
 
