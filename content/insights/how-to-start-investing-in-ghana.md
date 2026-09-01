@@ -58,8 +58,10 @@ The usual starting point. A manager pools money from many investors and buys
 short-dated instruments — mostly Treasury bills, sometimes bank deposits and
 commercial paper.
 
-**What it costs.** An annual charge, taken from the fund's value. Of the
-managers whose figures we hold in full:
+**What it costs.** An annual charge, taken from the fund's value. Ghana has
+around 75 of these funds. Three publish enough for us to show what they charge,
+and those three are below — the rest is not a short list because the market is
+small, it is short because most managers publish little.
 
 | Fund | Annual charge |
 |---|---|
