@@ -29,25 +29,48 @@ it return?
 You have two. What does it return, and what does the cedi do against the pound
 or the dollar while your money is in it? The second usually matters more.
 
-Here is what that looks like with real figures. Between 1 June and 28 August
-2026:
+Here is the same thing twice — once where the currency hurt, once where it
+helped. Both use real figures from the same three months.
 
-| | Move |
+### When the currency worked against you
+
+Someone in Accra bought a one-ounce Ghana Gold Coin on 1 June and still holds
+it. Follow the money:
+
+| Step | 1 June | 28 August |
+|---|---|---|
+| Gold, world price | $4,545.95 | $4,568.95 |
+| Cedis per dollar | 11.735 | 11.215 |
+| **What the metal is worth, in cedis** | **GH₵53,347** | **GH₵51,241** |
+
+The gold went **up** 0.51%. Their holding went **down** 3.95%.
+
+Nothing happened to the metal. The cedi got stronger, so the same dollar-priced
+gold converted into fewer cedis. That is the entire difference.
+
+### When the currency worked for you
+
+Now a Ghanaian in London, over the same three months, putting money into a cedi
+money market fund. Same currency movement, opposite effect:
+
+| Step | Amount |
 |---|---|
-| Gold, in dollars | +0.51% |
-| The cedi, against the dollar | strengthened 11.735 to 11.215 |
-| **The Ghana Gold Coin, in cedis** | **−3.93%** |
+| Sends £1,000, converted at GH₵15.2 to the pound | GH₵15,200 |
+| Fund returns 8% over three months | GH₵16,416 |
+| Converts back, now at GH₵14.5 to the pound | £1,132 |
+| **The fund earned 8%. They earned** | **13.2%** |
 
-Gold rose. The coin fell. Nothing happened to the metal — the currency moved,
-and a strengthening cedi works against anyone holding a dollar-priced asset.
+The fund did what it said. The extra five points came from the cedi
+strengthening while their money was in it — the same movement that cost the
+coin holder 4%.
 
-**Now reverse it.** A saver in London holding a cedi money market fund over the
-same period would have earned the fund's return *and* gained from the cedi
-strengthening, because their cedis converted back into more pounds.
+> The currency giveth and it taketh, and which it does depends on when you sent
+> the money and when you take it out.
 
-The currency giveth and taketh, and which it does depends entirely on when you
-send and when you take it out. No fund factsheet mentions this, because for a
-domestic investor it does not arise.
+**Both examples are the same three months.** One person lost to the currency and
+one gained from it, holding different things. Neither fund factsheet nor coin
+circular mentions any of this, because for someone earning and spending in
+cedis it does not arise.
 
 ## What that means in practice
 
