@@ -112,90 +112,6 @@ export default async function Home() {
     >
 
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        {/*
-          Full width, above the columns. In the narrow centre column the
-          headline ran to four lines and dominated the card; across the page
-          it fits on two, and the figures sit beside the text rather than
-          beneath it.
-        */}
-        <section
-          className="overflow-hidden rounded-3xl p-7 text-white sm:p-10"
-          style={{
-            background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
-          }}
-        >
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-center">
-            <div>
-              <h1
-                className="text-[2.1rem] font-bold leading-[1.06] sm:text-[3.1rem]"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Investing and borrowing in Ghana,
-                <br />
-                the opportunities
-              </h1>
-
-              {/* Rewritten: the old line listed charges, which described the
-                  old headline about cost rather than this one. */}
-              <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-90">
-                What Ghanaian funds, Treasury bills, listed shares and gold
-                have actually returned, and what business credit really costs
-                once fees are counted. Every figure taken from documents
-                providers publish themselves, dated and sourced.
-              </p>
-
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link
-                  href="/match"
-                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
-                  style={{ background: C.gold, color: C.ink }}
-                >
-                  Where to invest &rarr;
-                </Link>
-                <Link
-                  href="/funding/match"
-                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
-                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
-                >
-                  Where to borrow
-                </Link>
-              </div>
-            </div>
-
-            {/* One figure from each side, beside the text rather than under it. */}
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-75">
-                  Best return we track
-                </p>
-                <p
-                  className="mt-1.5 text-[2.1rem] font-bold tabular-nums leading-none"
-                  style={{ color: C.gold }}
-                >
-                  +172.7%
-                </p>
-                <p className="mt-1.5 text-[10.5px] opacity-70">
-                  GSE index, Feb 2025 &ndash; Jul 2026
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-75">
-                  Cheapest business credit
-                </p>
-                <p className="mt-1.5 text-[2.1rem] font-bold tabular-nums leading-none">
-                  11.03%
-                </p>
-                <p className="mt-1.5 text-[10.5px] opacity-70">
-                  APR, of 22 banks
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)_260px]">
           {/* LEFT — what we have written. */}
           <aside className="order-2 lg:order-1">
@@ -243,6 +159,82 @@ export default async function Home() {
 
           {/* CENTRE — what this is, in one figure. */}
           <div className="order-1 lg:order-2">
+            {/*
+              Back in the centre column, sized to fit. Across the full page
+              width the card was too wide to read comfortably and dominated
+              everything below it; at this width the three-column rhythm holds
+              down the whole page. Smaller type rather than less content.
+            */}
+            <section
+              className="overflow-hidden rounded-3xl p-6 text-white sm:p-7"
+              style={{
+                background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+              }}
+            >
+              <h1
+                className="text-[1.65rem] font-bold leading-[1.12] sm:text-[2rem]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                Investing and borrowing in Ghana,
+                <br />
+                the opportunities
+              </h1>
+
+              <p className="mt-4 text-[13.5px] leading-relaxed opacity-90">
+                What Ghanaian funds, Treasury bills, listed shares and gold
+                have actually returned, and what business credit really costs
+                once fees are counted. Every figure taken from documents
+                providers publish themselves, dated and sourced.
+              </p>
+
+              <div className="mt-5 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[9.5px] uppercase tracking-wider opacity-75">
+                    Best return we track
+                  </p>
+                  <p
+                    className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none"
+                    style={{ color: C.gold }}
+                  >
+                    +172.7%
+                  </p>
+                  <p className="mt-1 text-[10px] opacity-70">
+                    GSE index, Feb 2025 &ndash; Jul 2026
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[9.5px] uppercase tracking-wider opacity-75">
+                    Cheapest business credit
+                  </p>
+                  <p className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none">
+                    11.03%
+                  </p>
+                  <p className="mt-1 text-[10px] opacity-70">
+                    APR, of 22 banks
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                <Link
+                  href="/match"
+                  className="rounded-full px-4 py-2.5 text-[13px] font-bold"
+                  style={{ background: C.gold, color: C.ink }}
+                >
+                  Where to invest &rarr;
+                </Link>
+                <Link
+                  href="/funding/match"
+                  className="rounded-full px-4 py-2.5 text-[13px] font-bold"
+                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                >
+                  Where to borrow
+                </Link>
+              </div>
+            </section>
 
             <h2
               className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em]"
