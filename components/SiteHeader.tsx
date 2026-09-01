@@ -47,6 +47,11 @@ const MENUS: { label: string; items: Item[] }[] = [
       // distinction between a single company and a diversified fund is worth
       // keeping visible without making shares hard to find.
       ["/shares", "Listed shares", "39 companies on the exchange"],
+      // Gold sits here too. It is a commodity rather than a capital market
+      // product, which is why it has its own menu — but people search for it
+      // as an investment, and someone browsing Invest will not think to look
+      // under "Shares & gold" for it.
+      ["/compare/commodity-GHS", "Gold", "Coins and the NewGold ETF"],
       ["/match", "Find what fits you", "Eight questions, nothing saved"],
     ],
   },
