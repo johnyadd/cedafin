@@ -224,12 +224,25 @@ const QUESTIONS = [
     why: "Filters the list to these. Choose as many as you like.",
     multi: true,
     options: [
-      ["money_market", "Money market — steady, low risk"],
-      ["fixed_income", "Fixed income — bonds and bills"],
-      ["balanced", "Balanced — a mix"],
-      ["equity", "Equity — shares, higher risk"],
-      ["government_security", "Treasury bills — government, no charges"],
-      ["real_estate", "Property"],
+      /*
+        Each label says what the thing IS, not how risky it feels.
+
+        The previous set called money market "low risk" and equity "higher
+        risk". Neither is sourced, and the first is contradicted by recent
+        Ghanaian history: money market funds held instruments caught in the
+        2022-23 domestic debt restructuring and investors took losses. Low
+        volatility is not low risk, and a label that conflates them hides
+        exactly the case that matters.
+
+        A reader can judge risk from the price charts and the disclosures.
+        The label should describe, not pre-judge.
+      */
+      ["money_market", "Money market — short-dated instruments and deposits"],
+      ["fixed_income", "Fixed income — bonds and bills paying a set rate"],
+      ["balanced", "Balanced — a mix of shares and fixed income"],
+      ["equity", "Equity — part-ownership of listed companies"],
+      ["government_security", "Treasury bills — lending to the government"],
+      ["real_estate", "Property — buildings and land"],
     ],
   },
   {
