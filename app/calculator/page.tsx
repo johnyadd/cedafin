@@ -126,7 +126,7 @@ const OPTIONS: {
 */
 const CURRENCIES = [
   { code: "GBP", symbol: "£", label: "Pounds" },
-  { code: "GHS", symbol: "GH₵", label: "Cedis — investing in Ghana" },
+  { code: "GHS", symbol: "GH₵", label: "Cedis" },
   { code: "USD", symbol: "$", label: "Dollars" },
   { code: "EUR", symbol: "€", label: "Euros" },
   { code: "CAD", symbol: "C$", label: "Canadian dollars" },
@@ -164,6 +164,8 @@ function Field({
  * desktop, and below the form on a phone. Same markup, so they cannot drift.
  */
 interface Result {
+  /** False when the exchange rates are missing — figures render as dashes. */
+  ready: boolean;
   amt: number;
   cedisIn: number;
   grossOut: number;
@@ -182,12 +184,15 @@ function Split({
   money,
   fund,
   local,
+  dash,
 }: {
   r: Result;
   money: (v: number) => string;
   fund: (typeof OPTIONS)[number];
   /** Cedi investor — no exchange step, so no currency column. */
   local: boolean;
+  /** Shown where a figure is unknown, so the card keeps its shape. */
+  dash: string;
 }) {
   return (
     <>
@@ -196,7 +201,7 @@ function Split({
           The fund earned
         </p>
         <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none">
-          +{money(r.fundGainHome)}
+          {r.ready ? `+${money(r.fundGainHome)}` : dash}
         </p>
         <p className="mt-1 text-[10px] opacity-70">
           {r.fundOnlyPct.toFixed(2)}% a year, before charges
@@ -224,7 +229,7 @@ function Split({
           Charges took
         </p>
         <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none">
-          −{money(r.chargeCostHome)}
+          {r.ready ? `−${money(r.chargeCostHome)}` : dash}
         </p>
         <p className="mt-1 text-[10px] opacity-70">
           {fund.chargePct.toFixed(2)}% a year
@@ -257,9 +262,15 @@ export default function CalculatorPage() {
     const ret = (Number(returnPct) || 0) / 100;
     const chg = fund.chargePct / 100;
 
-    // Returning null blanked the whole card the moment someone cleared a
-    // field to type a new number. Better to show zeros and fill in as they go.
-    if (!out || !back) return null;
+    /*
+      The card must never be replaced — same gradient, same size, same layout,
+      only the numbers change. Swapping it for a prompt made the page jump and
+      looked like a fault rather than a request.
+
+      With no rates the figures are not zero, they are unknown, so the card
+      renders dashes. A zero would be a claim; a dash is an absence.
+    */
+    const ready = out > 0 && back > 0;
 
     const cedisIn = amt * out;
     // Return compounds over the period; the charge is taken annually from the
@@ -277,6 +288,7 @@ export default function CalculatorPage() {
     const currencyEffect = homeBack - amt - fundGainHome + chargeCostHome;
 
     return {
+      ready,
       amt,
       cedisIn,
       grossOut,
@@ -293,6 +305,9 @@ export default function CalculatorPage() {
     };
   }, [amount, rateOut, rateBack, years, returnPct, fund]);
 
+  // A dash where a figure is unknown, so the card keeps its shape without
+  // asserting a zero.
+  const dash = "—";
   const money = (v: number) =>
     `${cur.symbol}${Math.abs(v).toLocaleString("en-GB", {
       maximumFractionDigits: 0,
@@ -359,66 +374,61 @@ export default function CalculatorPage() {
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
           {/* Result — first on mobile, right-hand column on desktop. */}
           <div className="order-1 lg:order-2 lg:sticky lg:top-[76px]">
-            {!r ? (
-              <section
-                className="rounded-2xl p-5 text-[14px]"
+            <section
+              className="overflow-hidden rounded-2xl p-5 text-white sm:p-6"
+              style={{
+                background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+              }}
+            >
+              {/* The eyebrow carries the prompt when rates are missing, so
+                  the card asks without changing shape. */}
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80">
+                {r.ready
+                  ? `${money(r.amt)} in ${fund.name}, over ${years} ${
+                      Number(years) === 1 ? "year" : "years"
+                    }`
+                  : `Enter your ${ccy} rates to see the result`}
+              </p>
+              <p
+                className="mt-1.5 text-[2rem] font-bold tabular-nums leading-none sm:text-[2.5rem]"
                 style={{
-                  background: C.card,
-                  border: `1px solid ${C.gold}`,
-                  color: C.muted,
+                  color: !r.ready
+                    ? "rgba(255,255,255,0.4)"
+                    : r.totalGain >= 0
+                      ? C.gold
+                      : "#FFC9BC",
                 }}
               >
-                <strong style={{ color: C.ink }}>
-                  Enter your {ccy} exchange rates
-                </strong>{" "}
-                — the rate you got when you sent, and the rate now. Everything
-                else is already filled in.
-              </section>
-            ) : (
-              <section
-                className="overflow-hidden rounded-2xl p-5 text-white sm:p-6"
-                style={{
-                  background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
-                }}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80">
-                  {money(r.amt)} in {fund.name}, over {years}{" "}
-                  {Number(years) === 1 ? "year" : "years"}
-                </p>
-                <p
-                  className="mt-1.5 text-[2rem] font-bold tabular-nums leading-none sm:text-[2.5rem]"
-                  style={{ color: r.totalGain >= 0 ? C.gold : "#FFC9BC" }}
-                >
-                  {money(r.homeBack)}
-                </p>
-                <p className="mt-1.5 text-[13px] opacity-90">
-                  {r.totalGain >= 0 ? "Up" : "Down"} {money(r.totalGain)} —{" "}
-                  {r.totalPct >= 0 ? "+" : ""}
-                  {r.totalPct.toFixed(1)}% on what you sent
-                </p>
-                {!local && (
-                  <p className="mt-0.5 text-[11px] opacity-70">
-                    GH₵{Math.round(r.cedisIn).toLocaleString("en-GB")} sent,
-                    grew to GH₵{Math.round(r.netOut).toLocaleString("en-GB")}{" "}
-                    after charges
-                  </p>
+                {r.ready ? money(r.homeBack) : dash}
+              </p>
+              <p className="mt-1.5 text-[13px] opacity-90">
+                {r.ready ? (
+                  <>
+                    {r.totalGain >= 0 ? "Up" : "Down"} {money(r.totalGain)} —{" "}
+                    {r.totalPct >= 0 ? "+" : ""}
+                    {r.totalPct.toFixed(1)}% on what you sent
+                  </>
+                ) : (
+                  <>Both rate fields are needed before this can be worked out.</>
                 )}
+              </p>
+              {!local && (
+                <p className="mt-0.5 text-[11px] opacity-70">
+                  {r.ready
+                    ? `GH₵${Math.round(r.cedisIn).toLocaleString("en-GB")} sent, grew to GH₵${Math.round(r.netOut).toLocaleString("en-GB")} after charges`
+                    : "\u00a0"}
+                </p>
+              )}
 
-                {/*
-                  The breakdown. Hidden here on a phone and repeated below the
-                  form, so the headline stays short enough to keep the first
-                  input in view.
-                */}
-                <div
-                  className={`mt-4 hidden gap-4 border-t pt-4 lg:grid ${
-                local ? "lg:grid-cols-2" : ""
-              }`}
-                  style={{ borderColor: "rgba(255,255,255,0.25)" }}
-                >
-                  <Split r={r} money={money} fund={fund} local={local} />
-                </div>
-              </section>
-            )}
+              <div
+                className={`mt-4 hidden gap-4 border-t pt-4 lg:grid ${
+                  local ? "lg:grid-cols-2" : ""
+                }`}
+                style={{ borderColor: "rgba(255,255,255,0.25)" }}
+              >
+                <Split r={r} money={money} fund={fund} local={local} dash={dash} />
+              </div>
+            </section>
           </div>
 
           {/* Form — second on mobile, left-hand column on desktop. */}
@@ -467,7 +477,10 @@ export default function CalculatorPage() {
                       setRateOut(next === "GHS" ? "1" : "");
                       setRateBack(next === "GHS" ? "1" : "");
                     }}
-                    className="cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
+                    // A select sizes itself to its longest option. "Cedis
+                    // — investing in Ghana" was wider than the column, so it
+                    // overflowed into the field beside it.
+                    className="w-full min-w-0 cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
                     style={inputStyle}
                   >
                     {CURRENCIES.map((c) => (
@@ -496,7 +509,7 @@ export default function CalculatorPage() {
                     // their own — otherwise switching funds discards it.
                     if (f && !touchedReturn) setReturnPct(String(f.returnPct));
                   }}
-                  className="w-full cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
+                  className="w-full min-w-0 cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
                   style={inputStyle}
                 >
                   {OPTIONS.map((o) => (
@@ -612,7 +625,7 @@ export default function CalculatorPage() {
                 background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
               }}
             >
-              <Split r={r} money={money} fund={fund} local={local} />
+              <Split r={r} money={money} fund={fund} local={local} dash={dash} />
             </section>
           )}
         </div>
