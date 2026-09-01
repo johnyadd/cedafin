@@ -42,6 +42,11 @@ const MENUS: { label: string; items: Item[] }[] = [
       ["/compare/fixed_income-GHS", "Fixed income funds"],
       ["/compare/balanced-GHS", "Balanced funds"],
       ["/compare/government_security-GHS", "Treasury bills"],
+      // Also listed under "Shares & gold". Duplicated deliberately: someone
+      // looking to invest expects shares in the Invest menu, and the
+      // distinction between a single company and a diversified fund is worth
+      // keeping visible without making shares hard to find.
+      ["/shares", "Listed shares", "39 companies on the exchange"],
       ["/match", "Find what fits you", "Eight questions, nothing saved"],
     ],
   },
