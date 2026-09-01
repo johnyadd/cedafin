@@ -155,6 +155,44 @@ export default async function ArticlePage({
           </p>
         )}
 
+        {/*
+          When the figures were taken, and where the live ones are.
+
+          An article is a snapshot. Treasury bill rates move weekly, the gold
+          premium daily. A piece with correct numbers today is quietly wrong in
+          six months, and a reader has no way to know which figures moved —
+          unless the page says so and points at the live version.
+        */}
+        {article.figuresAsOf && (
+          <div
+            className="mt-6 rounded-xl px-4 py-3 text-[12.5px] leading-relaxed"
+            style={{
+              background: "rgba(232,163,61,0.10)",
+              borderLeft: `3px solid ${C.gold}`,
+              color: C.muted,
+            }}
+          >
+            <strong style={{ color: C.ink }}>
+              Figures correct as of {fmtDate(article.figuresAsOf)}.
+            </strong>{" "}
+            Rates and prices move — Treasury bills weekly, the gold premium
+            daily. For current figures see{" "}
+            {article.liveAt.map((href, i) => (
+              <span key={href}>
+                {i > 0 && (i === article.liveAt.length - 1 ? " and " : ", ")}
+                <Link
+                  href={href}
+                  className="underline underline-offset-2"
+                  style={{ color: C.deep }}
+                >
+                  {href.replace("/compare/", "").replace("-GHS", "").replace(/_/g, " ")}
+                </Link>
+              </span>
+            ))}
+            .
+          </div>
+        )}
+
         {/* A gold rule rather than a grey one — the only ornament on the page. */}
         <hr
           className="mt-8 w-14"

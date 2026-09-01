@@ -39,6 +39,18 @@ export interface Article {
   tags: string[];
   /** Where the figures in the piece came from. */
   sources: string[];
+  /**
+   * When the figures in the piece were true, if they can go stale.
+   *
+   * An article is a snapshot. Treasury bill rates move weekly, the gold
+   * premium daily, fund charges rarely. A piece written today with correct
+   * numbers is quietly wrong in six months, and the reader has no way to know
+   * which figures moved — so any article carrying rate-sensitive numbers says
+   * when they were taken, at the top, and points at the live page.
+   */
+  figuresAsOf: string | null;
+  /** Where the live versions of those figures are, e.g. /compare/... */
+  liveAt: string[];
   /** Rough minutes, from word count. */
   readingMinutes: number;
   body: string;
@@ -100,6 +112,8 @@ export function getArticle(slug: string): Article | null {
     summary: str(meta.summary),
     tags: list(meta.tags),
     sources: list(meta.sources),
+    figuresAsOf: str(meta.figuresAsOf) || null,
+    liveAt: list(meta.liveAt),
     // 220 words a minute, rounded up. Rough by nature; a figure-heavy piece
     // reads slower than prose and this does not know the difference.
     readingMinutes: Math.max(1, Math.round(words / 220)),

@@ -4,6 +4,8 @@ date: 2026-09-01
 summary: What you need, what each route costs, what it takes to open an account, and what nobody will tell you until after you have committed. Written from published figures, with the gaps marked.
 tags: [guide, funds, shares, gold, costs]
 sources: [Fund managers — published factsheets, Bank of Ghana — Treasury bill tender results and Ghana Gold Coin pricing circulars, Ghana Stock Exchange — monthly market reports, Securities and Exchange Commission — licensee registers, Broker websites, checked August 2026]
+figuresAsOf: 2026-08-31
+liveAt: [/compare/government_security-GHS, /compare/commodity-GHS, /funds]
 ---
 
 Most guides to investing in Ghana tell you to diversify, think long term, and

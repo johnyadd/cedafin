@@ -4,6 +4,8 @@ date: 2026-08-31
 summary: The GSE Composite Index rose 172.7% between February 2025 and July 2026. Over the same period the best money market fund returned 38.8%, Treasury bills fell to 5%, and gold lost money in cedis.
 tags: [shares, GSE, returns]
 sources: [Ghana Stock Exchange — monthly market reports, February 2025 to July 2026, Bank of Ghana — Treasury bill tender results, Fund managers — published factsheets, Bank of Ghana — Ghana Gold Coin daily pricing circulars]
+figuresAsOf: 2026-07-31
+liveAt: [/shares, /compare/equity-GHS]
 ---
 
 Between February 2025 and July 2026, the Ghana Stock Exchange Composite Index

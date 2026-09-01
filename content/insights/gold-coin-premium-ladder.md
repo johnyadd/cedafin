@@ -4,6 +4,8 @@ date: 2026-08-31
 summary: Bank of Ghana sells a one-ounce gold coin at about 3.5% above the metal in it. The quarter-ounce coin costs 7.75% above. Same gold, and the difference falls on whoever has least to spend.
 tags: [gold, costs, Bank of Ghana]
 sources: [Bank of Ghana — Ghana Gold Coin daily pricing circulars, 56 working days from 1 June to 28 August 2026, Absa Corporate and Investment Banking — NewGold ETF Minimum Disclosure Document, Ghana Stock Exchange — monthly equities market reports]
+figuresAsOf: 2026-08-28
+liveAt: [/compare/commodity-GHS]
 ---
 
 Bank of Ghana publishes a price for the Ghana Gold Coin every working day by
