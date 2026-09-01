@@ -178,9 +178,7 @@ export default async function Home() {
                   letterSpacing: "-0.015em",
                 }}
               >
-                Investing and borrowing in Ghana,
-                <br />
-                the opportunities
+                Investing and borrowing in Ghana, the opportunities
               </h1>
 
               <p className="mt-4 text-[13.5px] leading-relaxed opacity-90">
