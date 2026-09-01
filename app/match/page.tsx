@@ -78,6 +78,14 @@ interface Fund {
 }
 
 type Answers = {
+  /*
+    Asked first, because three of the questions below assume a person. A
+    company treasurer investing surplus cash has no age band, is not saving
+    for a house, and "what do you already hold" means something different.
+    Asking anyway would have been a questionnaire that did not know who it
+    was talking to.
+  */
+  investorType?: string;
   ageBand?: string;
   amountGhs?: number;
   regular?: string;
@@ -131,6 +139,16 @@ const ASSET_LABEL: Record<string, string> = {
 
 const QUESTIONS = [
   {
+    key: "investorType",
+    q: "Who are you investing for?",
+    why: "Some of the questions that follow only make sense for a person.",
+    options: [
+      ["personal", "Myself or my household"],
+      ["business", "A business or organisation"],
+    ],
+  },
+  {
+    // Skipped for businesses — see PERSONAL_ONLY below.
     key: "ageBand",
     q: "How old are you?",
     why: "Used only for suitability guidance, which is switched off.",
@@ -322,14 +340,50 @@ export default function MatchPage() {
       ...a,
       ...(key === "amount" ? { amountGhs: Number(value) } : { [key]: value }),
     }));
-    advance();
+    // Pass the value just chosen — state has not updated yet.
+    advance(key === "investorType" ? value : answers.investorType);
   }
 
-  function advance() {
+  /*
+    Three questions assume a person: their age, what they are saving for, and
+    what they already hold. A company treasurer has none of those in any
+    meaningful sense, so they are skipped rather than asked and ignored.
+
+    Skipping has to work in BOTH directions. A business user who presses Back
+    from question five must land on the one they actually answered, not on a
+    screen they never saw — which is what a plain step-1 would do.
+  */
+  const PERSONAL_ONLY = ["ageBand", "purpose", "hasExisting"];
+
+  /*
+    `type` is passed in rather than read from state. advance() runs in the
+    same handler as setAnswers, and React has not applied the update by then
+    — so reading answers.investorType here saw the PREVIOUS value and skipped
+    nothing. Choosing "a business" went straight to "how old are you", which
+    is exactly what this question exists to prevent.
+  */
+  function applies(index: number, type?: string): boolean {
+    const q = QUESTIONS[index];
+    if (!q) return false;
+    const t = type ?? answers.investorType;
+    if (t !== "business") return true;
+    return !PERSONAL_ONLY.includes(q.key);
+  }
+
+  function advance(type?: string) {
     setStep((s) => {
-      const next = s + 1;
+      let next = s + 1;
+      while (next < QUESTIONS.length && !applies(next, type)) next += 1;
       if (next >= QUESTIONS.length && !funds) void loadFunds();
       return next;
+    });
+  }
+
+  function goBack() {
+    setStep((s) => {
+      let prev = s - 1;
+      while (prev > 0 && !applies(prev)) prev -= 1;
+      return Math.max(0, prev);
     });
   }
 
@@ -535,16 +589,20 @@ export default function MatchPage() {
             )}
 
             <div className="flex items-center gap-2">
-              {QUESTIONS.map((_, i) => (
-                <span
-                  key={i}
-                  className="h-1 flex-1 rounded-full"
-                  style={{ background: i <= step ? C.teal : C.rule }}
-                />
-              ))}
+              {/* Only the questions that apply — a business sees six
+                  segments, not nine with three it will never reach. */}
+              {QUESTIONS.map((_, i) => i)
+                .filter((i) => applies(i))
+                .map((i) => (
+                  <span
+                    key={i}
+                    className="h-1 flex-1 rounded-full"
+                    style={{ background: i <= step ? C.teal : C.rule }}
+                  />
+                ))}
             </div>
             <p className="mt-4 text-[11px] uppercase tracking-wider" style={{ color: C.muted }}>
-              Question {step + 1} of {QUESTIONS.length}
+                  Question {QUESTIONS.slice(0, step + 1).filter((_, i) => applies(i)).length}{" "}of{" "}{QUESTIONS.filter((_, i) => applies(i)).length}
             </p>
 
             <h1 className="mt-2 text-[1.7rem] font-bold leading-tight sm:text-[2.1rem]">
@@ -626,7 +684,7 @@ export default function MatchPage() {
 
             <div className="mt-6 flex items-center justify-between">
               <button
-                onClick={() => setStep((s) => Math.max(0, s - 1))}
+                onClick={goBack}
                 disabled={step === 0}
                 className="text-[13px] disabled:opacity-40"
                 style={{ color: C.muted }}
@@ -634,7 +692,7 @@ export default function MatchPage() {
                 ← Back
               </button>
               <button
-                onClick={advance}
+                onClick={() => advance()}
                 className="rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white"
                 style={{ background: C.deep }}
               >
