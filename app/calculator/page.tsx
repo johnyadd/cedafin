@@ -245,7 +245,17 @@ export default function CalculatorPage() {
   const [fundId, setFundId] = useState("faif");
   // Both 1 for cedis, so the exchange step is a no-op rather than a branch.
   const [rateOut, setRateOut] = useState("15.20");
-  const [rateBack, setRateBack] = useState("14.50");
+  /*
+    Defaults to the same as the send rate, so the tool opens showing what
+    happens if the currency does NOT move — the honest baseline.
+
+    The previous default of 14.50 assumed a strengthening cedi and quietly
+    flattered the result. And the old label asked for "the rate when you take
+    it out", which someone deciding whether to invest cannot possibly know.
+    Framed as an assumption they can test, the uncertainty becomes the point
+    rather than a gap.
+  */
+  const [rateBack, setRateBack] = useState("15.20");
   const [years, setYears] = useState("1");
   const [returnPct, setReturnPct] = useState("34.73");
   const [touchedReturn, setTouchedReturn] = useState(false);
@@ -556,11 +566,11 @@ export default function CalculatorPage() {
               </Field>
 
               <Field
-                label={`Cedis per 1 ${ccy}, when you take it out`}
+                label={`If the cedi is at… when you take it out`}
                 hint={
                   local
                     ? undefined
-                    : "A lower number means the cedi strengthened, which works in your favour."
+                    : `Nobody knows this in advance — it is an assumption to test. The same as above means the cedi did not move; a LOWER number means a stronger cedi, which is better for you. Cedis per 1 ${ccy}.`
                 }
               >
                 <input
