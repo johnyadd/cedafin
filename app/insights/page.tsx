@@ -94,15 +94,6 @@ export default function InsightsPage() {
       className={`${display.variable} ${body.variable} min-h-screen`}
       style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-body)" }}
     >
-      <header className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
-        <Link
-          href="/"
-          className="text-[19px] font-bold tracking-tight"
-          style={{ fontFamily: "var(--font-display)", color: C.deep }}
-        >
-          {BRAND.name}
-        </Link>
-      </header>
 
       <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-10">
         <section

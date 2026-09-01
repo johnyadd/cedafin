@@ -119,16 +119,6 @@ export default async function FundingPage({
         {asOf ? ` · ${fmtDate(asOf)}` : ""} · indicative, not quotes
       </div>
 
-      <header className="mx-auto max-w-4xl px-5 pt-6 sm:px-8">
-        <Link
-          href="/"
-          className="text-[19px] font-bold tracking-tight"
-          style={{ fontFamily: "var(--font-display)", color: C.deep }}
-        >
-          {BRAND.name}
-        </Link>
-      </header>
-
       <div className="mx-auto max-w-4xl px-5 py-8 sm:px-8 sm:py-10">
         <section
           className="overflow-hidden rounded-3xl p-7 text-white sm:p-10"

@@ -110,13 +110,92 @@ export default async function Home() {
       className={`${display.variable} ${body.variable} min-h-screen`}
       style={{ background: C.bg, color: C.ink, fontFamily: "var(--font-body)" }}
     >
-      <SiteHeader
-        name={BRAND.name}
-        articles={articles.slice(0, 4).map((a) => ({ slug: a.slug, title: a.title }))}
-      />
-      <Ticker items={ticker} />
 
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+        {/*
+          Full width, above the columns. In the narrow centre column the
+          headline ran to four lines and dominated the card; across the page
+          it fits on two, and the figures sit beside the text rather than
+          beneath it.
+        */}
+        <section
+          className="overflow-hidden rounded-3xl p-7 text-white sm:p-10"
+          style={{
+            background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+          }}
+        >
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-center">
+            <div>
+              <h1
+                className="text-[2.1rem] font-bold leading-[1.06] sm:text-[3.1rem]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Investing and borrowing in Ghana,
+                <br />
+                the opportunities
+              </h1>
+
+              {/* Rewritten: the old line listed charges, which described the
+                  old headline about cost rather than this one. */}
+              <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-90">
+                What Ghanaian funds, Treasury bills, listed shares and gold
+                have actually returned, and what business credit really costs
+                once fees are counted. Every figure taken from documents
+                providers publish themselves, dated and sourced.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  href="/match"
+                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
+                  style={{ background: C.gold, color: C.ink }}
+                >
+                  Where to invest &rarr;
+                </Link>
+                <Link
+                  href="/funding/match"
+                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
+                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                >
+                  Where to borrow
+                </Link>
+              </div>
+            </div>
+
+            {/* One figure from each side, beside the text rather than under it. */}
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <p className="text-[10px] uppercase tracking-wider opacity-75">
+                  Best return we track
+                </p>
+                <p
+                  className="mt-1.5 text-[2.1rem] font-bold tabular-nums leading-none"
+                  style={{ color: C.gold }}
+                >
+                  +172.7%
+                </p>
+                <p className="mt-1.5 text-[10.5px] opacity-70">
+                  GSE index, Feb 2025 &ndash; Jul 2026
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-wider opacity-75">
+                  Cheapest business credit
+                </p>
+                <p className="mt-1.5 text-[2.1rem] font-bold tabular-nums leading-none">
+                  11.03%
+                </p>
+                <p className="mt-1.5 text-[10.5px] opacity-70">
+                  APR, of 22 banks
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)_260px]">
           {/* LEFT — what we have written. */}
           <aside className="order-2 lg:order-1">
@@ -164,71 +243,6 @@ export default async function Home() {
 
           {/* CENTRE — what this is, in one figure. */}
           <div className="order-1 lg:order-2">
-            <section
-              className="overflow-hidden rounded-3xl p-7 text-white sm:p-9"
-              style={{
-                background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
-              }}
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
-                Ghana
-              </p>
-              <h1
-                className="mt-3 text-[2rem] font-bold leading-[1.1] sm:text-[2.7rem]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                What your money
-                <br />
-                actually costs you
-              </h1>
-
-              {cheapest !== null && dearest !== null && (
-                <div className="mt-7 grid grid-cols-2 gap-4 sm:max-w-sm">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider opacity-75">
-                      Cheapest fund
-                    </p>
-                    <p
-                      className="mt-1 text-[1.8rem] font-bold tabular-nums leading-none"
-                      style={{ color: C.gold }}
-                    >
-                      {cheapest.toFixed(2)}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider opacity-75">
-                      Dearest
-                    </p>
-                    <p className="mt-1 text-[1.8rem] font-bold tabular-nums leading-none">
-                      {dearest.toFixed(2)}%
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              <p className="mt-6 max-w-lg text-[14px] leading-relaxed opacity-90">
-                Fund charges, Treasury bill rates, bank lending APRs, gold
-                premiums and listed shares — from the documents providers
-                publish themselves. Every figure dated, every source named.
-              </p>
-
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link
-                  href="/match"
-                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
-                  style={{ background: C.gold, color: C.ink }}
-                >
-                  Find what fits you →
-                </Link>
-                <Link
-                  href="/funds"
-                  className="rounded-full px-5 py-3 text-[13.5px] font-bold"
-                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
-                >
-                  Every fund
-                </Link>
-              </div>
-            </section>
 
             <h2
               className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em]"
