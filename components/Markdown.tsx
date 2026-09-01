@@ -251,16 +251,56 @@ export default function Markdown({ body }: { body: string }) {
       const level = h[1].length;
       const text = h[2];
       const Tag = (["h1", "h2", "h3", "h4"] as const)[level - 1];
-      const size = ["2rem", "1.5rem", "1.2rem", "1.05rem"][level - 1];
+      const size = ["2rem", "1.6rem", "1.25rem", "1.05rem"][level - 1];
+
+      /*
+        A numbered h3 — "### 1. Money market funds" — gets the number set as a
+        marker rather than run into the text. In a guide the numbers are the
+        structure, and a reader scanning for step three should find it without
+        reading the words around it.
+      */
+      const numbered = level === 3 ? text.match(/^(\d+)\.\s+(.*)$/) : null;
+
+      if (numbered) {
+        out.push(
+          <h3
+            key={key++}
+            className="mt-14 mb-4 flex items-baseline gap-3"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[16px] font-bold text-white"
+              style={{ background: C.deep }}
+            >
+              {numbered[1]}
+            </span>
+            <span
+              className="text-[1.35rem] font-bold leading-[1.2]"
+              style={{ color: C.ink, letterSpacing: "-0.01em" }}
+            >
+              {inline(numbered[2], `h-${key}`)}
+            </span>
+          </h3>,
+        );
+        i++;
+        continue;
+      }
+
+      // h2 in a long piece carries a rule above it, so sections read as
+      // sections rather than as bolder paragraphs.
       out.push(
         <Tag
           key={key++}
-          className="mt-12 mb-4 font-bold leading-[1.2]"
+          className={
+            level === 2 ? "mt-14 mb-4 border-t pt-8 font-bold leading-[1.15]"
+                        : "mt-12 mb-4 font-bold leading-[1.2]"
+          }
           style={{
             fontFamily: "var(--font-display)",
             fontSize: size,
             color: C.ink,
-            letterSpacing: "-0.01em",
+            letterSpacing: "-0.015em",
+            borderColor: level === 2 ? C.rule : undefined,
           }}
         >
           {inline(text, `h-${key}`)}
@@ -353,21 +393,35 @@ export default function Markdown({ body }: { body: string }) {
     // continue reads this one, and nothing else on the page competes with it.
     const lead = firstPara;
     firstPara = false;
+    const text = para.join(" ");
+
+    /*
+      A paragraph that OPENS with bold is a labelled point — "**What it
+      costs.** An annual charge…" — and in a guide those carry the structure
+      within a section. Given a tinted panel and a gold edge they can be found
+      by scanning, which is how anyone actually reads a guide this long.
+    */
+    const labelled = !lead && /^\*\*[^*]+\.\*\*\s/.test(text);
+
     out.push(
       <p
         key={key++}
         className={
           lead
-            ? "mb-6 text-[20px] leading-[1.55]"
-            : "my-6 text-[17px] leading-[1.7]"
+            ? "mb-7 text-[20px] leading-[1.55]"
+            : labelled
+              ? "my-5 rounded-r-xl border-l-[3px] py-3 pl-4 pr-4 text-[16.5px] leading-[1.65]"
+              : "my-6 text-[17px] leading-[1.7]"
         }
         style={{
           maxWidth: "68ch",
-          color: lead ? C.ink : C.ink,
+          color: C.ink,
           fontWeight: lead ? 500 : 400,
+          borderColor: labelled ? C.gold : undefined,
+          background: labelled ? "rgba(232,163,61,0.07)" : undefined,
         }}
       >
-        {inline(para.join(" "), `p-${key}`)}
+        {inline(text, `p-${key}`)}
       </p>,
     );
   }
