@@ -214,13 +214,24 @@ function Split({
         </p>
         <p
           className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none"
-          style={{ color: r.currencyEffect >= 0 ? "#8FE3BC" : "#FFC9BC" }}
+          style={{
+            color: !r.ready
+              ? "rgba(255,255,255,0.5)"
+              : r.currencyEffect >= 0
+                ? "#8FE3BC"
+                : "#FFC9BC",
+          }}
         >
-          {r.currencyEffect >= 0 ? "+" : "−"}
-          {money(r.currencyEffect)}
+          {r.ready
+            ? `${r.currencyEffect >= 0 ? "+" : "−"}${money(r.currencyEffect)}`
+            : dash}
         </p>
         <p className="mt-1 text-[10px] opacity-70">
-          {r.currencyEffect >= 0 ? "moved in your favour" : "moved against you"}
+          {!r.ready
+            ? "\u00a0"
+            : r.currencyEffect >= 0
+              ? "moved in your favour"
+              : "moved against you"}
         </p>
       </div>
       )}
