@@ -125,8 +125,8 @@ const OPTIONS: {
   maintain.
 */
 const CURRENCIES = [
-  { code: "GHS", symbol: "GH₵", label: "Cedis — I'm in Ghana" },
   { code: "GBP", symbol: "£", label: "Pounds" },
+  { code: "GHS", symbol: "GH₵", label: "Cedis — investing in Ghana" },
   { code: "USD", symbol: "$", label: "Dollars" },
   { code: "EUR", symbol: "€", label: "Euros" },
   { code: "CAD", symbol: "C$", label: "Canadian dollars" },
@@ -235,12 +235,12 @@ function Split({
 }
 
 export default function CalculatorPage() {
-  const [amount, setAmount] = useState("5000");
-  const [ccy, setCcy] = useState("GHS");
+  const [amount, setAmount] = useState("1000");
+  const [ccy, setCcy] = useState("GBP");
   const [fundId, setFundId] = useState("faif");
   // Both 1 for cedis, so the exchange step is a no-op rather than a branch.
-  const [rateOut, setRateOut] = useState("1");
-  const [rateBack, setRateBack] = useState("1");
+  const [rateOut, setRateOut] = useState("15.20");
+  const [rateBack, setRateBack] = useState("14.50");
   const [years, setYears] = useState("1");
   const [returnPct, setReturnPct] = useState("34.73");
   const [touchedReturn, setTouchedReturn] = useState(false);
@@ -430,14 +430,20 @@ export default function CalculatorPage() {
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field
-                label="Currency and amount you send"
+                label="Currency and amount"
                 hint={
                   !local && (rateOut === "" || rateBack === "")
                     ? `Now enter your ${ccy} rates below.`
                     : undefined
                 }
               >
-                <div className="flex gap-2">
+                {/*
+                  Was a select and an input side by side in a half-width
+                  column. The select needs room for "Cedis — investing in
+                  Ghana", which left the amount box a few pixels wide and the
+                  label wrapping over it. Stacked, both get the full column.
+                */}
+                <div className="grid gap-2">
                   <select
                     value={ccy}
                     onChange={(e) => {
@@ -504,10 +510,22 @@ export default function CalculatorPage() {
               {/* The currency is named in the label, so a stale figure would
                   be visible even if the clearing above ever failed. Hidden
                   entirely for cedis — there is nothing to convert. */}
-              {!local && (
+              {/*
+                Shown for every currency, including cedis. Removing them for a
+                local investor hid the exchange comparison from anyone who did
+                not think to change the dropdown — which is most people, and
+                that comparison is the reason this tool exists.
+
+                For cedis they are disabled with a line saying why, so the form
+                keeps its shape and the diaspora case stays discoverable.
+              */}
               <Field
                 label={`Cedis per 1 ${ccy}, when you send`}
-                hint="The rate you actually got, not the published one — your provider's margin is part of the cost."
+                hint={
+                  local
+                    ? "No conversion when you invest in cedis. Change the currency above if you are sending from abroad."
+                    : "The rate you actually got, not the published one — your provider's margin is part of the cost."
+                }
               >
                 <input
                   inputMode="decimal"
@@ -515,18 +533,22 @@ export default function CalculatorPage() {
                   value={rateOut}
                   onChange={(e) => setRateOut(e.target.value)}
                   className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  disabled={local}
                   style={{
                     ...inputStyle,
                     borderColor: rateOut === "" ? C.gold : C.rule,
+                    opacity: local ? 0.45 : 1,
                   }}
                 />
               </Field>
-              )}
 
-              {!local && (
               <Field
                 label={`Cedis per 1 ${ccy}, when you take it out`}
-                hint="A lower number means the cedi strengthened, which works in your favour."
+                hint={
+                  local
+                    ? undefined
+                    : "A lower number means the cedi strengthened, which works in your favour."
+                }
               >
                 <input
                   inputMode="decimal"
@@ -534,13 +556,14 @@ export default function CalculatorPage() {
                   value={rateBack}
                   onChange={(e) => setRateBack(e.target.value)}
                   className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  disabled={local}
                   style={{
                     ...inputStyle,
                     borderColor: rateBack === "" ? C.gold : C.rule,
+                    opacity: local ? 0.45 : 1,
                   }}
                 />
               </Field>
-              )}
 
               <Field label="Years invested">
                 <input
