@@ -149,6 +149,76 @@ function Field({
   );
 }
 
+/**
+ * The three-way split, rendered in two places: inside the result card on a
+ * desktop, and below the form on a phone. Same markup, so they cannot drift.
+ */
+interface Result {
+  amt: number;
+  cedisIn: number;
+  grossOut: number;
+  netOut: number;
+  homeBack: number;
+  totalGain: number;
+  totalPct: number;
+  fundGainHome: number;
+  chargeCostHome: number;
+  currencyEffect: number;
+  fundOnlyPct: number;
+}
+
+function Split({
+  r,
+  money,
+  fund,
+}: {
+  r: Result;
+  money: (v: number) => string;
+  fund: (typeof OPTIONS)[number];
+}) {
+  return (
+    <>
+      <div>
+        <p className="text-[9.5px] uppercase tracking-wider opacity-75">
+          The fund earned
+        </p>
+        <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none">
+          +{money(r.fundGainHome)}
+        </p>
+        <p className="mt-1 text-[10px] opacity-70">
+          {r.fundOnlyPct.toFixed(2)}% a year, before charges
+        </p>
+      </div>
+      <div>
+        <p className="text-[9.5px] uppercase tracking-wider opacity-75">
+          The currency
+        </p>
+        <p
+          className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none"
+          style={{ color: r.currencyEffect >= 0 ? "#8FE3BC" : "#FFC9BC" }}
+        >
+          {r.currencyEffect >= 0 ? "+" : "−"}
+          {money(r.currencyEffect)}
+        </p>
+        <p className="mt-1 text-[10px] opacity-70">
+          {r.currencyEffect >= 0 ? "moved in your favour" : "moved against you"}
+        </p>
+      </div>
+      <div>
+        <p className="text-[9.5px] uppercase tracking-wider opacity-75">
+          Charges took
+        </p>
+        <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none">
+          −{money(r.chargeCostHome)}
+        </p>
+        <p className="mt-1 text-[10px] opacity-70">
+          {fund.chargePct.toFixed(2)}% a year
+        </p>
+      </div>
+    </>
+  );
+}
+
 export default function CalculatorPage() {
   const [amount, setAmount] = useState("1000");
   const [ccy, setCcy] = useState("GBP");
@@ -170,10 +240,8 @@ export default function CalculatorPage() {
     const ret = (Number(returnPct) || 0) / 100;
     const chg = fund.chargePct / 100;
 
-    // Returning null here made the whole card vanish the moment someone
-    // cleared a field to type a new number — the layout jumped and the result
-    // they were watching disappeared. Better to show zeros and let it fill in
-    // as they type.
+    // Returning null blanked the whole card the moment someone cleared a
+    // field to type a new number. Better to show zeros and fill in as they go.
     if (!out || !back) return null;
 
     const cedisIn = amt * out;
@@ -198,8 +266,8 @@ export default function CalculatorPage() {
       netOut,
       homeBack,
       totalGain: homeBack - amt,
-      // Zero divided by zero is NaN, which appeared on screen the moment
-      // someone cleared the amount to type a new one.
+      // Zero over zero is NaN, which appeared on screen when the amount was
+      // cleared.
       totalPct: amt > 0 ? ((homeBack / amt) - 1) * 100 : 0,
       fundGainHome,
       chargeCostHome,
@@ -255,198 +323,243 @@ export default function CalculatorPage() {
 
           The header is already sticky at 0, so this sits below it.
         */}
-        {r && (
-          <section
-            className="mt-6 overflow-hidden rounded-2xl p-5 text-white sm:p-6"
-            style={{
-              background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
-            }}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80">
-              {money(r.amt)} in {fund.name}, over {years}{" "}
-              {Number(years) === 1 ? "year" : "years"}
-            </p>
-            <p
-              className="mt-1.5 text-[1.9rem] font-bold tabular-nums leading-none sm:text-[2.4rem]"
-              style={{ color: r.totalGain >= 0 ? C.gold : "#FFC9BC" }}
-            >
-              {money(r.homeBack)}
-            </p>
-            <p className="mt-1.5 text-[13px] opacity-90">
-              {r.totalGain >= 0 ? "Up" : "Down"} {money(r.totalGain)} —{" "}
-              {r.totalPct >= 0 ? "+" : ""}
-              {r.totalPct.toFixed(1)}% on what you sent
-            </p>
-            {/* Both currencies. Someone sending money abroad thinks in two,
-                and seeing only one hides where the money actually went. */}
-            <p className="mt-0.5 text-[11px] opacity-70">
-              GH₵{Math.round(r.cedisIn).toLocaleString("en-GB")} sent, grew to
-              GH₵{Math.round(r.netOut).toLocaleString("en-GB")} after charges
-            </p>
+        {/*
+          Side by side on desktop, so the connection between the form and the
+          result needs no explaining — you change a figure on the left and
+          watch the number move on the right.
 
-            <div
-              className="mt-4 grid grid-cols-3 gap-3 border-t pt-3.5"
-              style={{ borderColor: "rgba(255,255,255,0.25)" }}
-            >
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-75">
-                  The fund earned
-                </p>
-                <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none sm:text-[1.25rem]">
-                  +{money(r.fundGainHome)}
-                </p>
-                <p className="mt-1 text-[10.5px] opacity-70">
-                  {r.fundOnlyPct.toFixed(2)}% a year, before charges
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-75">
-                  The currency
+          On a phone they stack, and the order is the awkward part. Result
+          first means an immediate answer but pushes the form below the fold;
+          form first opens with an empty-looking page, which is what this
+          design set out to avoid.
+
+          So on mobile the result splits: a compact headline stays on top, and
+          the three-way breakdown moves BELOW the form. Small enough that the
+          first field is visible without scrolling, and the detail is still
+          there for anyone who reads that far.
+        */}
+        <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
+          {/* Result — first on mobile, right-hand column on desktop. */}
+          <div className="order-1 lg:order-2 lg:sticky lg:top-[76px]">
+            {!r ? (
+              <section
+                className="rounded-2xl p-5 text-[14px]"
+                style={{
+                  background: C.card,
+                  border: `1px solid ${C.gold}`,
+                  color: C.muted,
+                }}
+              >
+                <strong style={{ color: C.ink }}>
+                  Enter your {ccy} exchange rates
+                </strong>{" "}
+                — the rate you got when you sent, and the rate now. Everything
+                else is already filled in.
+              </section>
+            ) : (
+              <section
+                className="overflow-hidden rounded-2xl p-5 text-white sm:p-6"
+                style={{
+                  background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+                }}
+              >
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80">
+                  {money(r.amt)} in {fund.name}, over {years}{" "}
+                  {Number(years) === 1 ? "year" : "years"}
                 </p>
                 <p
-                  className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none sm:text-[1.25rem]"
-                  style={{
-                    color: r.currencyEffect >= 0 ? "#8FE3BC" : "#FFC9BC",
-                  }}
+                  className="mt-1.5 text-[2rem] font-bold tabular-nums leading-none sm:text-[2.5rem]"
+                  style={{ color: r.totalGain >= 0 ? C.gold : "#FFC9BC" }}
                 >
-                  {r.currencyEffect >= 0 ? "+" : "−"}
-                  {money(r.currencyEffect)}
+                  {money(r.homeBack)}
                 </p>
-                <p className="mt-1 text-[10.5px] opacity-70">
-                  {r.currencyEffect >= 0
-                    ? "the cedi moved in your favour"
-                    : "the cedi moved against you"}
+                <p className="mt-1.5 text-[13px] opacity-90">
+                  {r.totalGain >= 0 ? "Up" : "Down"} {money(r.totalGain)} —{" "}
+                  {r.totalPct >= 0 ? "+" : ""}
+                  {r.totalPct.toFixed(1)}% on what you sent
                 </p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wider opacity-75">
-                  Charges took
+                <p className="mt-0.5 text-[11px] opacity-70">
+                  GH₵{Math.round(r.cedisIn).toLocaleString("en-GB")} sent, grew
+                  to GH₵{Math.round(r.netOut).toLocaleString("en-GB")} after
+                  charges
                 </p>
-                <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none sm:text-[1.25rem]">
-                  −{money(r.chargeCostHome)}
-                </p>
-                <p className="mt-1 text-[10.5px] opacity-70">
-                  {fund.chargePct.toFixed(2)}% a year
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
 
-        {/* Everything above is editable. */}
-        <section
-          className="mt-5 rounded-2xl p-5 sm:p-6"
-          style={{ background: C.card, border: `1px solid ${C.rule}` }}
-        >
-          <h2 className="text-[14px] font-bold">Change any of it</h2>
+                {/*
+                  The breakdown. Hidden here on a phone and repeated below the
+                  form, so the headline stays short enough to keep the first
+                  input in view.
+                */}
+                <div
+                  className="mt-4 hidden gap-4 border-t pt-4 lg:grid"
+                  style={{ borderColor: "rgba(255,255,255,0.25)" }}
+                >
+                  <Split r={r} money={money} fund={fund} />
+                </div>
+              </section>
+            )}
+          </div>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label="You send">
-              <div className="flex gap-2">
+          {/* Form — second on mobile, left-hand column on desktop. */}
+          <section
+            className="order-2 rounded-2xl p-5 sm:p-6 lg:order-1"
+            style={{ background: C.card, border: `1px solid ${C.rule}` }}
+          >
+            <h2 className="text-[14px] font-bold">Change any of it</h2>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Field
+                label="Currency and amount you send"
+                hint={
+                  rateOut === "" || rateBack === ""
+                    ? `Now enter your ${ccy} rates below.`
+                    : undefined
+                }
+              >
+                <div className="flex gap-2">
+                  <select
+                    value={ccy}
+                    onChange={(e) => {
+                      /*
+                        Clearing the rates rather than flagging them.
+
+                        Someone switching GBP to USD keeps 15.20 and 14.50 —
+                        pound rates silently applied to dollars, producing a
+                        result that looks plausible and is wrong.
+
+                        A warning would not fix it. Form research is consistent
+                        that pre-filled values get skipped: people scan quickly
+                        and do not re-read a field that already has something
+                        in it. An empty box cannot be skipped.
+                      */
+                      setCcy(e.target.value);
+                      setRateOut("");
+                      setRateBack("");
+                    }}
+                    className="cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
+                    style={inputStyle}
+                  >
+                    {CURRENCIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.code} — {c.label}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    inputMode="decimal"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                    style={inputStyle}
+                  />
+                </div>
+              </Field>
+
+              <Field label="Into">
                 <select
-                  value={ccy}
-                  onChange={(e) => setCcy(e.target.value)}
-                  className="cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
+                  value={fundId}
+                  onChange={(e) => {
+                    const f = OPTIONS.find((o) => o.id === e.target.value);
+                    setFundId(e.target.value);
+                    // Only overwrite the return if the visitor has not set
+                    // their own — otherwise switching funds discards it.
+                    if (f && !touchedReturn) setReturnPct(String(f.returnPct));
+                  }}
+                  className="w-full cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
                   style={inputStyle}
                 >
-                  {CURRENCIES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.code}
+                  {OPTIONS.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name}
                     </option>
                   ))}
                 </select>
+              </Field>
+
+              {/* The currency is named in the label, so a stale figure would
+                  be visible even if the clearing above ever failed. */}
+              <Field
+                label={`Cedis per 1 ${ccy}, when you send`}
+                hint="The rate you actually got, not the published one — your provider's margin is part of the cost."
+              >
                 <input
                   inputMode="decimal"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder={`cedis per ${cur.symbol}1`}
+                  value={rateOut}
+                  onChange={(e) => setRateOut(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  style={{
+                    ...inputStyle,
+                    borderColor: rateOut === "" ? C.gold : C.rule,
+                  }}
+                />
+              </Field>
+
+              <Field
+                label={`Cedis per 1 ${ccy}, when you take it out`}
+                hint="A lower number means the cedi strengthened, which works in your favour."
+              >
+                <input
+                  inputMode="decimal"
+                  placeholder={`cedis per ${cur.symbol}1`}
+                  value={rateBack}
+                  onChange={(e) => setRateBack(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  style={{
+                    ...inputStyle,
+                    borderColor: rateBack === "" ? C.gold : C.rule,
+                  }}
+                />
+              </Field>
+
+              <Field label="Years invested">
+                <input
+                  inputMode="decimal"
+                  value={years}
+                  onChange={(e) => setYears(e.target.value)}
                   className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
                   style={inputStyle}
                 />
-              </div>
-            </Field>
+              </Field>
 
-            <Field label="Into">
-              <select
-                value={fundId}
-                onChange={(e) => {
-                  const f = OPTIONS.find((o) => o.id === e.target.value);
-                  setFundId(e.target.value);
-                  // Only overwrite the return if the visitor has not set their
-                  // own — otherwise switching funds would silently discard it.
-                  if (f && !touchedReturn) setReturnPct(String(f.returnPct));
-                }}
-                className="w-full cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
-                style={inputStyle}
+              <Field
+                label="Annual return, %"
+                hint={
+                  touchedReturn
+                    ? "Your figure, not a published one."
+                    : `${fund.name} published ${fund.returnPct}% over ${fund.window}.`
+                }
               >
-                {OPTIONS.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
+                <input
+                  inputMode="decimal"
+                  value={returnPct}
+                  onChange={(e) => {
+                    setReturnPct(e.target.value);
+                    setTouchedReturn(true);
+                  }}
+                  className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  style={inputStyle}
+                />
+              </Field>
+            </div>
 
-            <Field
-              label="Cedis per 1 unit, when you send"
-              hint="The rate you actually got, not the published one — your provider's margin is part of the cost."
+            <p className="mt-4 text-[12.5px]" style={{ color: C.muted }}>
+              {fund.note}
+            </p>
+          </section>
+
+          {/* The breakdown, on mobile only — below the form, where there is
+              room for it. */}
+          {r && (
+            <section
+              className="order-3 grid grid-cols-3 gap-3 rounded-2xl p-5 text-white lg:hidden"
+              style={{
+                background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
+              }}
             >
-              <input
-                inputMode="decimal"
-                value={rateOut}
-                onChange={(e) => setRateOut(e.target.value)}
-                className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
-                style={inputStyle}
-              />
-            </Field>
-
-            <Field
-              label="Cedis per 1 unit, when you take it out"
-              hint="A lower number means the cedi strengthened, which works in your favour."
-            >
-              <input
-                inputMode="decimal"
-                value={rateBack}
-                onChange={(e) => setRateBack(e.target.value)}
-                className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
-                style={inputStyle}
-              />
-            </Field>
-
-            <Field label="Years invested">
-              <input
-                inputMode="decimal"
-                value={years}
-                onChange={(e) => setYears(e.target.value)}
-                className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
-                style={inputStyle}
-              />
-            </Field>
-
-            <Field
-              label="Annual return, %"
-              hint={
-                touchedReturn
-                  ? "Your figure, not a published one."
-                  : `${fund.name} published ${fund.returnPct}% over ${fund.window}. Change it to test your own assumption.`
-              }
-            >
-              <input
-                inputMode="decimal"
-                value={returnPct}
-                onChange={(e) => {
-                  setReturnPct(e.target.value);
-                  setTouchedReturn(true);
-                }}
-                className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
-                style={inputStyle}
-              />
-            </Field>
-          </div>
-
-          <p className="mt-4 text-[12.5px]" style={{ color: C.muted }}>
-            {fund.note}
-          </p>
-        </section>
+              <Split r={r} money={money} fund={fund} />
+            </section>
+          )}
+        </div>
 
         {/* The honest limits, not buried. */}
         <section
