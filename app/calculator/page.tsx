@@ -115,7 +115,17 @@ const OPTIONS: {
   },
 ];
 
+/*
+  Cedis first, because most readers are in Ghana.
+
+  Choosing GHS removes the exchange step entirely: someone investing cedis in
+  a cedi fund has no currency effect to separate out, and asking them for a
+  cedis-per-cedi rate would be nonsense. The rates are fixed at 1 and the row
+  is hidden — the arithmetic is unchanged, so there is no special case to
+  maintain.
+*/
 const CURRENCIES = [
+  { code: "GHS", symbol: "GH₵", label: "Cedis — I'm in Ghana" },
   { code: "GBP", symbol: "£", label: "Pounds" },
   { code: "USD", symbol: "$", label: "Dollars" },
   { code: "EUR", symbol: "€", label: "Euros" },
@@ -171,10 +181,13 @@ function Split({
   r,
   money,
   fund,
+  local,
 }: {
   r: Result;
   money: (v: number) => string;
   fund: (typeof OPTIONS)[number];
+  /** Cedi investor — no exchange step, so no currency column. */
+  local: boolean;
 }) {
   return (
     <>
@@ -189,6 +202,7 @@ function Split({
           {r.fundOnlyPct.toFixed(2)}% a year, before charges
         </p>
       </div>
+      {!local && (
       <div>
         <p className="text-[9.5px] uppercase tracking-wider opacity-75">
           The currency
@@ -204,6 +218,7 @@ function Split({
           {r.currencyEffect >= 0 ? "moved in your favour" : "moved against you"}
         </p>
       </div>
+      )}
       <div>
         <p className="text-[9.5px] uppercase tracking-wider opacity-75">
           Charges took
@@ -220,17 +235,19 @@ function Split({
 }
 
 export default function CalculatorPage() {
-  const [amount, setAmount] = useState("1000");
-  const [ccy, setCcy] = useState("GBP");
+  const [amount, setAmount] = useState("5000");
+  const [ccy, setCcy] = useState("GHS");
   const [fundId, setFundId] = useState("faif");
-  const [rateOut, setRateOut] = useState("15.20");
-  const [rateBack, setRateBack] = useState("14.50");
+  // Both 1 for cedis, so the exchange step is a no-op rather than a branch.
+  const [rateOut, setRateOut] = useState("1");
+  const [rateBack, setRateBack] = useState("1");
   const [years, setYears] = useState("1");
   const [returnPct, setReturnPct] = useState("34.73");
   const [touchedReturn, setTouchedReturn] = useState(false);
 
   const fund = OPTIONS.find((f) => f.id === fundId) ?? OPTIONS[0];
   const cur = CURRENCIES.find((c) => c.code === ccy) ?? CURRENCIES[0];
+  const local = ccy === "GHS";
 
   const r = useMemo(() => {
     const amt = Number(amount) || 0;
@@ -309,8 +326,9 @@ export default function CalculatorPage() {
           className="mt-2 max-w-2xl text-[13.5px] leading-relaxed"
           style={{ color: C.muted }}
         >
-          Sending money to Ghana from abroad? The exchange rate usually moves
-          your outcome more than the fund does. This separates the two.
+          What a fund's charge actually costs you over time — and, if you are
+          sending money from abroad, how much of your outcome was the exchange
+          rate rather than the fund.
         </p>
 
         {/*
@@ -378,11 +396,13 @@ export default function CalculatorPage() {
                   {r.totalPct >= 0 ? "+" : ""}
                   {r.totalPct.toFixed(1)}% on what you sent
                 </p>
-                <p className="mt-0.5 text-[11px] opacity-70">
-                  GH₵{Math.round(r.cedisIn).toLocaleString("en-GB")} sent, grew
-                  to GH₵{Math.round(r.netOut).toLocaleString("en-GB")} after
-                  charges
-                </p>
+                {!local && (
+                  <p className="mt-0.5 text-[11px] opacity-70">
+                    GH₵{Math.round(r.cedisIn).toLocaleString("en-GB")} sent,
+                    grew to GH₵{Math.round(r.netOut).toLocaleString("en-GB")}{" "}
+                    after charges
+                  </p>
+                )}
 
                 {/*
                   The breakdown. Hidden here on a phone and repeated below the
@@ -390,10 +410,12 @@ export default function CalculatorPage() {
                   input in view.
                 */}
                 <div
-                  className="mt-4 hidden gap-4 border-t pt-4 lg:grid"
+                  className={`mt-4 hidden gap-4 border-t pt-4 lg:grid ${
+                local ? "lg:grid-cols-2" : ""
+              }`}
                   style={{ borderColor: "rgba(255,255,255,0.25)" }}
                 >
-                  <Split r={r} money={money} fund={fund} />
+                  <Split r={r} money={money} fund={fund} local={local} />
                 </div>
               </section>
             )}
@@ -410,7 +432,7 @@ export default function CalculatorPage() {
               <Field
                 label="Currency and amount you send"
                 hint={
-                  rateOut === "" || rateBack === ""
+                  !local && (rateOut === "" || rateBack === "")
                     ? `Now enter your ${ccy} rates below.`
                     : undefined
                 }
@@ -431,9 +453,13 @@ export default function CalculatorPage() {
                         and do not re-read a field that already has something
                         in it. An empty box cannot be skipped.
                       */
-                      setCcy(e.target.value);
-                      setRateOut("");
-                      setRateBack("");
+                      const next = e.target.value;
+                      setCcy(next);
+                      // Cedis need no conversion, so 1 and 1. Anything else
+                      // clears, because a pound rate silently applied to
+                      // dollars produces a plausible wrong answer.
+                      setRateOut(next === "GHS" ? "1" : "");
+                      setRateBack(next === "GHS" ? "1" : "");
                     }}
                     className="cursor-pointer rounded-xl px-3 py-2.5 text-[14px]"
                     style={inputStyle}
@@ -476,7 +502,9 @@ export default function CalculatorPage() {
               </Field>
 
               {/* The currency is named in the label, so a stale figure would
-                  be visible even if the clearing above ever failed. */}
+                  be visible even if the clearing above ever failed. Hidden
+                  entirely for cedis — there is nothing to convert. */}
+              {!local && (
               <Field
                 label={`Cedis per 1 ${ccy}, when you send`}
                 hint="The rate you actually got, not the published one — your provider's margin is part of the cost."
@@ -493,7 +521,9 @@ export default function CalculatorPage() {
                   }}
                 />
               </Field>
+              )}
 
+              {!local && (
               <Field
                 label={`Cedis per 1 ${ccy}, when you take it out`}
                 hint="A lower number means the cedi strengthened, which works in your favour."
@@ -510,6 +540,7 @@ export default function CalculatorPage() {
                   }}
                 />
               </Field>
+              )}
 
               <Field label="Years invested">
                 <input
@@ -551,12 +582,14 @@ export default function CalculatorPage() {
               room for it. */}
           {r && (
             <section
-              className="order-3 grid grid-cols-3 gap-3 rounded-2xl p-5 text-white lg:hidden"
+              className={`order-3 grid gap-3 rounded-2xl p-5 text-white lg:hidden ${
+                local ? "grid-cols-2" : "grid-cols-3"
+              }`}
               style={{
                 background: `linear-gradient(135deg, ${C.deep} 0%, ${C.teal} 72%)`,
               }}
             >
-              <Split r={r} money={money} fund={fund} />
+              <Split r={r} money={money} fund={fund} local={local} />
             </section>
           )}
         </div>
