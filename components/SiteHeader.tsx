@@ -52,6 +52,7 @@ const MENUS: { label: string; items: Item[] }[] = [
       // as an investment, and someone browsing Invest will not think to look
       // under "Shares & gold" for it.
       ["/compare/commodity-GHS", "Gold", "Coins and the NewGold ETF"],
+      ["/calculator", "Return calculator", "What the fund did, what the currency did"],
       ["/match", "Find what fits you", "Eight questions, nothing saved"],
     ],
   },

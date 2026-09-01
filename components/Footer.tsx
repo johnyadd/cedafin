@@ -43,6 +43,7 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
     links: [
       ["/funds", "Every fund"],
       ["/match", "Find what fits you"],
+      ["/calculator", "Return calculator"],
       ["/compare/money_market-GHS", "Money market funds"],
       ["/compare/fixed_income-GHS", "Fixed income funds"],
       ["/compare/government_security-GHS", "Treasury bills"],

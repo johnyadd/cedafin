@@ -59,6 +59,7 @@ const C = {
 
 const TOOLS: [href: string, title: string, note: string][] = [
   ["/match", "Find what fits you", "Eight questions. Answers stay in your browser."],
+  ["/calculator", "Return calculator", "Separates the fund, the currency and the charges."],
   ["/shares", "39 listed shares", "Price history from the exchange's own reports."],
   ["/brokers", "24 stockbrokers", "Not one publishes a commission rate. We checked."],
   ["/compare/commodity-GHS", "Gold, four ways", "The small coin costs twice what the big one does."],
