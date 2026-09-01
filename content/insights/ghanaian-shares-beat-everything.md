@@ -90,8 +90,8 @@ conditions. A share is a claim on a company, and a price chart says nothing
 about whether the company is sound.
 
 **And whether any of it repeats.** Ghanaian Treasury bills paid over 20% in
-early 2025 and around 5% by August 2026. Money that left deposits looking for
-return had to go somewhere, and some of it went here. That is a rate cycle, not
-a permanent condition.
+early 2025 and 5.08% in August 2026. Money that left deposits looking for
+return had to go somewhere, and some of it went here. That is a rate cycle, and
+cycles turn.
 
 [See all 39 listed shares with their price history](/shares)

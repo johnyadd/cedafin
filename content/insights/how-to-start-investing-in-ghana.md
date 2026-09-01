@@ -101,10 +101,11 @@ Lending directly to the government of Ghana, for 91, 182 or 364 days.
 broker takes something to buy it for you, and what that is depends on the bank
 — none publishes it clearly.
 
-**The thing to understand.** These rates have collapsed. The 91-day bill paid
-over 20% in early 2025 and pays 5.08% now. If you read an article praising
-Ghanaian Treasury bill returns, check when it was written — a fund that
-returned 33% last year did it in a rate environment that no longer exists.
+**The thing to understand.** These rates move, and they have moved a long way.
+The 91-day bill paid over 20% in early 2025 and 5.08% in August 2026. If you
+read an article praising Ghanaian Treasury bill returns, check when it was
+written and check the rate today — a fund that returned 33% earned it in
+conditions that may no longer apply.
 
 **Withholding tax** applies to the interest. We have seen 8% quoted but only
 from secondary sources, so treat it as unverified until your bank confirms.
