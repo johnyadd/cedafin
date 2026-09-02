@@ -75,6 +75,17 @@ On GH₵5,000, the difference between 1.75% and 2.25% is GH₵25 a year. Not
 enormous — but it is charged every year, on a rising balance, and it comes out
 whether the fund makes money or not.
 
+**The minimum and the charge are separate questions.** Stanbic Cash Trust
+takes GH₵20 to open, the lowest verified minimum in Ghana, and charges 2.25% a
+year. First Atlantic charges 1.75%. So the most accessible fund is not the
+cheapest one — on GH₵20 the difference is pesewas, but on GH₵20,000 it is
+GH₵100 a year, every year, on a rising balance. Starting with what you can
+reach does not mean staying there.
+
+**And ask for the top-up minimum, not just the opening one.** They are
+frequently different, and a fund that opens at GH₵20 may want GH₵100 each time
+after. If you plan to add monthly, that is the figure that governs.
+
 **What to watch.** The stated charge and the total expense ratio are different
 figures, and they should agree. Stanbic publishes stated charges of 2.25% and a
 TER of 1.86% — the TER is normally the fuller figure, so seeing it 39 basis
