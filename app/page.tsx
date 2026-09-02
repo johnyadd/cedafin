@@ -480,6 +480,46 @@ export default async function Home() {
                 </div>
               </div>
 
+              {/*
+                Borrowing reading, inside the borrowing section.
+
+                The Insights column lists the five most recent articles
+                regardless of subject, and a side column does not move with
+                the reader. Putting the relevant pieces here means they sit
+                where someone is already looking.
+              */}
+              <div
+                className="mt-5 border-t pt-4"
+                style={{ borderColor: "rgba(255,255,255,0.25)" }}
+              >
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75">
+                  Worth reading first
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {(
+                    [
+                      [
+                        "/insights/how-to-borrow-for-your-business-in-ghana",
+                        "How to borrow for your business in Ghana",
+                      ],
+                      [
+                        "/insights/advertised-rate-against-what-you-pay",
+                        "One bank advertises 13.70% and charges 23.42%",
+                      ],
+                    ] as [string, string][]
+                  ).map(([href, label]) => (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className="text-[12.5px] underline underline-offset-4 opacity-90 hover:opacity-100"
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <div className="mt-5 flex flex-wrap gap-2.5">
                 <Link
                   href="/funding"
