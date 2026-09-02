@@ -55,6 +55,7 @@ const C = {
   card: "#FFFFFF",
   rule: "#DAE4EB",
   muted: "#5F6E78",
+  good: "#0E8F62",
 };
 
 const TOOLS: [href: string, title: string, note: string][] = [
@@ -313,6 +314,71 @@ export default async function Home() {
             </section>
 
             {/*
+              Three figures nobody else publishes.
+
+              The compare-by-kind grid tells a visitor what sections exist. It
+              does not tell them why any of it is worth reading.
+
+              Each of these survives the outreach succeeding, which is the
+              test for a home page: a gold premium is a price, the index is a
+              market fact, and the fee gap comes from the regulator. An
+              earlier version led with "0 of 24 brokers publish a rate" —
+              true, and wrong the moment one replies.
+            */}
+            <section className="mt-8">
+              <h2
+                className="text-[11px] font-semibold uppercase tracking-[0.14em]"
+                style={{ color: C.gold }}
+              >
+                What the numbers show
+              </h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {(
+                  [
+                    [
+                      "/insights/gold-coin-premium-ladder",
+                      "7.75%",
+                      "what the smallest gold coin costs above the metal in it — more than twice the full ounce",
+                      C.gold,
+                    ],
+                    [
+                      "/insights/ghanaian-shares-beat-everything",
+                      "+172.7%",
+                      "the Ghana Stock Exchange index, Feb 2025 to Jul 2026 — on trading volume up 331%",
+                      C.good,
+                    ],
+                    [
+                      "/insights/advertised-rate-against-what-you-pay",
+                      "9.72pt",
+                      "gap between what one bank advertises and what its loan actually costs",
+                      "#8A4B1F",
+                    ],
+                  ] as [string, string, string, string][]
+                ).map(([href, figure, note, colour]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="group rounded-2xl p-4 transition-shadow hover:shadow-md"
+                    style={{ background: C.card, border: `1px solid ${C.rule}` }}
+                  >
+                    <p
+                      className="text-[1.7rem] font-bold tabular-nums leading-none"
+                      style={{ color: colour, fontFamily: "var(--font-display)" }}
+                    >
+                      {figure}
+                    </p>
+                    <p
+                      className="mt-2 text-[12px] leading-relaxed"
+                      style={{ color: C.muted }}
+                    >
+                      {note}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/*
               The borrow side, which was one button in the hero and a card in
               the sidebar — half the site, almost invisible. A business owner
               arriving here had nothing addressed to them.
@@ -363,6 +429,54 @@ export default async function Home() {
                     33.58%
                   </p>
                   <p className="mt-1 text-[10.5px] opacity-70">Guaranty Trust</p>
+                </div>
+              </div>
+
+              {/*
+                Nine combinations, because that is what the data holds —
+                three kinds of credit at one, three and five years, from Bank
+                of Ghana APR returns. /funding already filters on type and
+                term, so each lands on the right comparison rather than the
+                same page nine times.
+
+                The invest side had a grid like this from the start. The
+                borrow side had one button.
+              */}
+              <div
+                className="mt-6 border-t pt-5"
+                style={{ borderColor: "rgba(255,255,255,0.25)" }}
+              >
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75">
+                  Compare by kind and term
+                </p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  {(
+                    [
+                      ["sme_credit", "Business", "22 banks"],
+                      ["personal_credit", "Personal", "21 banks"],
+                      ["corporate_credit", "Corporate", "21 banks"],
+                    ] as [string, string, string][]
+                  ).map(([type, label, count]) => (
+                    <div key={type}>
+                      <p className="text-[12.5px] font-bold">{label}</p>
+                      <p className="text-[10.5px] opacity-70">{count}</p>
+                      <div className="mt-1.5 flex gap-1.5">
+                        {[1, 3, 5].map((term) => (
+                          <Link
+                            key={term}
+                            href={`/funding?type=${type}&term=${term}`}
+                            className="rounded-full px-2.5 py-1 text-[11.5px] font-semibold"
+                            style={{
+                              background: "rgba(255,255,255,0.15)",
+                              border: "1px solid rgba(255,255,255,0.25)",
+                            }}
+                          >
+                            {term}yr
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
