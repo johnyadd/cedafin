@@ -311,6 +311,78 @@ export default async function Home() {
                 says so rather than filling the gap.
               </p>
             </section>
+
+            {/*
+              The borrow side, which was one button in the hero and a card in
+              the sidebar — half the site, almost invisible. A business owner
+              arriving here had nothing addressed to them.
+            */}
+            <section
+              className="mt-8 overflow-hidden rounded-2xl p-5 text-white sm:p-6"
+              style={{
+                background: `linear-gradient(135deg, #6B3A16 0%, #A9662E 75%)`,
+              }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] opacity-80">
+                Borrowing
+              </p>
+              <h2
+                className="mt-2 text-[1.4rem] font-bold leading-tight sm:text-[1.7rem]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                The same loan costs 11% at one bank and 34% at another
+              </h2>
+              <p className="mt-3 text-[13.5px] leading-relaxed opacity-90">
+                Bank of Ghana requires every bank to report what its lending
+                actually costs, fees included. We publish those figures for 22
+                banks. On a one-year SME loan the cheapest and the dearest are
+                22.5 percentage points apart — about GH&#8373;22,550 a year on
+                GH&#8373;100,000.
+              </p>
+
+              <div className="mt-5 grid grid-cols-2 gap-4 sm:max-w-sm">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider opacity-75">
+                    Cheapest
+                  </p>
+                  <p
+                    className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none"
+                    style={{ color: C.gold }}
+                  >
+                    11.03%
+                  </p>
+                  <p className="mt-1 text-[10.5px] opacity-70">
+                    Standard Chartered
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider opacity-75">
+                    Dearest
+                  </p>
+                  <p className="mt-1 text-[1.5rem] font-bold tabular-nums leading-none">
+                    33.58%
+                  </p>
+                  <p className="mt-1 text-[10.5px] opacity-70">Guaranty Trust</p>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                <Link
+                  href="/funding"
+                  className="rounded-full px-4 py-2.5 text-[13px] font-bold"
+                  style={{ background: C.gold, color: C.ink }}
+                >
+                  Compare all 22 banks &rarr;
+                </Link>
+                <Link
+                  href="/funding/match"
+                  className="rounded-full px-4 py-2.5 text-[13px] font-bold"
+                  style={{ border: "1px solid rgba(255,255,255,0.4)" }}
+                >
+                  Find funding that fits
+                </Link>
+              </div>
+            </section>
           </div>
 
           {/* RIGHT — our own tools, not advertising. */}
