@@ -32,6 +32,7 @@ import Link from "next/link";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import Footer from "@/components/Footer";
+import Subscribe from "@/components/Subscribe";
 import { BRAND } from "@/lib/brand";
 import { getPeerGroups, getPublishedFunds } from "@/lib/data/funds";
 import { getArticles, type Article } from "@/lib/insights";
@@ -280,6 +281,15 @@ export default async function Home() {
                 All insights &rarr;
               </Link>
             </p>
+
+            {/*
+              The newsletter, beside the reading rather than only at the foot
+              of an article. It is the one thing on this site that compounds,
+              and it belongs next to the writing it offers more of.
+            */}
+            <div className="mt-5">
+              <Subscribe source="home" compact />
+            </div>
           </aside>
 
           <div className="order-1 lg:order-2">
@@ -407,6 +417,36 @@ export default async function Home() {
                 />
               ))}
             </ul>
+
+            {/*
+              What the site cannot show, and why. A visitor who wonders where
+              the other sixty-seven funds are should find the answer beside
+              the tools rather than having to look for it.
+            */}
+            <section
+              className="mt-6 rounded-2xl p-4"
+              style={{ background: C.card, border: `1px solid ${C.rule}` }}
+            >
+              <p className="text-[12.5px] font-bold">8 funds of 75, in full</p>
+              <p
+                className="mt-1.5 text-[11.5px] leading-relaxed"
+                style={{ color: C.muted }}
+              >
+                We have catalogued 75 Ghanaian funds. Eight publish enough for
+                us to show what they charge and what they returned. The rest
+                are listed with the fields blank, because we will not publish a
+                figure we cannot source.
+              </p>
+              <p className="mt-2 text-[12px]">
+                <Link
+                  href="/funds"
+                  className="font-semibold underline underline-offset-4"
+                  style={{ color: C.deep }}
+                >
+                  See all 75 &rarr;
+                </Link>
+              </p>
+            </section>
           </aside>
         </div>
 
