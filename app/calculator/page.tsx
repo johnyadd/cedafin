@@ -453,7 +453,10 @@ export default function CalculatorPage() {
               Returns calculator
             </h2>
             <p className="text-[11.5px] opacity-80">
-              Change anything on the left — the figures update as you type
+              {/* Names the form rather than pointing at it. "On the left"
+                  was false on a phone, where it sits below. */}
+              Change any figure on the Returns form — the result updates as
+              you type
             </p>
           </div>
           <div className="p-4 sm:p-5">
@@ -609,7 +612,7 @@ export default function CalculatorPage() {
             className="order-2 rounded-2xl p-5 sm:p-6 lg:order-1"
             style={{ background: C.card, border: `1px solid ${C.rule}` }}
           >
-            <h2 className="text-[14px] font-bold">Change any of it</h2>
+            <h2 className="text-[14px] font-bold">Returns form</h2>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field
