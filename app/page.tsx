@@ -384,81 +384,6 @@ export default async function Home() {
               ))}
             </div>
 
-            {/*
-              Three figures nobody else publishes.
-
-              Each survives the outreach succeeding, which is the test for a
-              home page: a gold premium is a price, the index is a market fact,
-              and the fee gap comes from the regulator. An earlier version led
-              with "0 of 24 brokers publish a rate" — true, and wrong the
-              moment one replies.
-            */}
-            <h3 className={`mt-8 ${eyebrow}`} style={{ color: C.gold }}>
-              What the numbers show
-            </h3>
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {(
-                [
-                  [
-                    "/insights/gold-coin-premium-ladder",
-                    "7.75%",
-                    "what the smallest gold coin costs above the metal in it — more than twice the full ounce",
-                    C.gold,
-                  ],
-                  [
-                    "/insights/ghanaian-shares-beat-everything",
-                    "+172.7%",
-                    "the Ghana Stock Exchange index, Feb 2025 to Jul 2026 — on trading volume up 331%",
-                    C.good,
-                  ],
-                  [
-                    "/insights/advertised-rate-against-what-you-pay",
-                    "9.72pt",
-                    "gap between what one bank advertises and what its loan actually costs",
-                    C.brown,
-                  ],
-                ] as [string, string, string, string][]
-              ).map(([href, figure, note, colour]) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="rounded-2xl p-4 transition-shadow hover:shadow-md"
-                  style={{ background: C.card, border: `1px solid ${C.rule}` }}
-                >
-                  <p
-                    className="text-[1.7rem] font-bold tabular-nums leading-none"
-                    style={{ color: colour, fontFamily: "var(--font-display)" }}
-                  >
-                    {figure}
-                  </p>
-                  <p
-                    className="mt-2 text-[12px] leading-relaxed"
-                    style={{ color: C.muted }}
-                  >
-                    {note}
-                  </p>
-                </Link>
-              ))}
-            </div>
-
-            <section
-              className="mt-8 rounded-2xl p-5"
-              style={{ background: C.card, border: `1px solid ${C.rule}` }}
-            >
-              <h3 className="text-[14px] font-bold">
-                Where these figures come from
-              </h3>
-              <p
-                className="mt-2 text-[13px] leading-relaxed"
-                style={{ color: C.muted }}
-              >
-                Bank of Ghana&rsquo;s tender results and daily circulars, the
-                Ghana Stock Exchange&rsquo;s monthly reports, the SEC&rsquo;s
-                registers, and fund managers&rsquo; own factsheets. Nothing here
-                is estimated, and where a provider publishes nothing, the page
-                says so rather than filling the gap.
-              </p>
-            </section>
           </div>
 
           <aside className="order-3">
@@ -484,6 +409,93 @@ export default async function Home() {
             </ul>
           </aside>
         </div>
+
+        {/*
+          Below the columns, at full width.
+
+          These were in the centre, which made it much taller than the side
+          columns and left a long gap either side of everything low on the
+          page. Chasing equal heights by adding content is padding; taking the
+          tall parts out is the structural fix — and the findings row wanted
+          the width anyway, since three cards squeezed into a narrow middle
+          were never going to read well.
+        */}
+        {/*
+          Three figures nobody else publishes.
+
+          Each survives the outreach succeeding, which is the test for a
+          home page: a gold premium is a price, the index is a market fact,
+          and the fee gap comes from the regulator. An earlier version led
+          with "0 of 24 brokers publish a rate" — true, and wrong the
+          moment one replies.
+        */}
+        <h3 className={`mt-8 ${eyebrow}`} style={{ color: C.gold }}>
+          What the numbers show
+        </h3>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {(
+            [
+              [
+                "/insights/gold-coin-premium-ladder",
+                "7.75%",
+                "what the smallest gold coin costs above the metal in it — more than twice the full ounce",
+                C.gold,
+              ],
+              [
+                "/insights/ghanaian-shares-beat-everything",
+                "+172.7%",
+                "the Ghana Stock Exchange index, Feb 2025 to Jul 2026 — on trading volume up 331%",
+                C.good,
+              ],
+              [
+                "/insights/advertised-rate-against-what-you-pay",
+                "9.72pt",
+                "gap between what one bank advertises and what its loan actually costs",
+                C.brown,
+              ],
+            ] as [string, string, string, string][]
+          ).map(([href, figure, note, colour]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-2xl p-4 transition-shadow hover:shadow-md"
+              style={{ background: C.card, border: `1px solid ${C.rule}` }}
+            >
+              <p
+                className="text-[1.7rem] font-bold tabular-nums leading-none"
+                style={{ color: colour, fontFamily: "var(--font-display)" }}
+              >
+                {figure}
+              </p>
+              <p
+                className="mt-2 text-[12px] leading-relaxed"
+                style={{ color: C.muted }}
+              >
+                {note}
+              </p>
+            </Link>
+          ))}
+        </div>
+
+
+        <section
+          className="mt-8 rounded-2xl p-5"
+          style={{ background: C.card, border: `1px solid ${C.rule}` }}
+        >
+          <h3 className="text-[14px] font-bold">
+            Where these figures come from
+          </h3>
+          <p
+            className="mt-2 text-[13px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Bank of Ghana&rsquo;s tender results and daily circulars, the
+            Ghana Stock Exchange&rsquo;s monthly reports, the SEC&rsquo;s
+            registers, and fund managers&rsquo; own factsheets. Nothing here
+            is estimated, and where a provider publishes nothing, the page
+            says so rather than filling the gap.
+          </p>
+        </section>
 
         {/* ───────────────────────── BORROWING ───────────────────────── */}
         <div className="mt-14">
@@ -621,24 +633,6 @@ export default async function Home() {
                 </div>
               </section>
 
-              <section
-                className="mt-6 rounded-2xl p-5"
-                style={{ background: C.card, border: `1px solid ${C.rule}` }}
-              >
-                <h3 className="text-[14px] font-bold">
-                  Where the lending figures come from
-                </h3>
-                <p
-                  className="mt-2 text-[13px] leading-relaxed"
-                  style={{ color: C.muted }}
-                >
-                  Bank of Ghana&rsquo;s Annual Percentage Rates and Average
-                  Interest Rates returns, which every bank is required to file.
-                  They show what a loan costs once fees are counted — not the
-                  interest rate on the poster. Three of the twenty-two banks
-                  mention a rate on their own website.
-                </p>
-              </section>
             </div>
 
             <aside className="order-3">
@@ -689,6 +683,25 @@ export default async function Home() {
               </section>
             </aside>
           </div>
+
+          <section
+            className="mt-6 rounded-2xl p-5"
+            style={{ background: C.card, border: `1px solid ${C.rule}` }}
+          >
+            <h3 className="text-[14px] font-bold">
+              Where the lending figures come from
+            </h3>
+            <p
+              className="mt-2 text-[13px] leading-relaxed"
+              style={{ color: C.muted }}
+            >
+              Bank of Ghana&rsquo;s Annual Percentage Rates and Average
+              Interest Rates returns, which every bank is required to file.
+              They show what a loan costs once fees are counted — not the
+              interest rate on the poster. Three of the twenty-two banks
+              mention a rate on their own website.
+            </p>
+          </section>
         </div>
       </div>
 
