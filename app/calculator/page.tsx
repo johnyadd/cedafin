@@ -177,6 +177,8 @@ interface Result {
   chargeCostHome: number;
   currencyEffect: number;
   fundOnlyPct: number;
+  scenarios: { label: string; back: number; pct: number }[];
+  chargeOverTime: { years: number; cost: number }[];
 }
 
 function Split({
@@ -240,7 +242,9 @@ function Split({
           Charges took
         </p>
         <p className="mt-1 text-[1.05rem] font-bold tabular-nums leading-none">
-          {r.ready ? `−${money(r.chargeCostHome)}` : dash}
+          {r.ready && fund.chargePct > 0
+            ? `−${money(r.chargeCostHome)}`
+            : dash}
         </p>
         <p className="mt-1 text-[10px] opacity-70">
           {fund.chargePct.toFixed(2)}% a year
@@ -323,6 +327,41 @@ export default function CalculatorPage() {
       chargeCostHome,
       currencyEffect,
       fundOnlyPct: ret * 100,
+      /*
+        Three currency outcomes, not one.
+
+        A projection showing only the assumption someone happened to type is
+        not a projection. The FCA rule on forward-looking performance requires
+        scenarios in both directions, and the reason is plain once stated: a
+        reader who enters a favourable rate sees a good number and stops.
+
+        These need no typing — the range is simply visible.
+      */
+      scenarios: [1, 2, 3].map((i) => {
+        const mult = i === 1 ? 0.9 : i === 2 ? 1 : 1.2;
+        const label =
+          i === 1
+            ? "cedi strengthens 10%"
+            : i === 2
+              ? "cedi does not move"
+              : "cedi weakens 20%";
+        const b = netOut / (out * mult);
+        return { label, back: b, pct: amt > 0 ? (b / amt - 1) * 100 : 0 };
+      }),
+
+      /*
+        What the charge costs over 1, 5 and 10 years.
+
+        Research on retail disclosure found the standard "past performance is
+        not a guide" wording does not improve decisions, and that pointing
+        people at fees does. A percentage is easy to dismiss; the same charge
+        as a total over ten years is not.
+      */
+      chargeOverTime: [1, 5, 10].map((y) => {
+        const g = cedisIn * Math.pow(1 + ret, y);
+        const n = g * Math.pow(1 - chg, y);
+        return { years: y, cost: (g - n) / out };
+      }),
     };
   }, [amount, rateOut, rateBack, years, returnPct, fund]);
 
@@ -392,6 +431,32 @@ export default function CalculatorPage() {
           first field is visible without scrolling, and the detail is still
           there for anyone who reads that far.
         */}
+        {/*
+          One outlined container around the form and the result, so they read
+          as a single tool. Before this they were two panels sitting near each
+          other, and nothing said they were connected.
+        */}
+        <div
+          className="mt-5 overflow-hidden rounded-3xl"
+          style={{ background: C.card, border: `1px solid ${C.rule}` }}
+        >
+          <div
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-3.5 text-white sm:px-6"
+            style={{
+              background: `linear-gradient(90deg, ${C.deep}, ${C.teal})`,
+            }}
+          >
+            <h2
+              className="text-[15px] font-bold"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Returns calculator
+            </h2>
+            <p className="text-[11.5px] opacity-80">
+              Change anything on the left — the figures update as you type
+            </p>
+          </div>
+          <div className="p-4 sm:p-5">
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-start">
           {/* Result — first on mobile, right-hand column on desktop. */}
           <div className="order-1 lg:order-2 lg:sticky lg:top-[76px]">
@@ -450,6 +515,93 @@ export default function CalculatorPage() {
                 <Split r={r} money={money} fund={fund} local={local} dash={dash} />
               </div>
             </section>
+
+            {/*
+              Three outcomes at once, so the range is visible without anyone
+              having to think to test it. A reader who typed a favourable rate
+              would otherwise see one good number and stop.
+
+              Not shown for a cedi investor — there is no exchange step, so
+              there is no scenario to vary.
+            */}
+            {r.ready && !local && (
+              <div
+                className="mt-3 rounded-2xl p-4"
+                style={{ background: C.card, border: `1px solid ${C.rule}` }}
+              >
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-[0.12em]"
+                  style={{ color: C.muted }}
+                >
+                  Nobody knows the rate in advance. The range:
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {r.scenarios.map((sc) => (
+                    <li
+                      key={sc.label}
+                      className="flex items-baseline justify-between gap-3 text-[12.5px]"
+                    >
+                      <span style={{ color: C.muted }}>If the {sc.label}</span>
+                      <span className="tabular-nums">
+                        <strong>{money(sc.back)}</strong>{" "}
+                        <span
+                          style={{ color: sc.pct >= 0 ? C.good : C.clay }}
+                        >
+                          {sc.pct >= 0 ? "+" : ""}
+                          {sc.pct.toFixed(1)}%
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/*
+              The charge as a total, not a percentage.
+
+              Research on retail disclosure found the standard past-performance
+              warning does not improve decisions and that pointing people at
+              fees does. 1.75% sounds like nothing; the same charge compounding
+              for ten years does not.
+            */}
+            {r.ready && (
+              <div
+                className="mt-3 rounded-2xl p-4"
+                style={{ background: C.card, border: `1px solid ${C.rule}` }}
+              >
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-[0.12em]"
+                  style={{ color: C.muted }}
+                >
+                  {fund.chargePct > 0
+                    ? `What ${fund.chargePct.toFixed(2)}% a year actually costs`
+                    : "No management charge on this one"}
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {r.chargeOverTime.map((c) => (
+                    <li
+                      key={c.years}
+                      className="flex items-baseline justify-between gap-3 text-[12.5px]"
+                    >
+                      <span style={{ color: C.muted }}>
+                        Over {c.years} year{c.years === 1 ? "" : "s"}
+                      </span>
+                      {/* A dash rather than zero. Three lines of "GH₵0"
+                          reads as a calculation that failed, not as a fund
+                          with no management charge. */}
+                      <strong className="tabular-nums">
+                        {fund.chargePct > 0 ? money(c.cost) : dash}
+                      </strong>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-[11px]" style={{ color: C.muted }}>
+                  Charged on the balance each year, so it grows as the
+                  investment does.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Form — second on mobile, left-hand column on desktop. */}
@@ -649,6 +801,8 @@ export default function CalculatorPage() {
               <Split r={r} money={money} fund={fund} local={local} dash={dash} />
             </section>
           )}
+        </div>
+          </div>
         </div>
 
         {/* The honest limits, not buried. */}
