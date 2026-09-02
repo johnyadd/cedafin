@@ -127,21 +127,42 @@ export default async function Home() {
                 Nothing published yet.
               </p>
             ) : (
-              <ul className="mt-3 space-y-3">
+              <ul className="mt-3 space-y-2.5">
                 {articles.slice(0, 5).map((a) => (
-                  <li
-                    key={a.slug}
-                    className="rounded-2xl p-4"
-                    style={{ background: C.card, border: `1px solid ${C.rule}` }}
-                  >
-                    <p className="text-[10.5px]" style={{ color: C.muted }}>
-                      {fmtDate(a.date)} · {a.readingMinutes} min
-                    </p>
+                  <li key={a.slug}>
+                    {/*
+                      Gold edge and a coloured date, matching the article
+                      cards on /insights. Five identical white blocks of text
+                      gave the eye nowhere to land.
+                    */}
                     <Link
                       href={`/insights/${a.slug}`}
-                      className="mt-1 block text-[13.5px] font-bold leading-snug"
+                      className="group flex overflow-hidden rounded-2xl transition-shadow hover:shadow-md"
+                      style={{
+                        background: C.card,
+                        border: `1px solid ${C.rule}`,
+                      }}
                     >
-                      {a.title}
+                      <span
+                        className="w-1 shrink-0"
+                        style={{ background: C.gold }}
+                        aria-hidden="true"
+                      />
+                      <span className="flex-1 p-4">
+                        <span
+                          className="block text-[10px] font-semibold uppercase tracking-[0.12em]"
+                          style={{ color: C.gold }}
+                        >
+                          {fmtDate(a.date)}
+                          <span style={{ color: C.muted }}>
+                            {" · "}
+                            {a.readingMinutes} min
+                          </span>
+                        </span>
+                        <span className="mt-1.5 block text-[13.5px] font-bold leading-snug">
+                          {a.title}
+                        </span>
+                      </span>
                     </Link>
                   </li>
                 ))}
@@ -300,24 +321,57 @@ export default async function Home() {
             >
               Tools
             </h2>
-            <ul className="mt-3 space-y-3">
-              {TOOLS.map(([href, title, note]) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className="block rounded-2xl p-4"
-                    style={{ background: C.card, border: `1px solid ${C.rule}` }}
-                  >
-                    <p className="text-[13.5px] font-bold">{title}</p>
-                    <p
-                      className="mt-1 text-[11.5px] leading-relaxed"
-                      style={{ color: C.muted }}
+            <ul className="mt-3 space-y-2.5">
+              {TOOLS.map(([href, title, note], i) => {
+                /*
+                  A coloured edge per tool, keyed to what it is rather than
+                  assigned at random — gold for gold, brown for borrowing, the
+                  brand blue for the rest. A column of identical white cards
+                  gave a reader nothing to aim at.
+                */
+                const edge = href.includes("commodity")
+                  ? C.gold
+                  : href.includes("funding")
+                    ? "#8A4B1F"
+                    : href.includes("shares") || href.includes("brokers")
+                      ? C.teal
+                      : C.deep;
+                return (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="group flex overflow-hidden rounded-2xl transition-shadow hover:shadow-md"
+                      style={{
+                        background: C.card,
+                        border: `1px solid ${C.rule}`,
+                      }}
                     >
-                      {note}
-                    </p>
-                  </Link>
-                </li>
-              ))}
+                      <span
+                        className="w-1 shrink-0"
+                        style={{ background: edge }}
+                        aria-hidden="true"
+                      />
+                      <span className="flex-1 p-4">
+                        <span className="flex items-baseline gap-1.5">
+                          <span className="text-[13.5px] font-bold">{title}</span>
+                          <span
+                            className="ml-auto text-[13px] opacity-0 transition-opacity group-hover:opacity-100"
+                            style={{ color: edge }}
+                          >
+                            &rarr;
+                          </span>
+                        </span>
+                        <span
+                          className="mt-1 block text-[11.5px] leading-relaxed"
+                          style={{ color: C.muted }}
+                        >
+                          {note}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
 
             {/*
