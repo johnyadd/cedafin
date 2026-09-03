@@ -730,18 +730,29 @@ export function creditLabel(c: string): string {
   return CREDIT_LABEL[c] ?? c;
 }
 
-export async function getLending(category?: string): Promise<LendingRow[]> {
+export async function getLending(
+  category?: string,
+  /*
+    Filter to one provider in the QUERY.
+
+    Without it the lender page fetched all 157 lending products and kept
+    seven — once per page, twenty-three times in a build, which truncated
+    the response mid-stream and failed with a garbled parse error.
+  */
+  providerSlug?: string,
+): Promise<LendingRow[]> {
   let q = publicClient()
     .from("products")
     .select(
       `id, slug, name, asset_class, lock_in_days, rate_min, rate_max,
        eligibility_notes,
-       providers ( trading_name, legal_name, slug ),
+       providers!inner ( trading_name, legal_name, slug ),
        product_fees ( verified_on )`,
     )
     .eq("market_side", "borrow")
     .eq("status", "published");
   if (category) q = q.eq("asset_class", category);
+  if (providerSlug) q = q.eq("providers.slug", providerSlug);
 
   const { data, error } = await q;
   if (error) throw new Error(`getLending: ${error.message}`);
@@ -837,8 +848,17 @@ export async function getLender(slug: string): Promise<LenderProfile | null> {
   if (error) throw new Error(`getLender: ${error.message}`);
   if (!data) return null;
 
-  const all = await getLending();
-  const mine = all.filter((r) => r.provider.slug === slug);
+  /*
+    Filtered in the query, not after it.
+
+    This fetched every lending product in the market and then kept one
+    provider's — 157 rows to use seven, once per lender page, twenty-three
+    times in a build. Enough to truncate the response mid-stream and fail
+    with a garbled parse error.
+
+    getLending already accepts a providerSlug. It simply was not being used.
+  */
+  const mine = await getLending(undefined, slug);
   if (mine.length === 0) return null;
 
   const aprs = mine.map((r) => r.aprPct).filter((v): v is number => v !== null);
@@ -868,17 +888,45 @@ export async function getLenderSlugs(): Promise<string[]> {
 }
 
 /** Market average APR per category and tenor, for context on a lender page. */
+/**
+ * Market average APR per category and tenor, for context on a lender page.
+ *
+ * Its own slim query rather than getLending().
+ *
+ * getLending returns the full payload — eligibility notes, provider records,
+ * fee histories — and this runs once per lender page, twenty-three times in a
+ * build. That was enough to truncate the response mid-stream and fail the
+ * build with a garbled parse error.
+ *
+ * Three columns is all an average needs.
+ */
 export async function getMarketAverages(): Promise<
   Map<string, { avg: number; count: number }>
 > {
-  const all = await getLending();
+  const { data, error } = await publicClient()
+    .from("products")
+    .select("asset_class, lock_in_days, rate_min, rate_max")
+    .eq("market_side", "borrow")
+    .eq("status", "published");
+  if (error) throw new Error(`getMarketAverages: ${error.message}`);
+
   const buckets = new Map<string, number[]>();
-  for (const r of all) {
-    if (r.aprPct === null) continue;
-    const k = `${r.category}:${r.tenorYears}`;
+  for (const r of (data ?? []) as {
+    asset_class: string | null;
+    lock_in_days: number | null;
+    rate_min: number | null;
+    rate_max: number | null;
+  }[]) {
+    // The APR shown elsewhere is the maximum — what the loan can cost — so
+    // the average is of those, not of the advertised minimums.
+    const apr = r.rate_max ?? r.rate_min;
+    if (apr === null || !r.asset_class || !r.lock_in_days) continue;
+    const years = Math.round(r.lock_in_days / 365);
+    const k = `${r.asset_class}:${years}`;
     if (!buckets.has(k)) buckets.set(k, []);
-    buckets.get(k)!.push(r.aprPct);
+    buckets.get(k)!.push(Number((apr * 100).toFixed(2)));
   }
+
   const out = new Map<string, { avg: number; count: number }>();
   for (const [k, vals] of buckets) {
     out.set(k, {
