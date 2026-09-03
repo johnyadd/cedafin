@@ -1,7 +1,7 @@
 ---
-title: There are three cedi exchange rates, and you get the worst one
+title: How to tell whether your exchange rate is any good
 date: 2026-09-03
-summary: Bank of Ghana published the dollar at GH₵11.05. Commercial banks sold it at GH₵11.92. Forex bureaux wanted GH₵12.25. That spread is larger than every charge this site compares, put together.
+summary: Bank of Ghana published the dollar at GH₵11.05 on 19 August. Commercial banks sold it at GH₵11.92, forex bureaux at GH₵12.25. Knowing the baseline is how you judge the rate you are quoted.
 tags: [currency, diaspora, costs]
 sources: [Bank of Ghana — Daily Interbank FX Rates, CediRates via Modern Ghana — daily bureau and commercial bank rates, Ghana News Agency — Bank of Ghana interbank data, August 2026]
 figuresAsOf: 2026-08-19
@@ -93,9 +93,13 @@ series, tell us and we will add it.
 
 ## Where to check
 
-Bank of Ghana publishes daily interbank rates for the dollar, pound, euro,
-Swiss franc, Canadian and Australian dollars, krone, krona and yen. That is
-your baseline — the number your own rate should be measured against.
+**Measure against the interbank rate**, the first of the three. It is the
+wholesale price between banks, so it is the floor: every retail rate sits above
+it, and the distance is what you are paying. Comparing against a bureau rate
+tells you nothing, because bureaux differ from each other.
+
+Bank of Ghana publishes it daily for the dollar, pound, euro, Swiss franc,
+Canadian and Australian dollars, krone, krona and yen.
 
 Ask your provider what rate they are giving you before you send, work out the
 gap yourself, and treat that gap as the price of the transfer.
