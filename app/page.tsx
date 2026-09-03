@@ -239,7 +239,11 @@ export default async function Home() {
     if (cur === undefined || v < cur) cheapestIn.set(f.peerGroup, v);
   }
 
-  const grid = "grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)_260px]";
+  // items-start matters: without it a grid child stretches to the row
+  // height, so a sticky aside has no room to move within its own cell and
+  // simply never sticks.
+  const grid =
+    "grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)_260px] lg:items-start";
   const eyebrow =
     "text-[11px] font-semibold uppercase tracking-[0.14em]";
 
@@ -257,7 +261,7 @@ export default async function Home() {
         />
 
         <div className={grid}>
-          <aside className="order-2 lg:order-1">
+          <aside className="order-2 lg:sticky lg:top-[76px] lg:order-1">
             <h3 className={eyebrow} style={{ color: C.gold }}>
               Reading
             </h3>
@@ -282,14 +286,6 @@ export default async function Home() {
               </Link>
             </p>
 
-            {/*
-              The newsletter, beside the reading rather than only at the foot
-              of an article. It is the one thing on this site that compounds,
-              and it belongs next to the writing it offers more of.
-            */}
-            <div className="mt-5">
-              <Subscribe source="home" compact />
-            </div>
           </aside>
 
           <div className="order-1 lg:order-2">
@@ -396,7 +392,7 @@ export default async function Home() {
 
           </div>
 
-          <aside className="order-3">
+          <aside className="order-3 lg:sticky lg:top-[76px]">
             <h3 className={eyebrow} style={{ color: C.gold }}>
               Tools
             </h3>
@@ -537,6 +533,20 @@ export default async function Home() {
           </p>
         </section>
 
+        {/*
+          The newsletter, full width.
+
+          It was in the left column, which made that column the long one and
+          simply moved the gap rather than closing it. Three columns holding
+          different content will never end level, so the tall things belong
+          out here — and a subscribe box in a 260px column was cramped
+          anyway.
+        */}
+        <div className="mt-8">
+          <Subscribe source="home" />
+        </div>
+
+
         {/* ───────────────────────── BORROWING ───────────────────────── */}
         <div className="mt-14">
           <SectionHead
@@ -546,7 +556,7 @@ export default async function Home() {
           />
 
           <div className={grid}>
-            <aside className="order-2 lg:order-1">
+            <aside className="order-2 lg:sticky lg:top-[76px] lg:order-1">
               <h3 className={eyebrow} style={{ color: C.brown }}>
                 Reading
               </h3>
@@ -675,7 +685,7 @@ export default async function Home() {
 
             </div>
 
-            <aside className="order-3">
+            <aside className="order-3 lg:sticky lg:top-[76px]">
               <h3 className={eyebrow} style={{ color: C.brown }}>
                 Tools
               </h3>
