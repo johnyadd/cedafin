@@ -117,7 +117,10 @@ export default function Subscribe({
         className={compact ? "text-[15px] font-bold" : "text-[22px] font-bold"}
         style={{ fontFamily: "var(--font-display)" }}
       >
-        Get the next one
+        {/* "the next one" made sense at the foot of an article, where the
+            referent was the piece just read. On the home page it referred to
+            nothing. */}
+        Get the next article
       </h2>
       <p
         className={`mt-2 leading-relaxed opacity-90 ${compact ? "text-[12px]" : "text-[14.5px]"}`}
