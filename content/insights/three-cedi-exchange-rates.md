@@ -1,108 +1,97 @@
 ---
 title: How to tell whether your exchange rate is any good
 date: 2026-09-03
-summary: Bank of Ghana published the dollar at GH₵11.05 on 19 August. Commercial banks sold it at GH₵11.92, forex bureaux at GH₵12.25. Knowing the baseline is how you judge the rate you are quoted.
+summary: A pound was worth GH₵15.31 through a transfer app on 3 September, GH₵16.23 at a forex bureau and GH₵16.44 on a card. Same currency, same day, 7% apart. The channel costs you, not the currency.
 tags: [currency, diaspora, costs]
-sources: [Bank of Ghana — Daily Interbank FX Rates, CediRates via Modern Ghana — daily bureau and commercial bank rates, Ghana News Agency — Bank of Ghana interbank data, August 2026]
-figuresAsOf: 2026-08-19
+sources: [Bank of Ghana — Daily Interbank FX Rates, CediRates — daily bank, bureau, card and remittance rates for Ghana]
+figuresAsOf: 2026-09-03
 liveAt: [/calculator]
 ---
 
-On 19 August 2026 the Bank of Ghana published an interbank rate of GH₵11.05
-to the dollar. That is the figure quoted in the news, used in reports, and
-printed at the bottom of most articles about the cedi.
+Every report on the cedi quotes one number. On 3 September 2026, Bank of Ghana
+published the pound at GH₵15.3073 on the interbank market.
 
-It is not what anyone got.
+Whether that is what you get depends entirely on how you move the money — and
+the difference between the best channel and the worst is about 7%.
 
-## The three rates, on one day
+## The same pound, the same day
 
-| Where | Cedis per US$1 |
-|---|---|
-| Bank of Ghana, interbank | 11.05 |
-| Commercial banks, selling | 11.92 |
-| **Forex bureaux, selling** | **12.25** |
+| How you move it | Cedis per £1 | Against interbank |
+|---|---|---|
+| Bank of Ghana interbank | 15.3073 | the baseline |
+| Remittance apps | 15.24 – 15.32 | at it |
+| Forex bureau, selling | 16.20 – 16.30 | +6% |
+| **Card payment** | **16.44** | **+7.4%** |
 
-The gap between the top and the bottom is about **10%**.
+Nothing about the currency changed between those rows. Only the channel did.
 
-For comparison, the difference between the cheapest and dearest Ghanaian fund
-this site can verify is 0.50% a year. The gap between the cheapest and dearest
-one-year business loan is 22.5 percentage points, and that is the widest thing
-we publish.
+## The good news first, because it is genuinely good
 
-A ten per cent spread on the money before it reaches an investment at all sits
-alongside those, and almost nobody counts it.
+**Transfer apps are giving close to the interbank rate.**
 
-## What each rate actually is
+On 3 September, LemFi, WorldRemit, Western Union, Sendwave, UnityLink and
+TapTap Send were all at GH₵15.32 to the pound. Wise was at 15.29 and Remitly at
+15.24. The interbank rate was 15.3073.
 
-**The interbank rate** is what banks charge each other, computed by Bank of
-Ghana from data all banks submit. It is a wholesale price between institutions,
-published for transparency. No member of the public transacts at it.
+Several of them were fractionally *above* it.
 
-**The commercial bank rate** is what a bank quotes a customer. On 19 August
-banks averaged GH₵11.41 buying and GH₵11.92 selling — an 51 pesewa spread
-between what they pay you and what they charge you, on top of being 87 pesewas
-above the interbank rate.
+That matters because the received wisdom — that remittances are expensive and
+the rate is where you get caught — is out of date on this corridor. Competition
+has compressed the margin to almost nothing on the rate itself.
 
-**The bureau rate** is the street. GH₵11.85 buying, GH₵12.25 selling.
+**Fees are a different matter.** A provider offering a good rate may still
+charge a flat fee, and on small transfers that fee is the whole cost. Compare
+what actually arrives, not the rate alone.
 
-Each tier is a real price. Only the first gets reported.
+## Where it does cost you
 
-## Why this matters more than usual right now
+**Using a UK card in Ghana.** At GH₵16.44 to the pound against an interbank
+rate of 15.3073, a card transaction costs about 7.4% on the exchange rate
+before any card fee. On a GH₵5,000 purchase that is roughly £20 you would not
+have paid by transferring the money first.
 
-Between 10 and 17 August the cedi firmed almost 7% on the interbank market —
-the dollar fell from about GH₵11.75 to GH₵10.94 in a week.
+**Buying cedis at a forex bureau.** Bureaux were selling at GH₵16.20 to 16.30
+— about 6% above interbank. Reasonable for cash on arrival; expensive as a way
+to move money.
 
-Forex bureaux carried on selling dollars roughly 10% dearer.
+**And the bureau spread is worth seeing.** Aboki was buying pounds at 15.50 and
+selling at 16.30 — 80 pesewas between the two sides of the same counter, on the
+same day. Whether a bureau is cheap or dear depends on which direction you are
+going.
 
-So the headline said the cedi had strengthened sharply, and most Ghanaians
-changing money did not feel it. The rally happened in a market they cannot
-reach.
+## What to do with this
 
-That is not a scandal; wholesale and retail prices differ in every market. But
-it does mean a Ghanaian reading that the cedi gained 7% and expecting their
-remittance to go further was reading a number about somebody else's
-transaction.
+**Know the baseline.** Bank of Ghana publishes daily interbank rates for the
+pound, dollar, euro, Swiss franc, Canadian and Australian dollars, krone, krona
+and yen. It is the wholesale price between banks — the floor everything else
+sits above.
 
-## What it means if you are sending money home
+**Compare your quote against it, not against another provider's advert.** The
+gap between your rate and the interbank figure is a cost, whether or not
+anybody calls it a fee.
 
-**The rate you are quoted is the one that matters, not the one in the news.**
-Whatever your provider offers is your rate, and the difference between it and
-the published figure is a cost, whether or not it is called a fee.
+**Move money before you travel, not while you are there.** The 7% gap between a
+transfer app and a card is the clearest avoidable cost in this whole article.
 
-**A provider advertising "no fees" may still be the expensive one.** If the fee
-is nil and the rate is 8% off the interbank figure, you have paid 8%.
+**And check the fee separately.** A good rate with a flat fee can still be the
+expensive option on a small transfer.
 
-**Compare the rate, not the fee.** On GH₵15,000 — roughly £1,000 — the
-difference between the interbank rate and a bureau rate is about GH₵1,600.
-That is more than a year of charges on most Ghanaian funds, taken in one
-transaction.
+## What this does not cover
 
-## What we could not establish
+**The dollar corridor.** These figures are for sterling on one day. The dollar
+has shown a wider gap historically — in mid-August, Bank of Ghana's interbank
+dollar rate was GH₵11.05 while bureaux sold at GH₵12.25, roughly 10%. Whether
+that reflects a different corridor or a different day, we have not established.
 
-All the figures above are for the US dollar.
+**Any day but this one.** Rates move. The figures above are 3 September 2026,
+and the point is the method rather than the numbers: find the baseline, measure
+your quote against it.
 
-**We could not find published bureau or commercial bank rates for sterling.**
-Bank of Ghana publishes an interbank pound rate daily — GH₵15.2432 on 31
-August — and international mid-market quotes match it closely. What a Ghanaian
-forex bureau pays for a pound is not something we could source.
-
-It would be surprising if sterling behaved very differently from the dollar.
-But surprising is not evidence, and the largest diaspora corridors into Ghana
-are sterling and dollar alike. If you know of a published sterling bureau
-series, tell us and we will add it.
-
-## Where to check
-
-**Measure against the interbank rate**, the first of the three. It is the
-wholesale price between banks, so it is the floor: every retail rate sits above
-it, and the distance is what you are paying. Comparing against a bureau rate
-tells you nothing, because bureaux differ from each other.
-
-Bank of Ghana publishes it daily for the dollar, pound, euro, Swiss franc,
-Canadian and Australian dollars, krone, krona and yen.
-
-Ask your provider what rate they are giving you before you send, work out the
-gap yourself, and treat that gap as the price of the transfer.
+**And which provider is best for you.** Live comparisons of remittance rates
+already exist and are updated constantly — CediRates publishes daily rates for
+Ghanaian banks, bureaux, cards and transfer apps, and several international
+sites compare providers on total cost. This is not that. It is the baseline
+those comparisons should be read against.
 
 ---
 
