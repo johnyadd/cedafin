@@ -81,9 +81,17 @@ Meanwhile several shares did nothing at all, and two fell.
 dealing member you use, and [not one of the twenty-four publishes a
 rate](/brokers).
 
-**Dividends.** The exchange's monthly report defines dividend yield in its
-glossary and publishes it for no company. Every figure above is a price move
-only, so all of them understate what a holder actually received.
+**Dividends — and a correction.** The exchange's monthly report defines
+dividend yield in its glossary and publishes it for no company, so every figure
+above is a price move only and understates what a holder received.
+
+An earlier version of this piece implied the data does not exist. It does, just
+not from the exchange. Black Star Advisors publishes a Ghana Equity Total Return
+Index accounting for both capital gains and dividends, and per-company dividend
+yields are available from third-party data providers. We do not yet hold either
+in a form we can date and source, which is why the figures above remain price
+moves — but "the exchange does not publish it" is not the same as
+"nobody does".
 
 **Anything about the businesses.** Earnings, debt, management, sector
 conditions. A share is a claim on a company, and a price chart says nothing
