@@ -69,6 +69,25 @@ function fmtDate(iso: string): string {
   });
 }
 
+/**
+ * A title per fund manager. Somebody searching "Stanbic Investment Management
+ * fees" should find their page, and the title decides whether they do.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const p = await getProvider(slug);
+  if (!p) return { title: "Provider not found" };
+  const name = p.name;
+  return {
+    title: `${name} funds — charges, minimums and returns`,
+    description: `What ${name} charges on its Ghanaian funds and what they returned, taken from their own published factsheets and dated.`,
+  };
+}
+
 export async function generateStaticParams() {
   const providers = await getProviders();
   return providers.map((p) => ({ slug: p.slug }));
