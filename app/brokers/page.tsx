@@ -87,6 +87,11 @@ function fmtDate(iso: string): string {
   });
 }
 
+export const metadata = {
+  title: "Ghanaian stockbrokers — fees, contacts and market share",
+  description:
+    "All 24 licensed dealing members of the Ghana Stock Exchange: market share, contact details, and what none of them publishes about what a trade costs.",
+};
 export const revalidate = 3600;
 
 export default async function BrokersPage() {

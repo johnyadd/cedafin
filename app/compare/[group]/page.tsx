@@ -223,6 +223,25 @@ function groupByFund(rows: FundRow[]): FundGroup[] {
   }));
 }
 
+/**
+ * A title per peer group. "Cedi money market funds compared" is what somebody
+ * searches; the site name is not.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ group: string }>;
+}) {
+  const { group } = await params;
+  const groups = await getPeerGroups();
+  const g = groups.find((x) => x.peerGroup.replace(":", "-") === group);
+  if (!g) return { title: "Not found" };
+  return {
+    title: `${g.label} compared — charges and returns`,
+    description: `${g.fundCount} ${g.label.toLowerCase()} in Ghana, compared on what they charge and what they returned. Every figure from documents the providers publish themselves, dated and sourced.`,
+  };
+}
+
 export async function generateStaticParams() {
   const groups = await getPeerGroups();
   return groups.map((g) => ({ group: g.peerGroup.replace(":", "-") }));

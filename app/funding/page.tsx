@@ -76,6 +76,11 @@ function fmtDate(iso: string): string {
   });
 }
 
+export const metadata = {
+  title: "SME and business loan rates in Ghana — 22 banks compared",
+  description:
+    "What Ghanaian banks actually charge for business, personal and corporate credit, from Bank of Ghana's own APR returns. The rate with the fees counted.",
+};
 export const revalidate = 3600;
 
 export default async function FundingPage({

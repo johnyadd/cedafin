@@ -79,6 +79,28 @@ export async function generateStaticParams() {
 
 export const revalidate = 3600;
 
+/**
+ * A title per bank, not one shared across twenty-three pages.
+ *
+ * Somebody searching "GCB Bank loan rate" should find GCB's page, and the
+ * title is most of what decides that. Every one of these pages carried the
+ * site's generic title until now.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const lender = await getLender(slug);
+  if (!lender) return { title: "Lender not found" };
+  const name = lender.name;
+  return {
+    title: `${name} loan rates — what they actually charge`,
+    description: `What ${name} charges for business, personal and corporate credit in Ghana, from Bank of Ghana's own APR returns. The rate with fees counted, dated and sourced.`,
+  };
+}
+
 export default async function LenderPage({
   params,
 }: {

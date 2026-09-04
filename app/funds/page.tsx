@@ -81,6 +81,11 @@ function fmtDate(iso: string): string {
   });
 }
 
+export const metadata = {
+  title: "Ghanaian mutual fund charges compared — 75 funds",
+  description:
+    "What Ghanaian mutual funds charge, from their own factsheets. Management fees, total expense ratios and minimum investments for every fund we can verify.",
+};
 export const revalidate = 3600;
 
 export default async function FundsPage() {

@@ -82,6 +82,11 @@ function fmtDate(iso: string): string {
  * beside it, and a chart pretending to more precision than fifteen monthly
  * points support would be decoration rather than information.
  */
+export const metadata = {
+  title: "Ghana Stock Exchange share prices — all 39 listed companies",
+  description:
+    "Price history for every company listed on the Ghana Stock Exchange, from the exchange's own monthly reports. What each share did, and what the figures leave out.",
+};
 export const revalidate = 3600;
 
 export default async function SharesPage() {
