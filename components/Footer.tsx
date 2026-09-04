@@ -195,6 +195,16 @@ export default function Footer() {
             rather be corrected than be wrong.
           </p>
 
+          <p className="mt-3 text-[12.5px]">
+            <Link
+              href="/methodology"
+              className="underline underline-offset-4"
+              style={{ color: C.deep }}
+            >
+              How we source every figure &rarr;
+            </Link>
+          </p>
+
           <p
             className="mt-5 text-[11px] leading-relaxed"
             style={{ color: C.muted }}
