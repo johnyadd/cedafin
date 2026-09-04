@@ -19,7 +19,7 @@ Nothing else available to a Ghanaian investor came close.
 |---|---|---|
 | **GSE Composite Index** | **+172.7%** | **Feb 2025 – Jul 2026** |
 | Stanbic Income Fund Trust | +38.80% | 1 year |
-| First Atlantic Income Fund | +34.73% | 1 year |
+| First Atlantic Income Fund | +31.68% | 11 months to Feb 2026 |
 | 364-day Treasury bill | 11.59% | current rate |
 | 91-day Treasury bill | 5.08% | current rate |
 | Ghana Gold Coin, 1 oz | −3.93% | Jun–Aug, in cedis |

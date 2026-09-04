@@ -77,7 +77,10 @@ const OPTIONS: {
     id: "faif",
     name: "First Atlantic Income Fund",
     chargePct: 1.75,
-    returnPct: 34.73,
+    // Total return, not annualised. 34.73% was the annualised figure for
+    // an eleven-month window — the API route already warns against exactly
+    // this, and the warning was not followed.
+    returnPct: 31.68,
     window: "1 year to Jun 2026",
     note: "Cheapest annual charge of the funds we can verify.",
   },
@@ -272,7 +275,7 @@ export default function CalculatorPage() {
   */
   const [rateBack, setRateBack] = useState("15.20");
   const [years, setYears] = useState("1");
-  const [returnPct, setReturnPct] = useState("34.73");
+  const [returnPct, setReturnPct] = useState("31.68");
   const [touchedReturn, setTouchedReturn] = useState(false);
 
   const fund = OPTIONS.find((f) => f.id === fundId) ?? OPTIONS[0];

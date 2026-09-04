@@ -29,7 +29,7 @@ Most Ghanaian factsheets we have read do not publish holdings.
 
 ## The return, and why the window matters more than the figure
 
-You will see something like "34.73%". Two questions before that number means
+You will see something like "31.68%". Two questions before that number means
 anything.
 
 **Over what period?** A return with no window is not a return. Look for "1
