@@ -7,10 +7,15 @@ sources: [Ghana Stock Exchange — monthly market reports, February 2025 to July
 ---
 
 To buy a share on the Ghana Stock Exchange you must go through a licensed
-dealing member. There are twenty-four of them. In August 2026 we visited every
-one of their websites to find out what they charge.
+dealing member. There are twenty-four of them, and choosing between them ought
+to start with what each one charges.
 
-Not one publishes a commission rate.
+We could not find a commission rate published by any of them — and it took two
+searches and a correction from a broker to be confident of that, so it is not
+something you will find on a Saturday afternoon either.
+
+We are in contact with providers to close the gaps, and publish whatever they
+send, cited and dated. Here is what we did find, and what to ask meanwhile.
 
 One publishes a minimum to open an account. Three describe their rates as
 "competitive" without giving a figure. Six did not respond at all.

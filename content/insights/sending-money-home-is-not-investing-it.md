@@ -113,7 +113,7 @@ permitted for residents. Whether non-residents are treated differently is not
 addressed. The NewGold ETF trades on the exchange at around GH₵462 a unit and
 needs a broker, which returns you to the paragraph above.
 
-## The question nobody publishes an answer to
+## Can you open an account without coming to Ghana?
 
 **Can I open an account without coming to Ghana?**
 
@@ -121,12 +121,14 @@ For someone in London, Toronto or New York, that is the first question and the
 one that decides everything. Not the charge, not the return — whether the thing
 is reachable at all.
 
-We have asked every broker and every fund manager whose contact details we
-hold. Not one currently publishes the answer. When any of them replies, it goes
-on their page, cited and dated.
+We could not find it answered by any Ghanaian fund manager or broker.
 
-Until then the honest advice is unglamorous: contact them directly, ask what a
-non-resident needs, and ask before you send money rather than after.
+**So ask before you send money**, not after. Three questions: do you accept
+non-resident applications, what documents do you need, and is a Ghanaian bank
+account required first.
+
+We are in contact with providers to close the gaps, and publish whatever they
+send, cited and dated — so the next person may not have to ask.
 
 ## Three things worth doing regardless
 

@@ -429,10 +429,14 @@ export default async function Home() {
                 className="mt-1.5 text-[11.5px] leading-relaxed"
                 style={{ color: C.muted }}
               >
-                We have catalogued 75 Ghanaian funds. Eight publish enough for
-                us to show what they charge and what they returned. The rest
-                are listed with the fields blank, because we will not publish a
-                figure we cannot source.
+                Eight Ghanaian funds publish enough to show what they charge
+                and what they returned. Those are compared here.
+                <br />
+                <br />
+                The other 67 are listed with the fields blank. We are in
+                contact with providers to close the gaps, and publish whatever
+                they send, cited and dated — an empty row is more use to you
+                than a number we made up.
               </p>
               <p className="mt-2 text-[12px]">
                 <Link

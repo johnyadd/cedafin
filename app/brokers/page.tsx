@@ -418,22 +418,50 @@ export default async function BrokersPage() {
           >
             <li>
               <strong style={{ color: C.ink }}>What any of them charge.</strong>{" "}
-              We visited all {brokers.length} websites. Not one publishes a
-              commission rate. One — Republic Securities — publishes a minimum
-              to open an account. Three describe their rates as
-              &ldquo;competitive&rdquo; without giving a figure. An
-              international platform quotes 0.75% for Ghanaian shares; what a
-              member firm in Accra charges is not published anywhere.
+              We could not find a published commission rate for any of the{" "}
+              {brokers.length}, having checked their websites, their platform
+              subdomains and the usual fee pages. Republic Securities publishes a
+              minimum to open an account; three describe their rates as
+              &ldquo;competitive&rdquo; without giving a figure.
+              <br />
+              <br />
+              <strong style={{ color: C.ink }}>
+                Ask before you open an account:
+              </strong>{" "}
+              what do you charge to buy and to sell, and is there a minimum? An
+              international platform quotes 0.75% for Ghanaian shares, which is a
+              useful figure to hold in your head while you ask.
+              <br />
+              <br />
+              We are in contact with providers to close the gaps, and publish
+              whatever they send, cited and dated.
             </li>
             <li>
-              <strong style={{ color: C.ink }}>
-                Six of them have no working website.
-              </strong>{" "}
-              Bullion Securities, CDH Securities, FirstBanc Brokerage, Petra
+              {/*
+                Was "six have no working website". That asserts something about
+                the firms; what we established is that the website ON THE SEC
+                REGISTER did not respond. Black Star proved the register can be
+                stale — their live site is on a different domain entirely — so
+                any of these six could have moved.
+              */}
+              <strong style={{ color: C.ink }}>Six are hard to find online.</strong>{" "}
+              For Bullion Securities, CDH Securities, FirstBanc Brokerage, Petra
               Securities, Sarpong Capital Markets and Strategic African
-              Securities did not respond when we checked. All six hold current
-              SEC licences. For someone trying to open an account, that is a
-              barrier before any question of cost.
+              Securities, the website listed on the SEC register did not respond.
+              They may have moved to a new domain — one firm on this page had,
+              and told us when we wrote.
+              <br />
+              <br />
+              All six hold current SEC licences.{" "}
+              <strong style={{ color: C.ink }}>
+                The telephone numbers below are the more reliable route
+              </strong>
+              , since several of the register&rsquo;s email addresses did not
+              work either.
+              <br />
+              <br />
+              We are in contact with providers to close the gaps, and publish
+              whatever they send, cited and dated.
             </li>
             <li>
               <strong style={{ color: C.ink }}>
