@@ -56,13 +56,30 @@ This is the part most worth understanding.
 **The total expense ratio** is that plus everything else — custody, audit,
 trustee fees, administration.
 
-The TER is normally the larger number. If a factsheet shows a TER *below* the
-stated charges, something needs explaining. We found exactly that on one
-Ghanaian factsheet: stated charges of 2.25% and a TER of 1.86%, thirty-nine
-basis points apart in the wrong direction. We have asked the manager why.
+The TER is normally the larger number — which is exactly why the period each
+one covers matters more than the difference between them.
 
-**What to do.** Ask for the TER, not the management fee. If only one figure is
-given, ask which it is.
+**A worked example.** Stanbic Investment Management Services publish stated
+charges of 2.25% a year on Stanbic Cash Trust, and their factsheets carry two
+expense ratios: 1.86% for the full year 2025, and 1.66% year-to-date as at July
+2026.
+
+Those three numbers cover three different things, and comparing any two of them
+without noticing is easy. Stanbic told us the year-to-date figure will most
+likely exceed 2.25% once annualised, and that their factsheet labels each one —
+the TER with the month it runs to, the fees marked per annum. We had read past
+the labels.
+
+Why the 2025 full-year ratio came in below the stated charges is a separate
+question, and one we have put back to them.
+
+**So the lesson is not that a low TER is suspicious.** It is that a percentage
+means nothing until you know what period it covers, and the figures on a
+factsheet are frequently over different ones.
+
+**What to do.** Ask for the TER, ask what period it covers, and ask whether it
+is annualised. All three, because the second and third are where the confusion
+lives.
 
 ## The minimum, and the second minimum
 
