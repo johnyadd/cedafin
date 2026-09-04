@@ -31,6 +31,7 @@
 import Link from "next/link";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
+import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Subscribe from "@/components/Subscribe";
 import { BRAND } from "@/lib/brand";
@@ -546,6 +547,8 @@ export default async function Home() {
           <Subscribe source="home" />
         </div>
 
+
+        <Faq />
 
         {/* ───────────────────────── BORROWING ───────────────────────── */}
         <div className="mt-14">
