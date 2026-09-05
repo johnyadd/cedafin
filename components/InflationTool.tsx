@@ -41,7 +41,7 @@ const REDENOMINATION_FACTOR = 10_000;
 export default function InflationTool({
   index,
 }: {
-  index: { year: number; value: number }[];
+  index: { year: number; value: number; estimated?: boolean }[];
 }) {
   const years = index.map((r) => r.year);
   const latest = years.length ? Math.max(...years) : 2025;
@@ -53,6 +53,12 @@ export default function InflationTool({
 
   const lookup = useMemo(
     () => new Map(index.map((r) => [r.year, r.value])),
+    [index],
+  );
+  // Which years are our estimate rather than a published index. The World Bank
+  // series is annual, so the current year is always ours until they publish.
+  const estimatedYears = useMemo(
+    () => new Set(index.filter((r) => r.estimated).map((r) => r.year)),
     [index],
   );
 
@@ -82,10 +88,11 @@ export default function InflationTool({
       annualPct,
       yearsApart,
       // Only relevant when the earlier year predates July 2007.
+      usesEstimate: estimatedYears.has(y1) || estimatedYears.has(y2),
       spansRedenomination: y1 < REDENOMINATION_YEAR,
       oldCedis: amt * REDENOMINATION_FACTOR,
     };
-  }, [amount, from, to, lookup]);
+  }, [amount, from, to, lookup, estimatedYears]);
 
   const money = (v: number) =>
     `GH₵${v.toLocaleString("en-GB", { maximumFractionDigits: 2 })}`;
@@ -147,6 +154,7 @@ export default function InflationTool({
               {years.map((y) => (
                 <option key={y} value={y}>
                   {y}
+                  {estimatedYears.has(y) ? " (est.)" : ""}
                 </option>
               ))}
             </select>
@@ -168,6 +176,7 @@ export default function InflationTool({
               {years.map((y) => (
                 <option key={y} value={y}>
                   {y}
+                  {estimatedYears.has(y) ? " (est.)" : ""}
                 </option>
               ))}
             </select>
@@ -199,6 +208,16 @@ export default function InflationTool({
                 )}
               </p>
             </div>
+
+            {r.usesEstimate && (
+              <p className="mt-2 text-[11.5px]" style={{ color: C.muted }}>
+                The current year is our estimate, not a published index. The
+                World Bank series is annual and runs a year behind, so we carry
+                the last published figure forward using the monthly inflation
+                readings we hold for this year. It changes as each new month is
+                published, and is replaced when the annual figure appears.
+              </p>
+            )}
 
             {r.spansRedenomination && (
               <div

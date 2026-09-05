@@ -1857,8 +1857,45 @@ export async function getCpiIndex(): Promise<{ year: number; value: number }[]> 
     .eq("series_code", "GH_CPI_INDEX")
     .order("as_of", { ascending: true });
   if (error) throw new Error(`getCpiIndex: ${error.message}`);
-  return (data ?? []).map((r: { as_of: string; value: number }) => ({
+  const rows = (data ?? []).map((r: { as_of: string; value: number }) => ({
     year: Number(r.as_of.slice(0, 4)),
     value: Number(r.value),
+    estimated: false,
   }));
+
+  /*
+    The current year, estimated.
+
+    The World Bank series is annual and ends when a year does, so it runs a
+    year behind. Someone asking what their 1990 money is worth NOW means now.
+
+    The extension uses the monthly year-on-year readings we hold for the
+    current year, averaged. That matters: the annual index is a MEAN across
+    twelve months, so extending it by a single month's year-on-year figure
+    would compare an average against a point and overstate or understate
+    depending on which month you picked.
+
+    It is an estimate and the page says so. It is also self-correcting — each
+    new monthly reading changes the mean, and when the World Bank publishes
+    the real annual figure it replaces this one.
+  */
+  const last = rows[rows.length - 1];
+  if (last) {
+    const { data: monthly } = await publicClient()
+      .from("macro_series")
+      .select("as_of, value")
+      .eq("series_code", "GH_CPI_YOY")
+      .gte("as_of", `${last.year + 1}-01-01`);
+    const vals = (monthly ?? []).map((m: { value: number }) => Number(m.value));
+    if (vals.length) {
+      const mean = vals.reduce((a: number, b: number) => a + b, 0) / vals.length;
+      rows.push({
+        year: last.year + 1,
+        value: last.value * (1 + mean),
+        estimated: true,
+      });
+    }
+  }
+
+  return rows;
 }
