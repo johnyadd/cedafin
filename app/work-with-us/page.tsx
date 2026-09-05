@@ -334,10 +334,15 @@ export default function WorkWithUsPage() {
           demonstrated rather than described.
         </p>
         <p className="mt-3 text-[15px] leading-relaxed">
+          Our team spans financial analysis and data engineering — the two
+          halves this work requires, and the reason a pipeline built here is
+          built by people who understand what the numbers have to mean. We draw
+          on the disciplines an engagement needs rather than fitting it to the
+          skills we happen to have.
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed">
           The practice is led by <strong>John Addae</strong>, Chief Executive,
-          who combines a BSc in Computer Science with an MBA in Finance — the
-          two halves of this work, and the reason a pipeline here is built by
-          someone who understands what the numbers have to mean.
+          who combines a BSc in Computer Science with an MBA in Finance.
         </p>
 
         {/*
