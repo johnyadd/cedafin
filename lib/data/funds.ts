@@ -1841,3 +1841,24 @@ export async function getTicker(): Promise<TickerItem[]> {
 
   return out;
 }
+
+
+/**
+ * Ghana's annual consumer price index, 1964 onwards, oldest first.
+ *
+ * The LEVEL rather than the rate, because a purchasing-power calculation is
+ * the ratio between two years and no amount of recent rates substitutes for
+ * that.
+ */
+export async function getCpiIndex(): Promise<{ year: number; value: number }[]> {
+  const { data, error } = await publicClient()
+    .from("macro_series")
+    .select("as_of, value")
+    .eq("series_code", "GH_CPI_INDEX")
+    .order("as_of", { ascending: true });
+  if (error) throw new Error(`getCpiIndex: ${error.message}`);
+  return (data ?? []).map((r: { as_of: string; value: number }) => ({
+    year: Number(r.as_of.slice(0, 4)),
+    value: Number(r.value),
+  }));
+}

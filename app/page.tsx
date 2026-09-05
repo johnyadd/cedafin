@@ -72,6 +72,7 @@ type Tool = [href: string, title: string, note: string];
 const INVEST_TOOLS: Tool[] = [
   ["/match", "Find what fits you", "Eight questions. Answers stay in your browser."],
   ["/calculator", "Returns calculator", "Separates the fund, the currency and the charges."],
+  ["/inflation-calculator", "Inflation calculator", "What your cedis were worth, back to 1964."],
   ["/shares", "39 listed shares", "Price history from the exchange's own reports."],
   ["/brokers", "24 stockbrokers", "Not one publishes a commission rate. We checked."],
   ["/compare/commodity-GHS", "Gold, four ways", "The small coin costs twice what the big one does."],
