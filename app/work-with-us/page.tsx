@@ -185,8 +185,8 @@ export default function WorkWithUsPage() {
         >
           Financial analysis, modelling and data work — for organisations
           sitting on information they cannot use, or decisions they cannot
-          evidence. This site is the demonstration; the same work is available
-          to you.
+          evidence. This site is the demonstration; the same work is available to
+          your organisation.
         </p>
 
         <hr
@@ -325,13 +325,19 @@ export default function WorkWithUsPage() {
           className="mt-12 text-[1.5rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Who is behind it
+          About Cedafin
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed">
-          John Yaw Addae — a background in financial planning and analysis and
-          in data engineering, and an MBA in finance. This site is built and
-          maintained single-handed, which is either a recommendation or a
-          warning depending on what you need.
+          Cedafin builds financial data infrastructure and the analysis that
+          runs on it. The comparison platform on this site is our own work, kept
+          current from primary sources — which is why the consulting offer is
+          demonstrated rather than described.
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed">
+          The practice is led by <strong>John Addae</strong>, Chief Executive,
+          who combines a BSc in Computer Science with an MBA in Finance — the
+          two halves of this work, and the reason a pipeline here is built by
+          someone who understands what the numbers have to mean.
         </p>
 
         {/*
