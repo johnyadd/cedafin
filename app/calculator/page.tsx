@@ -180,6 +180,9 @@ interface Result {
   chargeCostHome: number;
   currencyEffect: number;
   fundOnlyPct: number;
+  inflationPct: number;
+  realHomeBack: number;
+  realPct: number;
   scenarios: { label: string; back: number; pct: number }[];
   chargeOverTime: { years: number; cost: number }[];
 }
@@ -276,6 +279,17 @@ export default function CalculatorPage() {
   const [rateBack, setRateBack] = useState("15.20");
   const [years, setYears] = useState("1");
   const [returnPct, setReturnPct] = useState("31.68");
+  /*
+    Inflation, so the result says what the money will BUY rather than what the
+    units did.
+
+    Defaults to 5.0% — Ghana Statistical Service, August 2026. That is the
+    latest reading, not necessarily the right one: the figure that belongs here
+    is inflation over the same window as the return. Ghanaian inflation was
+    13.7% in June 2025 and 3.2% in March 2026, so a twelve-month return spans
+    a range rather than a number, and the field is editable for that reason.
+  */
+  const [inflationPct, setInflationPct] = useState("5.0");
   const [touchedReturn, setTouchedReturn] = useState(false);
 
   const fund = OPTIONS.find((f) => f.id === fundId) ?? OPTIONS[0];
@@ -288,6 +302,7 @@ export default function CalculatorPage() {
     const back = Number(rateBack) || 0;
     const yrs = Math.max(0.25, Number(years) || 1);
     const ret = (Number(returnPct) || 0) / 100;
+    const inf = (Number(inflationPct) || 0) / 100;
     const chg = fund.chargePct / 100;
 
     /*
@@ -330,6 +345,20 @@ export default function CalculatorPage() {
       chargeCostHome,
       currencyEffect,
       fundOnlyPct: ret * 100,
+
+      /*
+        Fisher, not subtraction.
+
+        real = (1 + nominal) / (1 + inflation) - 1
+
+        The approximation everybody uses drifts once inflation is above about
+        5% or returns above 6%, which is the whole Ghanaian range. On 38.80%
+        against 13.7% inflation, subtracting gives 25.10% and Fisher gives
+        22.08% — three points of difference in a figure someone might act on.
+      */
+      inflationPct: inf * 100,
+      realHomeBack: amt > 0 ? amt * ((homeBack / amt) / (1 + inf)) : 0,
+      realPct: amt > 0 ? ((homeBack / amt) / (1 + inf) - 1) * 100 : 0,
       /*
         Three currency outcomes, not one.
 
@@ -366,7 +395,7 @@ export default function CalculatorPage() {
         return { years: y, cost: (g - n) / out };
       }),
     };
-  }, [amount, rateOut, rateBack, years, returnPct, fund]);
+  }, [amount, rateOut, rateBack, years, returnPct, inflationPct, fund]);
 
   // A dash where a figure is unknown, so the card keeps its shape without
   // asserting a zero.
@@ -754,6 +783,19 @@ export default function CalculatorPage() {
                     borderColor: rateBack === "" ? C.gold : C.rule,
                     opacity: local ? 0.45 : 1,
                   }}
+                />
+              </Field>
+
+              <Field
+                label="Inflation over the period, %"
+                hint="5.0% is the latest Ghanaian figure (Aug 2026). But inflation was 13.7% in June 2025 and 3.2% in March 2026 — so for a past return, use the inflation of its own period, not this month&rsquo;s."
+              >
+                <input
+                  inputMode="decimal"
+                  value={inflationPct}
+                  onChange={(e) => setInflationPct(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-[14px] tabular-nums"
+                  style={inputStyle}
                 />
               </Field>
 
