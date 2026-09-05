@@ -7,26 +7,22 @@ import { BRAND } from "@/lib/brand";
 /**
  * app/work-with-us/page.tsx — the consultancy offer.
  *
- * WHY THIS PAGE EXISTS AND WHY IT IS NOT AN EMAIL
+ * WHY THIS PAGE IS FOUND RATHER THAN SENT
  * We have written to twenty-four brokers and every fund manager we can reach,
  * asking for their data so a public comparison can be accurate. If that
- * correspondence turned into a sales approach, every one of those emails would
- * be reread as lead generation, and the data outreach is worth more than any
- * single consulting engagement.
+ * correspondence became a sales approach, every one of those emails would be
+ * reread as lead generation. So this sits on the site. Nobody is pitched.
  *
- * So this sits on the site and is found rather than sent. Somebody who reads
- * the broker analysis or the APR work and thinks "we need that internally" has
- * somewhere to go. Nobody is pitched.
+ * WHY THE EVIDENCE SECTION DESCRIBES OUTPUT AND NOT METHOD
+ * An earlier version named the exact documents, institutions and frequencies
+ * behind each extractor. That is a recipe, and there is no reason to publish
+ * one. The claims and the links are unchanged, so a prospect still verifies
+ * everything by clicking; what went is how it was done.
  *
- * WHY THE EVIDENCE IS UNUSUAL
- * Most consultancy pages assert capability. This one can point at a running
- * system: the extractors, the comparisons, the errors caught, the corrections
- * published. A prospect can verify every claim by clicking.
- *
- * WHAT IT DELIBERATELY DOES NOT SAY
- * No day rates, no packages, no "trusted by" logos we have not earned. The
- * work described is work that has demonstrably been done, and the invitation
- * is to a conversation rather than a purchase.
+ * WHY NO RATES OR PACKAGES
+ * The work varies too much for a price list to be honest, and a day rate on a
+ * page invites comparison on the wrong axis. The invitation is to a
+ * conversation about whether the answer is worth having.
  */
 
 const display = Fraunces({
@@ -54,10 +50,79 @@ const C = {
 };
 
 export const metadata = {
-  title: "Financial data extraction and analysis — Ghana",
+  title: "Financial analysis, modelling and data consulting",
   description:
-    "Turning documents nobody can query into figures you can act on. Regulatory filings, factsheets, market reports. Built and demonstrated on cedafin.com.",
+    "Fractional CFO work, financial modelling, data extraction and pipelines, market analysis and reporting. Demonstrated on cedafin.com and delivered remotely or on site.",
 };
+
+/**
+ * The services, ordered by how directly this site evidences them. Each says
+ * what it is, who tends to need it, and what arrives at the end — because
+ * "financial consulting" as a phrase tells a buyer nothing.
+ */
+const SERVICES: {
+  title: string;
+  who: string;
+  body: string;
+  deliverable: string;
+}[] = [
+  {
+    title: "Data extraction and pipelines",
+    who: "Anyone with figures locked in documents",
+    body:
+      "Reports, filings, factsheets, statements and spreadsheets that hold everything you need and answer nothing you ask. Turned into a structured series that can be queried, compared and kept current — with the checks that catch it when a source changes shape.",
+    deliverable:
+      "A running extractor, a documented schema, and the data in a form your own tools can read.",
+  },
+  {
+    title: "Financial modelling and forecasting",
+    who: "Founders raising, boards deciding, finance teams planning",
+    body:
+      "Three-statement models, scenario and sensitivity analysis, cash flow forecasting, unit economics, budgets and reforecasts. Built to be understood and changed by the people who own them rather than admired and abandoned.",
+    deliverable:
+      "A model you can drive yourself, with the assumptions visible and the logic traceable.",
+  },
+  {
+    title: "Fractional CFO and FP&A",
+    who: "Businesses that need the function, not the salary",
+    body:
+      "Management reporting, budgeting and variance analysis, cash management, pricing and margin work, board packs, and the finance discipline that turns bookkeeping into decisions. Ongoing or for a defined stretch.",
+    deliverable:
+      "A monthly rhythm — numbers that arrive on time, in a form that supports a decision.",
+  },
+  {
+    title: "Market and competitive analysis",
+    who: "Anyone who needs to know where they stand",
+    body:
+      "What competitors charge, what they publish and what they conspicuously do not, how a market has moved, where the outliers are. Assembled from public filings that everyone can see and almost nobody reads.",
+    deliverable:
+      "A findings document with every figure sourced and dated, and the working shown.",
+  },
+  {
+    title: "Reporting and dashboards",
+    who: "Teams drowning in data and short of answers",
+    body:
+      "The layer between a warehouse and a decision. Metrics defined so they mean the same thing to everyone, refreshed automatically, and presented so the exception is visible without hunting for it.",
+    deliverable:
+      "Dashboards that update themselves, and a definition of every metric on them.",
+  },
+  {
+    title: "Getting your data ready for AI",
+    who: "Anyone whose AI project stalled on the data",
+    body:
+      "Industry research is consistent that models are not the bottleneck — governance, lineage and clean pipelines are, and most organisations discover this after the pilot. Structured, documented, reproducible data with provenance on every figure: where it came from, when it was true, how it was derived. Plus the checks that catch an error before a model learns from it.",
+    deliverable:
+      "A dataset a model can be pointed at without inheriting your document problem — sourced, dated, and reproducible from the originals.",
+  },
+  {
+    title: "Data engineering",
+    who: "Organisations with sources that will not talk to each other",
+    body:
+      "Warehouse design, ingestion and transformation, migration between platforms, data quality and reconciliation. Experience across Databricks, SQL Server and SSIS, and the pragmatic end of the stack where most real work happens.",
+    deliverable:
+      "Pipelines that run unattended, fail loudly rather than silently, and can be handed over.",
+  },
+];
 
 /** Each links to the thing itself, because assertion is cheap. */
 const EVIDENCE: { claim: string; detail: string; href: string; label: string }[] =
@@ -92,21 +157,6 @@ const EVIDENCE: { claim: string; detail: string; href: string; label: string }[]
     },
   ];
 
-const WORK: { title: string; body: string }[] = [
-  {
-    title: "You have data you cannot use",
-    body: "Factsheet archives, regulatory returns, monthly reports, spreadsheets going back years. Everything is there and nothing is queryable, so questions that should take a minute take a week — or never get asked. This is the most common shape of the problem and the most tractable.",
-  },
-  {
-    title: "You need to know where you stand",
-    body: "What your charges look like against the market, what your competitors publish and what they do not, how a figure has moved over time. Assembled from the same public filings everyone can see and almost nobody reads.",
-  },
-  {
-    title: "You need something built that keeps running",
-    body: "Not a report that is stale in a month, but an extractor that runs on a schedule, checks itself, and tells you when a source changes shape. The pipeline behind this site is that, and it survives its sources being redesigned.",
-  },
-];
-
 export default function WorkWithUsPage() {
   return (
     <main
@@ -133,9 +183,10 @@ export default function WorkWithUsPage() {
           className="mt-5 text-[17px] leading-relaxed"
           style={{ color: C.muted }}
         >
-          PDFs, regulatory filings, monthly reports, factsheets. Extracted,
-          checked, dated and made comparable. If your organisation has data in
-          that state — and most do — this is the same work.
+          Financial analysis, modelling and data work — for organisations
+          sitting on information they cannot use, or decisions they cannot
+          evidence. This site is the demonstration; the same work is available
+          to you.
         </p>
 
         <hr
@@ -147,19 +198,54 @@ export default function WorkWithUsPage() {
           className="mt-12 text-[1.5rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          What this looks like in practice
+          What we do
         </h2>
-        <div className="mt-5 space-y-6">
-          {WORK.map(({ title, body }) => (
-            <div key={title}>
-              <p className="text-[15.5px] font-bold">{title}</p>
-              <p
-                className="mt-1.5 text-[15px] leading-relaxed"
-                style={{ color: C.muted }}
-              >
-                {body}
-              </p>
-            </div>
+        <p
+          className="mt-3 text-[15px] leading-relaxed"
+          style={{ color: C.muted }}
+        >
+          Seven things, and most engagements are one or two of them. Each says
+          what arrives at the end, because &ldquo;financial consulting&rdquo; as
+          a phrase tells nobody anything.
+        </p>
+
+        <div className="mt-5 space-y-3">
+          {SERVICES.map(({ title, who, body: text, deliverable }) => (
+            <section
+              key={title}
+              className="overflow-hidden rounded-2xl"
+              style={{ background: C.card, border: `1px solid ${C.rule}` }}
+            >
+              <div className="flex">
+                <span
+                  className="w-1 shrink-0"
+                  style={{ background: C.deep }}
+                  aria-hidden="true"
+                />
+                <div className="flex-1 p-5">
+                  <h3 className="text-[15.5px] font-bold">{title}</h3>
+                  <p
+                    className="mt-0.5 text-[11.5px] font-semibold uppercase tracking-[0.1em]"
+                    style={{ color: C.gold }}
+                  >
+                    {who}
+                  </p>
+                  <p
+                    className="mt-2.5 text-[14px] leading-relaxed"
+                    style={{ color: C.muted }}
+                  >
+                    {text}
+                  </p>
+                  <p
+                    className="mt-3 border-t pt-2.5 text-[13px] leading-relaxed"
+                    style={{ borderColor: C.rule }}
+                  >
+                    <strong>What you get:</strong>{" "}
+                    <span style={{ color: C.muted }}>{deliverable}</span>
+                  </p>
+                </div>
+              </div>
+            </section>
           ))}
         </div>
 
@@ -199,6 +285,40 @@ export default function WorkWithUsPage() {
               </p>
             </section>
           ))}
+        </div>
+
+        <h2
+          className="mt-12 text-[1.5rem] font-bold"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          How it works
+        </h2>
+        <div className="mt-4 space-y-4 text-[15px] leading-relaxed">
+          <p>
+            <strong>Remotely, or on site where it matters.</strong> Most of this
+            work is done wherever the data is, which is usually nowhere in
+            particular. Clients in Ghana, the United Kingdom and elsewhere are
+            equally practical.
+          </p>
+          <p>
+            <strong>Scoped before it is priced.</strong> The first conversation
+            establishes whether the answer you want is obtainable and whether it
+            is worth what it would cost to get. Sometimes it is not, and saying
+            so is part of the service.
+          </p>
+          <p>
+            <strong>Deterministic where it matters.</strong> The extraction
+            behind this site uses no language models. For financial figures
+            that is deliberate — same input, same output, every time, and a
+            wrong number is a bug rather than a plausible-looking guess. Models
+            are useful downstream, on data that has already been made
+            trustworthy.
+          </p>
+          <p>
+            <strong>Built to be handed over.</strong> A pipeline nobody but its
+            author can maintain is a liability. Everything comes documented, in
+            tools you already have where possible.
+          </p>
         </div>
 
         <h2
@@ -256,7 +376,7 @@ export default function WorkWithUsPage() {
           </p>
           <p className="mt-4 text-[15px] font-bold">
             <a
-              href={`mailto:${BRAND.enquiriesEmail}?subject=Data%20work`}
+              href={`mailto:${BRAND.enquiriesEmail}?subject=Consulting%20enquiry`}
               className="underline underline-offset-4"
               style={{ color: C.gold }}
             >
