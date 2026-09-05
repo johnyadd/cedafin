@@ -65,28 +65,28 @@ const EVIDENCE: { claim: string; detail: string; href: string; label: string }[]
     {
       claim: "Extraction from documents that were never meant to be queried",
       detail:
-        "Fifteen months of Ghana Stock Exchange monthly reports, parsed into a price history for all 39 listed companies. Bank of Ghana tender results and daily gold circulars, running on a schedule. Fund factsheets from every manager who publishes one.",
+        "Monthly market documents published as prose and tables, turned into a queryable price history for every listed company. Daily and weekly releases from several institutions, extracted on a schedule and reconciled against each other. The result is a series; the inputs were never designed to produce one.",
       href: "/shares",
       label: "39 companies, with price history",
     },
     {
       claim: "Comparable figures from filings that resist comparison",
       detail:
-        "Bank of Ghana requires every bank to report an annual percentage rate. The figures sit in returns few borrowers ever see. Assembled across 22 banks, three credit types and three terms, the spread turns out to be 22.5 percentage points on the same one-year loan.",
+        "Regulatory filings that exist to be filed rather than read. Assembled across 22 institutions, three product types and three terms, they show a spread of 22.5 percentage points on the same one-year facility — a figure nobody publishes because nobody had put the returns side by side.",
       href: "/funding",
       label: "22 banks, what they actually charge",
     },
     {
       claim: "Analysis that finds what the data was hiding",
       detail:
-        "One firm averages 52.7% of the value traded on the Ghana Stock Exchange, swinging between 20% and 79% month to month. One bank advertises 13.70% and reports a maximum of 23.42%. Neither figure is published anywhere; both come out of the filings once assembled.",
+        "A market concentration nobody had measured. A gap of nearly ten percentage points between what one institution advertises and what it reports charging. Neither figure appears in any single document — both emerge only once the series exists, which is the point of building one.",
       href: "/insights/advertised-rate-against-what-you-pay",
       label: "The gap between advertised and actual",
     },
     {
       claim: "Errors caught, including our own",
       detail:
-        "A published return that annualised an eleven-month window. A sector heading that filed a bank under Education. A claim about dividends that a fund manager corrected. Each found, fixed and recorded — because a pipeline that cannot catch its own mistakes is not finished.",
+        "A return that annualised a partial window. A classification that mislabelled a major institution. A published claim that a provider corrected. Each found, fixed and recorded — because a pipeline that cannot catch its own mistakes is not finished, and the checks matter more than the extraction.",
       href: "/methodology",
       label: "How we source every figure",
     },
