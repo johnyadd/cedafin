@@ -205,6 +205,22 @@ export default function Footer() {
             </Link>
           </p>
 
+          {/*
+            Footer only, deliberately. A prominent consulting link changes how
+            this site reads to a provider who has just sent us their figures.
+            Down here it is findable by somebody looking for it and invisible
+            to everybody else.
+          */}
+          <p className="mt-2 text-[12.5px]">
+            <Link
+              href="/work-with-us"
+              className="underline underline-offset-4"
+              style={{ color: C.muted }}
+            >
+              Data extraction and analysis, for organisations &rarr;
+            </Link>
+          </p>
+
           <p
             className="mt-5 text-[11px] leading-relaxed"
             style={{ color: C.muted }}
