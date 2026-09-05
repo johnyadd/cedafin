@@ -1700,6 +1700,43 @@ export async function getTicker(): Promise<TickerItem[]> {
     // A ticker is not worth failing a page load over.
   }
 
+
+  try {
+    /*
+      Inflation, next to the bill rates on purpose.
+
+      A 91-day bill paying 5.08% means nothing on its own. Beside inflation of
+      5.0% it means a saver in the safest Ghanaian product is standing still —
+      which is the single most useful thing this ticker can tell anyone.
+    */
+    const { data: cpi } = await publicClient()
+      .from("macro_series")
+      .select("as_of, value")
+      .eq("series_code", "GH_CPI_YOY")
+      .order("as_of", { ascending: false })
+      .limit(15);
+    if (cpi?.length) {
+      const rows = [...cpi].reverse() as { as_of: string; value: number }[];
+      const last = rows[rows.length - 1];
+      const prev = rows[rows.length - 2];
+      out.push({
+        label: "Inflation",
+        value: `${(last.value * 100).toFixed(1)}%`,
+        // Falling inflation is good news, so the arrow reads the opposite way
+        // round from a yield. Left as the plain direction rather than dressed
+        // up — the reader can judge which way is welcome.
+        direction: prev
+          ? last.value >= prev.value
+            ? "up"
+            : "down"
+          : undefined,
+        asOf: shortDate(last.as_of),
+        series: rows.map((r) => r.value * 100),
+      });
+    }
+  } catch {
+    // As above — not worth failing a page load over.
+  }
   try {
     const { data: idx } = await publicClient()
       .from("macro_series")
