@@ -81,6 +81,7 @@ const INVEST_TOOLS: Tool[] = [
 const BORROW_TOOLS: Tool[] = [
   ["/funding", "Compare 22 banks", "What each actually charges, fees included."],
   ["/funding/match", "Find funding that fits", "Six questions. Nothing saved."],
+  ["/loan-calculator", "Loan calculator", "What a loan costs, at each of 22 banks."],
 ];
 
 /**
