@@ -76,6 +76,25 @@ const MENUS: { label: string; items: Item[] }[] = [
     label: "Insights",
     items: [["/insights", "All articles", "What the numbers show"]],
   },
+  {
+    /*
+      Consulting sits last, and named plainly.
+
+      It was in the footer only, on the reasoning that a prominent link
+      changes how the site reads to a provider who has just sent us their
+      figures. That caution still holds, which is why the page itself says
+      the data request stands on its own — but a page nobody can find serves
+      nobody either.
+    */
+    label: "Consulting",
+    items: [
+      [
+        "/work-with-us",
+        "Analysis and data work",
+        "Modelling, pipelines, reporting — for organisations",
+      ],
+    ],
+  },
 ];
 
 export default function SiteHeader({
