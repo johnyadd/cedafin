@@ -46,6 +46,9 @@ export const BRAND = {
 
   /** General enquiries — readers rather than providers. */
   contactEmail: "hello@cedafin.com",
+  // Consulting enquiries, kept separate from data@ so a provider sending
+  // figures never lands in the same inbox as a sales enquiry.
+  enquiriesEmail: "enquiries@cedafin.com",
 
   /** One line, on every page. Accurate, not defensive. */
   legalStatus:
