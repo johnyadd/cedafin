@@ -231,6 +231,25 @@ export default async function FundingPage({
           </span>
         </Link>
 
+        {/*
+          Not a tab, deliberately. The tabs filter bank products by type and
+          term; equity has no APR, no term and no comparable rows, so putting
+          it among them would break the comparison rather than extend it.
+
+          A link down to it does the job — a business owner who reads "loan"
+          and thinks "that is not what I need" now has somewhere to go.
+        */}
+        <p className="mt-3 text-[13px]">
+          <a
+            href="#private-capital"
+            className="font-semibold underline underline-offset-4"
+            style={{ color: "#7A3E12" }}
+          >
+            Not a loan? Nine licensed funds provide equity and private debt
+            &darr;
+          </a>
+        </p>
+
         <p
           className="mt-5 rounded-2xl px-5 py-4 text-[13px] leading-relaxed"
           style={{ background: `${C.gold}1A` }}
@@ -330,6 +349,159 @@ export default async function FundingPage({
             );
           })}
         </ol>
+
+{/*
+  Equity and private debt — the option the borrowing pages never mention.
+
+  WHY IT BELONGS HERE
+  Everything else on the borrow side of this site is bank credit: 157 products
+  across 22 banks, compared on APR. A business owner reading it would conclude
+  that borrowing from a bank is the only route, because nothing here says
+  otherwise.
+
+  Ghana has nine SEC-licensed private funds providing equity and private debt.
+  All nine have working websites — better than the twenty-four stockbrokers,
+  six of whose registered sites did not respond. Four publish a visible way for
+  a founder to make contact. Two publish what size of investment they make.
+
+  WHY THE TICKET SIZES MATTER MORE THAN ANYTHING ELSE HERE
+  Because they answer the only question that decides whether to read on. The
+  smallest published equity ticket is around GH₵566,000 — more than five times
+  the GH₵100,000 the loan comparison on this page assumes. For most businesses
+  reading this, that settles it, and saying so saves them the afternoon.
+
+  WHY IT IS NOT A COMPARISON TABLE
+  Two of nine publishing a figure is not a market you can compare. A table with
+  seven blank rows would imply the blanks are failures rather than the normal
+  reticence of an asset class where terms are negotiated per deal.
+*/}
+<section
+  id="private-capital"
+  className="mt-10 overflow-hidden rounded-2xl"
+  style={{ background: C.card, border: `1px solid ${C.rule}` }}
+>
+  <div
+    className="px-5 py-3.5 text-white sm:px-6"
+    style={{ background: `linear-gradient(90deg, #6B3A16, #A9662E)` }}
+  >
+    <h2
+      className="text-[15px] font-bold"
+      style={{ fontFamily: "var(--font-display)" }}
+    >
+      If a loan is the wrong instrument
+    </h2>
+  </div>
+
+  <div className="p-5 sm:p-6">
+    <p className="text-[15px] leading-relaxed">
+      Everything above is bank credit — you borrow, you repay, you keep the
+      business. Ghana also has nine private funds licensed by the Securities
+      and Exchange Commission that provide{" "}
+      <strong>equity and private debt</strong>: they take a stake, or lend on
+      terms negotiated per deal, and they expect to exit in five to ten years.
+    </p>
+
+    <p
+      className="mt-3 text-[15px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      It suits a different situation. A bank wants security and repayment from
+      cash flow. An equity investor wants growth and does not want the money
+      back next year — which is the right shape for a business that will lose
+      money while it scales, and the wrong shape for one that simply needs
+      working capital.
+    </p>
+
+    {/* The figure that decides whether to read on. */}
+    <div
+      className="mt-5 rounded-2xl p-4"
+      style={{ background: "#FFF8EC", border: `1px solid ${C.gold}` }}
+    >
+      <p className="text-[13px] font-bold">
+        The first thing to check is the size
+      </p>
+      <p
+        className="mt-2 text-[13.5px] leading-relaxed"
+        style={{ color: C.muted }}
+      >
+        Two of the nine publish what they invest.{" "}
+        <strong style={{ color: C.ink }}>Wangara Green Ventures</strong> state
+        US$50,000 to US$500,000.{" "}
+        <strong style={{ color: C.ink }}>Growth Investment Partners</strong>{" "}
+        state the cedi equivalent of US$500,000 to US$5 million, with follow-on
+        of up to US$5 million more.
+      </p>
+      <p
+        className="mt-2.5 text-[13.5px] leading-relaxed"
+        style={{ color: C.muted }}
+      >
+        At current rates the smallest published ticket is around{" "}
+        <strong style={{ color: C.ink }}>GH&#8373;570,000</strong> — over five
+        times the GH&#8373;100,000 the loan comparison above assumes. If you
+        need less than that, this route is probably not open to you, and the
+        banks above are where to look.
+      </p>
+    </div>
+
+    <h3 className="mt-6 text-[14px] font-bold">
+      What the other seven publish
+    </h3>
+    <p
+      className="mt-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      Not much, and that is normal for the asset class rather than a failing —
+      private investment terms are negotiated per deal, so there is no rate card
+      to publish. Four of the nine do have a visible route for a founder who
+      knows nobody to make contact, which is the thing actually worth knowing.
+    </p>
+    <p
+      className="mt-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      All nine have working websites — which, set against the twenty-four
+      licensed stockbrokers where six of the registered sites did not respond,
+      is worth noting.
+    </p>
+
+    <h3 className="mt-6 text-[14px] font-bold">Before you approach one</h3>
+    <ul
+      className="mt-2 space-y-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      <li>
+        <strong style={{ color: C.ink }}>
+          Check they are licensed.
+        </strong>{" "}
+        The SEC maintains the register of licensed private funds, and has been
+        warning the public about unlicensed investment schemes. A fund that is
+        not on the register is not one to take money from or give equity to.
+      </li>
+      <li>
+        <strong style={{ color: C.ink }}>
+          Understand what you are giving up.
+        </strong>{" "}
+        Equity is not cheaper money — it is a share of everything the business
+        earns afterwards, permanently, plus a say in how it is run. On a
+        business that succeeds, it is usually the most expensive capital there
+        is.
+      </li>
+      <li>
+        <strong style={{ color: C.ink }}>Ask about the exit.</strong> These
+        funds have a fixed life and must return money to their own investors.
+        What that means for you in year five is a question to ask in year one.
+      </li>
+    </ul>
+
+    <p className="mt-5 text-[12.5px]" style={{ color: C.muted }}>
+      Nine funds, from the Securities and Exchange Commission&rsquo;s register
+      of licensed private funds. Ticket sizes as published by the two funds
+      that state them, read from their own sites in September 2026. We are in
+      contact with providers to close the gaps, and publish whatever they send,
+      cited and dated.
+    </p>
+  </div>
+</section>
 
         <section
           className="mt-12 rounded-3xl p-6 sm:p-8"
