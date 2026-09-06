@@ -1202,6 +1202,8 @@ const GHS_MIN = new Intl.NumberFormat("en-GH", {
 export interface BrokerRow {
   slug: string;
   name: string;
+  /** What the firm publishes about who it will take on. Null = nothing. */
+  accessRequirements: string | null;
   avgSharePct: number | null;
   minSharePct: number | null;
   maxSharePct: number | null;
@@ -1241,7 +1243,7 @@ export async function getBrokers(): Promise<BrokerRow[]> {
   const { data, error } = await publicClient()
     .from("providers")
     .select(
-      `slug, trading_name, legal_name, broker_share_avg_pct,
+      `slug, trading_name, legal_name, access_requirements, broker_share_avg_pct,
        broker_share_min_pct, broker_share_max_pct, broker_months_observed,
        broker_first_seen, broker_last_seen,
        broker_volume_share_avg_pct, broker_value_traded_ghs,
@@ -1256,6 +1258,10 @@ export async function getBrokers(): Promise<BrokerRow[]> {
     .map((d: Record<string, unknown>) => ({
       slug: String(d.slug),
       name: String(d.trading_name ?? d.legal_name ?? d.slug),
+      // Only one broker has published anything about who it will take on.
+      // Shown on their card, since somebody comparing brokers is asking the
+      // same question as somebody reading the diaspora page.
+      accessRequirements: (d.access_requirements as string | null) ?? null,
       avgSharePct: (d.broker_share_avg_pct as number | null) ?? null,
       minSharePct: (d.broker_share_min_pct as number | null) ?? null,
       maxSharePct: (d.broker_share_max_pct as number | null) ?? null,
@@ -1944,7 +1950,38 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
     .not("access_requirements", "is", null)
     .eq("market_side", "invest");
   if (error) throw new Error(`getAccessRecords: ${error.message}`);
-  return (data ?? []).map((r: Record<string, unknown>) => {
+
+  /*
+    Providers as well as products.
+
+    A brokerage is a service rather than an instrument, so Databank Brokerage
+    has no product row to hang an access note on. A reader does not care how we
+    model it — they want to know who will take them — so the two are unioned
+    and sorted together.
+  */
+  const { data: firms, error: firmError } = await publicClient()
+    .from("providers")
+    .select("slug, trading_name, legal_name, access_requirements, access_verified_on")
+    .not("access_requirements", "is", null);
+  if (firmError) throw new Error(`getAccessRecords: ${firmError.message}`);
+
+  const firmRows: AccessRecord[] = (firms ?? []).map(
+    (f: Record<string, unknown>) => ({
+      slug: String(f.slug),
+      name: String(f.trading_name ?? f.legal_name ?? ""),
+      providerName: String(f.trading_name ?? f.legal_name ?? ""),
+      providerSlug: String(f.slug),
+      // A firm is not an asset class. The page shows nothing where this is
+      // null, which is right — "Databank Brokerage · Shares" would imply we
+      // hold share data for them, and we do not.
+      assetClass: null,
+      peerGroup: null,
+      eligibilityNotes: null,
+      accessRequirements: String(f.access_requirements),
+      accessVerifiedOn: (f.access_verified_on as string | null) ?? null,
+    }),
+  );
+  const productRows: AccessRecord[] = (data ?? []).map((r: Record<string, unknown>) => {
     const p = r.providers as {
       trading_name?: string;
       legal_name?: string;
@@ -1962,4 +1999,7 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       accessVerifiedOn: (r.access_verified_on as string | null) ?? null,
     };
   });
+
+  // Products and firms together — a reader does not care how we model it.
+  return [...productRows, ...firmRows];
 }

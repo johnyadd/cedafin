@@ -189,13 +189,22 @@ export default async function InvestingFromAbroadPage() {
                           Compare charges and returns &rarr;
                         </Link>
                       )}
+                      {/* Brokers have no provider page — they live on the
+                          brokers listing — so the link has to know which
+                          kind of firm it points at. */}
                       {r.providerSlug && (
                         <Link
-                          href={`/providers/${r.providerSlug}`}
+                          href={
+                            r.providerSlug.startsWith("broker-")
+                              ? "/brokers"
+                              : `/providers/${r.providerSlug}`
+                          }
                           className="underline underline-offset-4"
                           style={{ color: C.muted }}
                         >
-                          About {r.providerName}
+                          {r.providerSlug.startsWith("broker-")
+                            ? "All 24 stockbrokers"
+                            : `About ${r.providerName}`}
                         </Link>
                       )}
                     </p>

@@ -387,6 +387,22 @@ export default async function BrokersPage() {
                   . Commission not published.
                 </p>
 
+                {/*
+                  Where a firm has published something about who it will take
+                  on. Only one has, and it should be visible on their card
+                  rather than only on the diaspora page — somebody comparing
+                  brokers here is asking the same question.
+                */}
+                {b.accessRequirements && (
+                  <p
+                    className="mt-2 rounded-lg p-2.5 text-[12px] leading-relaxed"
+                    style={{ background: "#FFF8EC", color: C.ink }}
+                  >
+                    <strong>Says something about who it will take on.</strong>{" "}
+                    {b.accessRequirements}
+                  </p>
+                )}
+
                 {b.valueTradedGhs !== null && b.latestMonth && (
                   <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
                     In {fmtDate(b.latestMonth)} they traded{" "}
