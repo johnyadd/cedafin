@@ -218,8 +218,8 @@ circumstances is your decision, or a licensed adviser's.
 **What anything will return.** Every figure here is what has already happened,
 in rate conditions that have changed sharply and may change again.
 
-**What most of the market charges.** We have catalogued 75 Ghanaian funds. Eight
-publish enough for us to show their full cost. The other 67 publish little or
+**What most of the market charges.** We have catalogued 106 Ghanaian funds. Eight
+publish enough for us to show their full cost. The other 98 publish little or
 nothing, and we would rather leave a row blank than fill it with an estimate.
 
 That gap is not ours to close alone. If you are considering a fund whose

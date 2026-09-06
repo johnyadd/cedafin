@@ -140,8 +140,8 @@ export default function MethodologyPage() {
         </p>
         <p className="mt-4 text-[16px] leading-relaxed">
           The consequence is visible everywhere. We have catalogued{" "}
-          <strong>75 Ghanaian funds and publish complete figures for eight</strong>.
-          The other 67 are listed with the fields blank. That is not a gap we
+          <strong>106 Ghanaian funds and publish complete figures for eight</strong>.
+          The other 98 are listed with the fields blank. That is not a gap we
           are hiding — it is the policy working, and closing it depends on
           managers publishing more than they currently do.
         </p>

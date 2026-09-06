@@ -292,7 +292,7 @@ export default async function FundsPage() {
         </div>
 
         {/*
-          Seventy-five funds is a lot to read through, and someone who does not
+          A hundred-odd funds is a lot to read through, and someone who does not
           already know what they want will bounce off a list this long. The
           narrowing flow is offered here, beside the problem it solves, rather
           than only on a home page they may never come back to.

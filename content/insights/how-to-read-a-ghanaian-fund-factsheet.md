@@ -11,7 +11,7 @@ factsheet: one or two pages, a chart, some percentages. Most people glance at
 the return and sign.
 
 The return is the least reliable thing on it. Here is what the rest means, in
-the order it usually appears — and, because we have read seventy-five of these,
+the order it usually appears — and, because we have read 106 of these,
 what is normally missing.
 
 ## The name tells you less than you think
@@ -101,7 +101,7 @@ and receiving the money. Some factsheets say. Most do not.
 
 ## What is almost never on a Ghanaian factsheet
 
-Having read seventy-five of them, the consistent gaps:
+Having read 106 of them, the consistent gaps:
 
 - **Holdings.** What the fund actually owns.
 - **The exit charge**, if there is one.
@@ -126,8 +126,8 @@ operate. So is one who does not.
 
 ## Why this matters for what we publish
 
-We hold complete figures for eight of the seventy-five Ghanaian funds we have
-catalogued. The other sixty-seven publish too little to compare — no charge, no
+We hold complete figures for eight of the 106 Ghanaian funds we have
+catalogued. The other ninety-eight publish too little to compare — no charge, no
 minimum, no dealing terms, or a return with no window attached.
 
 That is not a criticism of any one manager. It is a description of a market

@@ -288,12 +288,31 @@ def investigate(name: str, site: str, skip_wayback: bool = False) -> ProviderRes
 # which is why a deterministic parse is possible at all.
 # ---------------------------------------------------------------------------
 
+# Every category the register publishes, taken from its own index page rather
+# than guessed. The first six were all this scraper knew about; the rest were
+# found by reading licensees.sec.gov.gh, which lists eighteen.
+#
+# Two of the additions matter beyond completeness. Unit Trusts and REIT Funds
+# are retail investment products this site does not cover at all. The
+# crowdfunding pages are a route for a business to raise money that is
+# neither a bank nor a private fund, which belongs on the funding side.
 SEC_PAGES = [
     ("Fund Managers", "https://licensees.sec.gov.gh/licensees/FundManager.php"),
     ("Mutual Funds", "https://licensees.sec.gov.gh/licensees/MutualFunds.php"),
+    ("Unit Trusts", "https://licensees.sec.gov.gh/licensees/UnitTrust.php"),
     ("Exchange Traded Funds", "https://licensees.sec.gov.gh/licensees/ExchangeTradedFunds.php"),
+    ("REIT Funds", "https://licensees.sec.gov.gh/licensees/RealEstateInvestmentTrustFunds.php"),
     ("Private Funds", "https://licensees.sec.gov.gh/licensees/PrivateFunds.php"),
+    ("Broker Dealers", "https://licensees.sec.gov.gh/licensees/BrokerDealer.php"),
+    ("Investment Advisory", "https://licensees.sec.gov.gh/licensees/InvestmentAdvisory.php"),
+    ("Crowdfunding Platforms", "https://licensees.sec.gov.gh/licensees/CrowdfundingPlatform.php"),
+    ("Crowdfunding Intermediaries", "https://licensees.sec.gov.gh/licensees/CrowdfundingIntermediary.php"),
+    ("Primary Dealers", "https://licensees.sec.gov.gh/licensees/PrimaryDealers.php"),
+    ("Issuing Houses", "https://licensees.sec.gov.gh/licensees/IssuingHouse.php"),
+    ("Custodians", "https://licensees.sec.gov.gh/licensees/Custodians.php"),
+    ("Trustees", "https://licensees.sec.gov.gh/licensees/Trustees.php"),
     ("Registrars", "https://licensees.sec.gov.gh/licensees/Registrars.php"),
+    ("Depositories", "https://licensees.sec.gov.gh/licensees/Depositories.php"),
     ("Securities Exchanges", "https://licensees.sec.gov.gh/licensees/SecuritiesExchanges.php"),
 ]
 

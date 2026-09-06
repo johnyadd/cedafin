@@ -420,14 +420,14 @@ export default async function Home() {
 
             {/*
               What the site cannot show, and why. A visitor who wonders where
-              the other sixty-seven funds are should find the answer beside
+              the other ninety-eight funds are should find the answer beside
               the tools rather than having to look for it.
             */}
             <section
               className="mt-6 rounded-2xl p-4"
               style={{ background: C.card, border: `1px solid ${C.rule}` }}
             >
-              <p className="text-[12.5px] font-bold">8 funds of 75, in full</p>
+              <p className="text-[12.5px] font-bold">8 funds of 106, in full</p>
               <p
                 className="mt-1.5 text-[11.5px] leading-relaxed"
                 style={{ color: C.muted }}
@@ -436,7 +436,7 @@ export default async function Home() {
                 and what they returned. Those are compared here.
                 <br />
                 <br />
-                The other 67 are listed with the fields blank. We are in
+                The other 98 are listed with the fields blank. We are in
                 contact with providers to close the gaps, and publish whatever
                 they send, cited and dated — an empty row is more use to you
                 than a number we made up.

@@ -243,7 +243,7 @@ export default async function InvestingFromAbroadPage() {
             className="mt-2 text-[13.5px] leading-relaxed"
             style={{ color: C.muted }}
           >
-            We track seventy-five Ghanaian funds and twenty-four licensed
+            We track 106 Ghanaian funds and twenty-four licensed
             stockbrokers. The entries above are what we could find published
             about access, from anybody.
             <br />
