@@ -1915,3 +1915,37 @@ export async function getCpiIndex(): Promise<{ year: number; value: number }[]> 
 
   return rows;
 }
+
+/**
+ * Everything with a published position on access, whatever its status.
+ *
+ * Draft products are included deliberately. A record with no charge and no
+ * return cannot be compared, but if the provider has said something about who
+ * can open one, that is worth showing on its own.
+ */
+interface AccessRecord {
+  slug: string;
+  name: string;
+  providerName: string;
+  accessRequirements: string;
+  accessVerifiedOn: string | null;
+}
+
+export async function getAccessRecords(): Promise<AccessRecord[]> {
+  const { data, error } = await publicClient()
+    .from("products")
+    .select("slug, name, access_requirements, access_verified_on, providers ( trading_name, legal_name )")
+    .not("access_requirements", "is", null)
+    .eq("market_side", "invest");
+  if (error) throw new Error(`getAccessRecords: ${error.message}`);
+  return (data ?? []).map((r: Record<string, unknown>) => {
+    const p = r.providers as { trading_name?: string; legal_name?: string } | null;
+    return {
+      slug: String(r.slug),
+      name: String(r.name),
+      providerName: p?.trading_name ?? p?.legal_name ?? "",
+      accessRequirements: String(r.access_requirements),
+      accessVerifiedOn: (r.access_verified_on as string | null) ?? null,
+    };
+  });
+}
