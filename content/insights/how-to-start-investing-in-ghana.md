@@ -75,9 +75,15 @@ On GH₵5,000, the difference between 1.75% and 2.25% is GH₵25 a year. Not
 enormous — but it is charged every year, on a rising balance, and it comes out
 whether the fund makes money or not.
 
-**The minimum and the charge are separate questions.** Stanbic Cash Trust
-takes GH₵20 to open, the lowest verified minimum in Ghana, and charges 2.25% a
-year. First Atlantic charges 1.75%. So the most accessible fund is not the
+**The lowest minimum in Ghana is GH₵5, and it is not a fund.** Ecobank's
+TBill4All sells 91-day and 182-day Government of Ghana Treasury bills through
+an MTN Mobile Money wallet, from GH₵5, with no bank account required. You
+register once by dialling *770# and buy, rediscount and check statements from
+the phone.
+
+**Among funds, the minimum and the charge are separate questions.** Stanbic
+Cash Trust takes GH₵20 to open — the lowest verified fund minimum — and charges
+2.25% a year. First Atlantic charges 1.75%. So the most accessible fund is not the
 cheapest one — on GH₵20 the difference is pesewas, but on GH₵20,000 it is
 GH₵100 a year, every year, on a rising balance. Starting with what you can
 reach does not mean staying there.
