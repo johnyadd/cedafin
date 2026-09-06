@@ -38,6 +38,14 @@ const MENUS: { label: string; items: Item[] }[] = [
     label: "Invest",
     items: [
       ["/funds", "Every fund", "75 catalogued, charges compared"],
+      // Near the top because it is a starting point rather than a product —
+      // somebody abroad needs to know what they can reach before they can
+      // usefully compare anything.
+      [
+        "/investing-from-abroad",
+        "Investing from abroad",
+        "What providers say about diaspora access",
+      ],
       ["/compare/money_market-GHS", "Money market funds"],
       ["/compare/fixed_income-GHS", "Fixed income funds"],
       ["/compare/balanced-GHS", "Balanced funds"],
