@@ -444,7 +444,7 @@ export default async function FundingPage({
     </div>
 
     <h3 className="mt-7 text-[14px] font-bold">
-      The nine, and what each publishes
+      The nine, by what kind of capital they provide
     </h3>
     <p
       className="mt-2 text-[13.5px] leading-relaxed"
@@ -456,107 +456,165 @@ export default async function FundingPage({
     </p>
 
     {/*
-      All nine named, not just the two publishing figures.
+      Grouped rather than listed flat.
 
-      An earlier version said "nine licensed private funds" and named only the
-      two with ticket sizes. A business owner cannot act on a count — they need
-      to know who, and a firm that publishes nothing is still a firm they could
-      write to.
+      "Nine private funds" treats them as interchangeable and they are not. A
+      profitable business needing expansion capital wants a different firm from
+      a startup, and a business that does not want to give up ownership wants
+      the debt fund rather than any of the others. Burying that distinction in
+      a list makes the reader do work we could have done for them.
+
+      The groupings come from the fund names and what each site states — a
+      fund called "SME Fund" backs established small businesses, one called
+      "Private Debt Fund" lends. Where a site says more, that is used instead.
     */}
-    <div className="mt-3 space-y-2">
+    <div className="mt-4 space-y-5">
       {(
         [
           [
-            "Growth Investment Partners Ghana",
-            "gipghana.com",
-            "US$500,000 – US$5m, plus follow-on up to US$5m more",
-            "Sector stated. Visible route to make contact.",
+            "Debt — you keep the business",
+            "Lends rather than taking a stake. The closest of these to a bank loan, and the only route here that does not cost you ownership.",
+            [
+              [
+                "Origen Private Debt Fund",
+                "ashfieldinvest.com",
+                null,
+                "Nothing found on ticket size or how to apply. The register gives a website whose domain does not match the fund name, so this may not be theirs.",
+              ],
+            ],
           ],
           [
-            "Wangara Green Ventures",
-            "wangaracapital.com",
-            "US$50,000 – US$500,000",
-            "Stage and sector stated.",
+            "Growth and expansion capital",
+            "For businesses already trading and profitable, raising to expand. Larger cheques, and they will expect a board seat.",
+            [
+              [
+                "Growth Investment Partners Ghana",
+                "gipghana.com",
+                "US$500,000 – US$5m, plus follow-on up to US$5m more",
+                "Sector stated. Visible route to make contact.",
+              ],
+              [
+                "Mirepa Capital SME Fund 1",
+                "mirepaglobal.com",
+                null,
+                "Backs small and medium businesses, by its own name. Nothing found on ticket size, stage or how to apply.",
+              ],
+            ],
           ],
           [
-            "Injaro Ghana Venture Capital Fund",
-            "injaroinvestments.com",
-            null,
-            "Stage and sector stated. Visible route to make contact.",
+            "Venture capital — early stage",
+            "For businesses that will lose money while they grow. They expect most of their investments to fail and a few to pay for the rest, which shapes what they look for.",
+            [
+              [
+                "Injaro Ghana Venture Capital Fund",
+                "injaroinvestments.com",
+                null,
+                "Stage and sector stated. Visible route to make contact.",
+              ],
+              [
+                "ISF Ghana Venture Capital",
+                "impcapadv.com",
+                null,
+                "Stage and sector stated. Visible route to make contact.",
+              ],
+              [
+                "Ci GABA VC",
+                "siaghana.com",
+                null,
+                "Sector stated. Visible route to make contact.",
+              ],
+              [
+                "Oasis Africa VC Fund",
+                "oasiscapitalghana.com",
+                null,
+                "Nothing found on ticket size, stage or how to apply.",
+              ],
+              [
+                "Oasis Africa VC Fund II",
+                "oasiscapitalghana.com",
+                null,
+                "Same manager and site as the fund above.",
+              ],
+            ],
           ],
           [
-            "ISF Ghana Venture Capital",
-            "impcapadv.com",
-            null,
-            "Stage and sector stated. Visible route to make contact.",
+            "Climate and green ventures",
+            "Venture capital with a stated environmental focus. If your business does not fit that, this is not your fund whatever its cheque size.",
+            [
+              [
+                "Wangara Green Ventures",
+                "wangaracapital.com",
+                "US$50,000 – US$500,000",
+                "Stage and sector stated.",
+              ],
+            ],
           ],
-          [
-            "Ci GABA VC",
-            "siaghana.com",
-            null,
-            "Sector stated. Visible route to make contact.",
-          ],
-          [
-            "Mirepa Capital SME Fund 1",
-            "mirepaglobal.com",
-            null,
-            "Nothing found on ticket size, stage or how to apply.",
-          ],
-          [
-            "Oasis Africa VC Fund",
-            "oasiscapitalghana.com",
-            null,
-            "Nothing found on ticket size, stage or how to apply.",
-          ],
-          [
-            "Oasis Africa VC Fund II",
-            "oasiscapitalghana.com",
-            null,
-            "Same manager and site as the fund above.",
-          ],
-          [
-            "Origen Private Debt Fund",
-            "ashfieldinvest.com",
-            null,
-            "Nothing found. The register gives a website whose domain does not match the fund name, so this may not be theirs.",
-          ],
-        ] as [string, string, string | null, string][]
-      ).map(([name, domain, ticket, note]) => (
-        <div
-          key={name}
-          className="flex overflow-hidden rounded-xl"
-          style={{ background: C.bg, border: `1px solid ${C.rule}` }}
-        >
-          <span
-            className="w-1 shrink-0"
-            style={{ background: ticket ? "#A9662E" : C.rule }}
-            aria-hidden="true"
-          />
-          <div className="flex-1 p-3.5">
-            <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
-              <strong>{name}</strong>
-              <a
-                href={`https://${domain}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[12px] underline underline-offset-4"
-                style={{ color: C.deep }}
+        ] as [string, string, [string, string, string | null, string][]][]
+      ).map(([groupName, groupNote, funds]) => (
+        <div key={groupName}>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-[0.12em]"
+            style={{ color: "#A9662E" }}
+          >
+            {groupName}
+          </p>
+          <p
+            className="mt-1 text-[12.5px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            {groupNote}
+          </p>
+
+          <div className="mt-2.5 space-y-2">
+            {funds.map(([name, domain, ticket, note]) => (
+              <div
+                key={name}
+                className="flex overflow-hidden rounded-xl"
+                style={{ background: C.bg, border: `1px solid ${C.rule}` }}
               >
-                {domain}
-              </a>
-            </p>
-            {ticket && (
-              <p className="mt-1 text-[12.5px] font-semibold">
-                Invests {ticket}
-              </p>
-            )}
-            <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
-              {note}
-            </p>
+                <span
+                  className="w-1 shrink-0"
+                  style={{ background: ticket ? "#A9662E" : C.rule }}
+                  aria-hidden="true"
+                />
+                <div className="flex-1 p-3.5">
+                  <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
+                    <strong>{name}</strong>
+                    <a
+                      href={`https://${domain}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[12px] underline underline-offset-4"
+                      style={{ color: C.deep }}
+                    >
+                      {domain}
+                    </a>
+                  </p>
+                  {ticket && (
+                    <p className="mt-1 text-[12.5px] font-semibold">
+                      Invests {ticket}
+                    </p>
+                  )}
+                  <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+                    {note}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       ))}
     </div>
+
+    <p
+      className="mt-4 text-[12.5px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      The groupings are ours, drawn from each fund&rsquo;s own name and what
+      its site states. Several do not describe themselves in these terms, and a
+      fund that says nothing about its stage may well invest across more than
+      one of these. Ask before assuming.
+    </p>
 
     <h3 className="mt-6 text-[14px] font-bold">
       What the other seven publish
