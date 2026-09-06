@@ -443,6 +443,121 @@ export default async function FundingPage({
       </p>
     </div>
 
+    <h3 className="mt-7 text-[14px] font-bold">
+      The nine, and what each publishes
+    </h3>
+    <p
+      className="mt-2 text-[13.5px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      From the Securities and Exchange Commission&rsquo;s register of licensed
+      private funds, with what we could find on each of their own sites in
+      September 2026. Websites are the ones the register gives.
+    </p>
+
+    {/*
+      All nine named, not just the two publishing figures.
+
+      An earlier version said "nine licensed private funds" and named only the
+      two with ticket sizes. A business owner cannot act on a count — they need
+      to know who, and a firm that publishes nothing is still a firm they could
+      write to.
+    */}
+    <div className="mt-3 space-y-2">
+      {(
+        [
+          [
+            "Growth Investment Partners Ghana",
+            "gipghana.com",
+            "US$500,000 – US$5m, plus follow-on up to US$5m more",
+            "Sector stated. Visible route to make contact.",
+          ],
+          [
+            "Wangara Green Ventures",
+            "wangaracapital.com",
+            "US$50,000 – US$500,000",
+            "Stage and sector stated.",
+          ],
+          [
+            "Injaro Ghana Venture Capital Fund",
+            "injaroinvestments.com",
+            null,
+            "Stage and sector stated. Visible route to make contact.",
+          ],
+          [
+            "ISF Ghana Venture Capital",
+            "impcapadv.com",
+            null,
+            "Stage and sector stated. Visible route to make contact.",
+          ],
+          [
+            "Ci GABA VC",
+            "siaghana.com",
+            null,
+            "Sector stated. Visible route to make contact.",
+          ],
+          [
+            "Mirepa Capital SME Fund 1",
+            "mirepaglobal.com",
+            null,
+            "Nothing found on ticket size, stage or how to apply.",
+          ],
+          [
+            "Oasis Africa VC Fund",
+            "oasiscapitalghana.com",
+            null,
+            "Nothing found on ticket size, stage or how to apply.",
+          ],
+          [
+            "Oasis Africa VC Fund II",
+            "oasiscapitalghana.com",
+            null,
+            "Same manager and site as the fund above.",
+          ],
+          [
+            "Origen Private Debt Fund",
+            "ashfieldinvest.com",
+            null,
+            "Nothing found. The register gives a website whose domain does not match the fund name, so this may not be theirs.",
+          ],
+        ] as [string, string, string | null, string][]
+      ).map(([name, domain, ticket, note]) => (
+        <div
+          key={name}
+          className="flex overflow-hidden rounded-xl"
+          style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+        >
+          <span
+            className="w-1 shrink-0"
+            style={{ background: ticket ? "#A9662E" : C.rule }}
+            aria-hidden="true"
+          />
+          <div className="flex-1 p-3.5">
+            <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
+              <strong>{name}</strong>
+              <a
+                href={`https://${domain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[12px] underline underline-offset-4"
+                style={{ color: C.deep }}
+              >
+                {domain}
+              </a>
+            </p>
+            {ticket && (
+              <p className="mt-1 text-[12.5px] font-semibold">
+                Invests {ticket}
+              </p>
+            )}
+            <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+              {note}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
     <h3 className="mt-6 text-[14px] font-bold">
       What the other seven publish
     </h3>
