@@ -1078,6 +1078,42 @@ export default async function ComparePage({
                 {funds.find((f) => f.primary.taxNote)!.primary.taxNote}
               </li>
             )}
+            {/*
+              How you get in, where a provider says.
+
+              This is the first question anyone abroad asks and the one nobody
+              publishes. Where a provider states the requirements we show
+              them; where they do not, the absence appears below and is worth
+              as much.
+            */}
+            {funds.some((f) => f.primary.accessRequirements) && (
+              <li>
+                <strong style={{ color: C.ink }}>
+                  How you open one, where it is published.
+                </strong>{" "}
+                {funds
+                  .filter((f) => f.primary.accessRequirements)
+                  .map((f) => (
+                    <span key={f.primary.slug}>
+                      <strong>{f.primary.name}</strong>:{" "}
+                      {f.primary.accessRequirements}{" "}
+                    </span>
+                  ))}
+              </li>
+            )}
+            {funds.some((f) => !f.primary.accessRequirements) && (
+              <li>
+                <strong style={{ color: C.ink }}>
+                  How you open the rest.
+                </strong>{" "}
+                Not published. No Ghanaian provider we track states what is
+                needed to open an account — which documents, whether a
+                Ghanaian bank account comes first, or whether someone living
+                abroad is eligible at all. We are in contact with providers to
+                close the gaps, and publish whatever they send, cited and
+                dated.
+              </li>
+            )}
             <li>
               <strong style={{ color: C.ink }}>Tax.</strong> Ghanaian
               withholding on investment income hasn&rsquo;t been verified, so

@@ -174,6 +174,9 @@ export interface FundRow {
   chargeBasis: string | null;
   /** Tax treatment as the issuer publishes it. Not verified, not advice. */
   taxNote: string | null;
+  /** What the provider states is needed to open and use this. Null = not published. */
+  accessRequirements: string | null;
+  accessVerifiedOn: string | null;
   /** NULL means not established — which is not the same as false. */
   shariaCompliant: boolean | null;
   /** Latest FULL-YEAR expense ratio. Part-year figures never land here. */
@@ -310,6 +313,8 @@ interface RawProduct {
   dealing_frequency: string | null;
   lock_in_days: number | null;
   min_initial_minor: number | null;
+  access_requirements: string | null;
+  access_verified_on: string | null;
   min_verified_on: string | null;
   tax_note: string | null;
   sharia_compliant: boolean | null;
@@ -323,6 +328,7 @@ const SELECT = `
   id, slug, name, share_class, share_class_label, asset_class, peer_group,
   currency, distributes, dealing_frequency, lock_in_days, min_initial_minor,
   min_verified_on, tax_note, sharia_compliant,
+  access_requirements, access_verified_on,
   providers ( trading_name, legal_name, slug ),
   product_fees ( fee_type, rate, effective_from, effective_to, verified_on,
                  conditions, sources ( title, content_sha256 ) ),
@@ -510,6 +516,16 @@ function toFundRow(p: RawProduct): FundRow {
     dealingFrequency: p.dealing_frequency,
     lockInDays: p.lock_in_days ?? null,
     taxNote: (p.tax_note as string | null) ?? null,
+    /*
+      What the provider states is needed to open and use this — documents, a
+      wallet, residency. Their words, never our inference.
+
+      Null means not published, which is itself the finding: no Ghanaian fund
+      manager or broker we track states what a non-resident needs, and that is
+      the first question anyone abroad asks.
+    */
+    accessRequirements: (p.access_requirements as string | null) ?? null,
+    accessVerifiedOn: (p.access_verified_on as string | null) ?? null,
     shariaCompliant: (p.sharia_compliant as boolean | null) ?? null,
 
     currentManagementFeePct: mgmt
