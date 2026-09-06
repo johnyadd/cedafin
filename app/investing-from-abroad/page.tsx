@@ -241,11 +241,18 @@ export default async function InvestingFromAbroadPage() {
           </p>
           <p
             className="mt-2.5 text-[13.5px] leading-relaxed"
+            style={{ color: C.ink }}
+          >
+            <strong>This page will get longer.</strong> We ask providers what a
+            diaspora investor needs, and publish whatever comes back, cited and
+            dated.
+          </p>
+          <p
+            className="mt-2 text-[13px] leading-relaxed"
             style={{ color: C.muted }}
           >
-            We are in contact with providers to close the gaps, and publish
-            whatever they send, cited and dated — so this page should get
-            longer.
+            We hold no price history for the products above. Where a provider
+            sends one it appears on their page, with the charges beside it.
           </p>
         </section>
 
