@@ -236,8 +236,23 @@ export default async function InvestingFromAbroadPage() {
           >
             We track seventy-five Ghanaian funds and twenty-four licensed
             stockbrokers. The entries above are what we could find published
-            about non-resident access, from anybody. Not one broker states
-            whether they will open an account for someone living abroad.
+            about access, from anybody.
+            <br />
+            <br />
+            {/* Was "not one broker states whether they will open an account
+                for someone living abroad". One does, and continuing to assert
+                an absence after finding the exception is the error this site
+                exists to point out. */}
+            <strong style={{ color: C.ink }}>
+              One broker is an exception.
+            </strong>{" "}
+            Databank Brokerage state on their own site that they facilitate
+            trading for both local and foreign investors, individuals and
+            institutions alike — and their account opening form provides for
+            non-resident applicants, with a field for a foreign tax
+            identification number and proof of a foreign address among the
+            documents. What that means for a particular applicant is not
+            stated. The other twenty-three publish nothing on the question.
           </p>
           <p
             className="mt-2.5 text-[13.5px] leading-relaxed"
