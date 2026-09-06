@@ -1927,6 +1927,12 @@ interface AccessRecord {
   slug: string;
   name: string;
   providerName: string;
+  providerSlug: string;
+  /** What kind of thing it is, so a reader knows before clicking. */
+  assetClass: string | null;
+  peerGroup: string | null;
+  /** What it invests in, where the asset class does not say. */
+  eligibilityNotes: string | null;
   accessRequirements: string;
   accessVerifiedOn: string | null;
 }
@@ -1934,16 +1940,24 @@ interface AccessRecord {
 export async function getAccessRecords(): Promise<AccessRecord[]> {
   const { data, error } = await publicClient()
     .from("products")
-    .select("slug, name, access_requirements, access_verified_on, providers ( trading_name, legal_name )")
+    .select("slug, name, asset_class, peer_group, eligibility_notes, access_requirements, access_verified_on, providers ( trading_name, legal_name, slug )")
     .not("access_requirements", "is", null)
     .eq("market_side", "invest");
   if (error) throw new Error(`getAccessRecords: ${error.message}`);
   return (data ?? []).map((r: Record<string, unknown>) => {
-    const p = r.providers as { trading_name?: string; legal_name?: string } | null;
+    const p = r.providers as {
+      trading_name?: string;
+      legal_name?: string;
+      slug?: string;
+    } | null;
     return {
       slug: String(r.slug),
       name: String(r.name),
       providerName: p?.trading_name ?? p?.legal_name ?? "",
+      providerSlug: p?.slug ?? "",
+      assetClass: (r.asset_class as string | null) ?? null,
+      peerGroup: (r.peer_group as string | null) ?? null,
+      eligibilityNotes: (r.eligibility_notes as string | null) ?? null,
       accessRequirements: String(r.access_requirements),
       accessVerifiedOn: (r.access_verified_on as string | null) ?? null,
     };

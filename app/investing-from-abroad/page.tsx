@@ -66,6 +66,17 @@ export const metadata = {
   ],
 };
 
+/** Plain labels, since an asset_class value means nothing to a reader. */
+const KIND: Record<string, string> = {
+  money_market: "Money market fund",
+  fixed_income: "Fixed income fund",
+  balanced: "Balanced",
+  equity: "Shares",
+  government_security: "Government Treasury bills",
+  commodity: "Gold",
+  real_estate: "Property",
+};
+
 const ASK = [
   "Do you accept applications from someone resident outside Ghana?",
   "Which identity documents — is a passport enough, or is a Ghana Card required?",
@@ -148,12 +159,45 @@ export default async function InvestingFromAbroadPage() {
                       style={{ color: C.gold }}
                     >
                       {r.providerName}
+                      {r.assetClass && KIND[r.assetClass] && (
+                        <> &middot; {KIND[r.assetClass]}</>
+                      )}
                     </p>
+                    {/* What it invests in, where the asset class does not say
+                        — discretionary management being the obvious case. */}
+                    {r.eligibilityNotes && (
+                      <p
+                        className="mt-2 text-[13px] leading-relaxed"
+                        style={{ color: C.muted }}
+                      >
+                        {r.eligibilityNotes}
+                      </p>
+                    )}
                     <p
                       className="mt-2.5 text-[14px] leading-relaxed"
                       style={{ color: C.muted }}
                     >
                       {r.accessRequirements}
+                    </p>
+                    <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px]">
+                      {r.peerGroup && (
+                        <Link
+                          href={`/compare/${r.peerGroup.replace(":", "-")}`}
+                          className="font-semibold underline underline-offset-4"
+                          style={{ color: C.deep }}
+                        >
+                          Compare charges and returns &rarr;
+                        </Link>
+                      )}
+                      {r.providerSlug && (
+                        <Link
+                          href={`/providers/${r.providerSlug}`}
+                          className="underline underline-offset-4"
+                          style={{ color: C.muted }}
+                        >
+                          About {r.providerName}
+                        </Link>
+                      )}
                     </p>
                     {r.accessVerifiedOn && (
                       <p
