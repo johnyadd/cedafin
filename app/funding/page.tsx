@@ -239,16 +239,36 @@ export default async function FundingPage({
           A link down to it does the job — a business owner who reads "loan"
           and thinks "that is not what I need" now has somewhere to go.
         */}
-        <p className="mt-3 text-[13px]">
-          <a
-            href="#private-capital"
-            className="font-semibold underline underline-offset-4"
-            style={{ color: "#7A3E12" }}
+        {/* Was a plain text link under a button, which disappeared. A
+            business owner for whom a loan is the wrong instrument should not
+            have to notice a footnote to find that out. */}
+        <a
+          href="#private-capital"
+          className="mt-3 flex items-center gap-3 rounded-2xl p-4 transition-shadow hover:shadow-md"
+          style={{ background: "#FFF8EC", border: "1px solid #A9662E" }}
+        >
+          <span className="flex-1">
+            <span
+              className="block text-[14px] font-bold"
+              style={{ color: C.ink }}
+            >
+              A loan is not the only way to raise money
+            </span>
+            <span
+              className="mt-0.5 block text-[12.5px]"
+              style={{ color: C.muted }}
+            >
+              Nine SEC-licensed funds provide equity and private debt, from
+              about GH&#8373;570,000 upwards
+            </span>
+          </span>
+          <span
+            className="shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-bold text-white"
+            style={{ background: "#7A3E12" }}
           >
-            Not a loan? Nine licensed funds provide equity and private debt
-            &darr;
-          </a>
-        </p>
+            See them &darr;
+          </span>
+        </a>
 
         <p
           className="mt-5 rounded-2xl px-5 py-4 text-[13px] leading-relaxed"
@@ -616,20 +636,12 @@ export default async function FundingPage({
       one of these. Ask before assuming.
     </p>
 
-    <h3 className="mt-6 text-[14px] font-bold">
-      What the other seven publish
-    </h3>
+    {/* "What the other seven publish" was a heading and paragraph repeating
+        what the grouped list above now says fund by fund. Cut. The website
+        comparison survives because it is a real finding rather than a
+        restatement. */}
     <p
-      className="mt-2 text-[14px] leading-relaxed"
-      style={{ color: C.muted }}
-    >
-      Not much, and that is normal for the asset class rather than a failing —
-      private investment terms are negotiated per deal, so there is no rate card
-      to publish. Four of the nine do have a visible route for a founder who
-      knows nobody to make contact, which is the thing actually worth knowing.
-    </p>
-    <p
-      className="mt-2 text-[14px] leading-relaxed"
+      className="mt-5 text-[14px] leading-relaxed"
       style={{ color: C.muted }}
     >
       All nine have working websites — which, set against the twenty-four
