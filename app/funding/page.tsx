@@ -688,11 +688,244 @@ export default async function FundingPage({
   </div>
 </section>
 
+{/*
+  Savings and loans companies — the alternative when a bank says no.
+
+  WHY THIS SECTION EXISTS
+  The foot of this page used to say that microfinance institutions, savings and
+  loans companies and digital lenders are outside Bank of Ghana's APR report,
+  and that they are where businesses refused by banks actually borrow. Both
+  true, and it left the reader with a gap rather than an answer.
+
+  There are twenty-six licensed savings and loans companies. We now have the
+  list, from Bank of Ghana's own register, and we checked every one of their
+  websites.
+
+  WHAT THE CHECK FOUND, AND WHY IT MATTERS
+  Two of twenty-three working websites publish a lending rate. The one that
+  publishes an unambiguous figure charges 42% — eight percentage points above
+  the dearest of the 22 banks on this page.
+
+  That is the finding. A business turned down by a bank may assume the
+  alternative is more accessible and therefore, somehow, more reasonable. On
+  the only published evidence, it is considerably dearer.
+
+  WHY JINS IS SHOWN WITH ITS AMBIGUITY RATHER THAN RESOLVED
+  Their FAQ gives 3.5% for business loans and does not say per what. Monthly is
+  the convention in this sector, which would make it about 42% a year and
+  consistent with Adehyeman. Annual would put them below every bank in Ghana,
+  which is not credible.
+
+  We are fairly sure. Fairly sure is not published, so the figure appears as
+  they give it with the gap named. We have asked.
+*/}
+<section
+  id="savings-loans"
+  className="mt-10 overflow-hidden rounded-2xl"
+  style={{ background: C.card, border: `1px solid ${C.rule}` }}
+>
+  <div
+    className="px-5 py-3.5 text-white sm:px-6"
+    style={{ background: `linear-gradient(90deg, #6B3A16, #A9662E)` }}
+  >
+    <h2
+      className="text-[15px] font-bold"
+      style={{ fontFamily: "var(--font-display)" }}
+    >
+      If a bank turns you down
+    </h2>
+  </div>
+
+  <div className="p-5 sm:p-6">
+    <p className="text-[15px] leading-relaxed">
+      Ghana has <strong>twenty-six licensed savings and loans companies</strong>.
+      They take deposits and lend, they are regulated by Bank of Ghana, and they
+      are where a great many businesses go when a bank declines.
+    </p>
+
+    <p
+      className="mt-3 text-[15px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      Bank of Ghana publishes a monthly APR table for banks. It publishes no
+      equivalent for these, so there is no official comparison to draw on. We
+      checked all twenty-three of their working websites instead.
+    </p>
+
+    {/* The point of the section, first. */}
+    <div
+      className="mt-5 rounded-2xl p-4"
+      style={{ background: "#FFF8EC", border: `1px solid ${C.gold}` }}
+    >
+      <p className="text-[13px] font-bold">
+        Cheaper than a bank is not what the evidence suggests
+      </p>
+      <p
+        className="mt-2 text-[13.5px] leading-relaxed"
+        style={{ color: C.muted }}
+      >
+        Two of the twenty-three publish a lending rate.{" "}
+        <strong style={{ color: C.ink }}>Adehyeman Savings and Loans</strong>{" "}
+        state 42% on a public sector loan, with a 2% processing fee and a 1%
+        monitoring fee on top.
+      </p>
+      <p
+        className="mt-2.5 text-[13.5px] leading-relaxed"
+        style={{ color: C.muted }}
+      >
+        That is{" "}
+        <strong style={{ color: C.ink }}>
+          eight percentage points above the dearest of the 22 banks
+        </strong>{" "}
+        compared above, before its fees are counted. A business refused by a
+        bank may assume the alternative is easier and therefore gentler. On the
+        only clear published figure, it is not.
+      </p>
+    </div>
+
+    <h3 className="mt-6 text-[14px] font-bold">
+      What the two publishers actually say
+    </h3>
+
+    <div className="mt-3 space-y-2">
+      <div
+        className="flex overflow-hidden rounded-xl"
+        style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+      >
+        <span
+          className="w-1 shrink-0"
+          style={{ background: "#A9662E" }}
+          aria-hidden="true"
+        />
+        <div className="flex-1 p-3.5">
+          <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
+            <strong>Adehyeman Savings and Loans</strong>
+            <a
+              href="https://adehyeman.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] underline underline-offset-4"
+              style={{ color: C.deep }}
+            >
+              adehyeman.com
+            </a>
+          </p>
+          <p className="mt-1 text-[12.5px] font-semibold">
+            42% on a public sector loan &middot; 2% processing &middot; 1%
+            monitoring
+          </p>
+          <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+            The most complete lending disclosure we have found from any
+            Ghanaian institution, bank or otherwise — a rate and an itemised
+            fee breakdown, in public, without asking.
+          </p>
+        </div>
+      </div>
+
+      <div
+        className="flex overflow-hidden rounded-xl"
+        style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+      >
+        <span
+          className="w-1 shrink-0"
+          style={{ background: C.gold }}
+          aria-hidden="true"
+        />
+        <div className="flex-1 p-3.5">
+          <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
+            <strong>Jins Savings and Loans</strong>
+            <a
+              href="https://www.jinssavingsandloans.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] underline underline-offset-4"
+              style={{ color: C.deep }}
+            >
+              jinssavingsandloans.com
+            </a>
+          </p>
+          <p className="mt-1 text-[12.5px] font-semibold">
+            3.5% business &middot; 4% personal &middot; 4.5% micro — period not
+            stated
+          </p>
+          <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+            Their FAQ gives these figures and does not say whether they are
+            monthly or annual. Monthly is the convention in this sector and
+            would put them near 42% a year; annual would make them cheaper than
+            every bank in Ghana, which is not plausible. We have asked, and
+            will publish the answer. Minimum deposit GH&#8373;20 to open an
+            account, GH&#8373;40 for an SME account.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h3 className="mt-6 text-[14px] font-bold">And the other twenty-four</h3>
+    <p
+      className="mt-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      Twenty-one working websites publishing no rate at all, and two whose
+      registered sites did not respond when we checked. Three publish a minimum
+      loan. Several have an application form and no indication of what
+      applying would cost.
+    </p>
+    <p
+      className="mt-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      We are in contact with providers to close the gaps, and publish whatever
+      they send, cited and dated.
+    </p>
+
+    <h3 className="mt-6 text-[14px] font-bold">Before you sign with one</h3>
+    <ul
+      className="mt-2 space-y-2 text-[14px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      <li>
+        <strong style={{ color: C.ink }}>
+          Ask whether the rate is monthly or annual.
+        </strong>{" "}
+        It is the single most important question here, and the difference is a
+        factor of twelve. A rate quoted without a period is not a quote.
+      </li>
+      <li>
+        <strong style={{ color: C.ink }}>Ask for the all-in cost.</strong>{" "}
+        Processing and monitoring fees are charged on top of the rate.
+        Adehyeman publishes theirs; most do not.
+      </li>
+      <li>
+        <strong style={{ color: C.ink }}>
+          Ask a bank first, even if you expect a refusal.
+        </strong>{" "}
+        The cheapest bank on this page charges 11.03%. If any bank will lend to
+        you, it is likely to cost a fraction of what these do.
+      </li>
+      <li>
+        <strong style={{ color: C.ink }}>Check the licence.</strong> Bank of
+        Ghana publishes the register of licensed savings and loans companies.
+        Firms outside it are not supervised, and the sector has a history of
+        collapses.
+      </li>
+    </ul>
+
+    <p className="mt-5 text-[12.5px]" style={{ color: C.muted }}>
+      Twenty-six companies from Bank of Ghana&rsquo;s register of licensed
+      savings and loans companies. Rates as published by the two that state
+      them, read from their own sites in September 2026. Microfinance
+      institutions and money lenders — several hundred of them, mostly small and
+      regional — are a separate register and are not covered here.
+    </p>
+  </div>
+</section>
+
         <section
           className="mt-12 rounded-3xl p-6 sm:p-8"
           style={{ background: C.card, border: `1px solid ${C.rule}` }}
         >
           <h2
+
             className="text-[18px] font-bold"
             style={{ fontFamily: "var(--font-display)" }}
           >
