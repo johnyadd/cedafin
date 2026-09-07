@@ -240,35 +240,61 @@ export default async function FundingPage({
           and thinks "that is not what I need" now has somewhere to go.
         */}
         {/* Was a plain text link under a button, which disappeared. A
-            business owner for whom a loan is the wrong instrument should not
-            have to notice a footnote to find that out. */}
-        <a
-          href="#private-capital"
-          className="mt-3 flex items-center gap-3 rounded-2xl p-4 transition-shadow hover:shadow-md"
-          style={{ background: "#FFF8EC", border: "1px solid #A9662E" }}
-        >
-          <span className="flex-1">
-            <span
-              className="block text-[14px] font-bold"
-              style={{ color: C.ink }}
+        {/*
+          Three routes, not three tabs.
+
+          Tabs filter one dataset — the ones above slice the same 22 banks by
+          credit type. These are different instruments with nothing in common
+          to compare: banks have APRs, private funds have ticket sizes in
+          dollars, savings and loans have two published rates between
+          twenty-six firms. Tabbing them would imply a comparability that
+          does not exist.
+
+          And tabs hide things. A business owner who does not know equity
+          finance exists will never click a tab labelled "Equity". A strip of
+          links leaves everything on the page and helps them skip ahead.
+        */}
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          {(
+            [
+              [
+                "#private-capital",
+                "Equity and private debt",
+                "9 licensed funds, from about GH₵570,000",
+              ],
+              [
+                "#savings-loans",
+                "Savings and loans",
+                "26 licensed lenders, dearer than banks",
+              ],
+              [
+                "/loan-calculator",
+                "What a loan would cost",
+                "Your figure against all 22 banks",
+              ],
+            ] as [string, string, string][]
+          ).map(([href, title, note]) => (
+            <a
+              key={href}
+              href={href}
+              className="rounded-2xl p-4 transition-shadow hover:shadow-md"
+              style={{ background: "#FFF8EC", border: "1px solid #A9662E" }}
             >
-              A loan is not the only way to raise money
-            </span>
-            <span
-              className="mt-0.5 block text-[12.5px]"
-              style={{ color: C.muted }}
-            >
-              Nine SEC-licensed funds provide equity and private debt, from
-              about GH&#8373;570,000 upwards
-            </span>
-          </span>
-          <span
-            className="shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-bold text-white"
-            style={{ background: "#7A3E12" }}
-          >
-            See them &darr;
-          </span>
-        </a>
+              <span
+                className="block text-[13.5px] font-bold"
+                style={{ color: C.ink }}
+              >
+                {title}
+              </span>
+              <span
+                className="mt-0.5 block text-[12px] leading-relaxed"
+                style={{ color: C.muted }}
+              >
+                {note}
+              </span>
+            </a>
+          ))}
+        </div>
 
         <p
           className="mt-5 rounded-2xl px-5 py-4 text-[13px] leading-relaxed"
