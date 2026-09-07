@@ -859,6 +859,199 @@ export default async function FundingPage({
         </div>
       </div>
     </div>
+    <h3 className="mt-7 text-[14px] font-bold">
+      All twenty-six, and what each publishes
+    </h3>
+    <p
+      className="mt-2 text-[13.5px] leading-relaxed"
+      style={{ color: C.muted }}
+    >
+      From Bank of Ghana&rsquo;s register of licensed savings and loans
+      companies. We visited every website listed and recorded what we could
+      find on rates, minimums and how to apply, in September 2026.
+    </p>
+
+    {/*
+      All twenty-six named, not just the two publishing rates.
+
+      A business turned down by a bank needs to know who exists. Naming only
+      the two that publish a rate would leave twenty-four institutions
+      invisible — and one of them may be the right lender for a particular
+      borrower whatever their website says.
+
+      Ordered by what they publish, because that is the useful sort: a reader
+      can see at a glance which of these can be assessed before contact and
+      which cannot.
+    */}
+    <div className="mt-3 space-y-2">
+      {(
+        [
+          [
+            "Adehyeman Savings and Loans",
+            "adehyeman.com",
+            "42% on a public sector loan, 2% processing, 1% monitoring",
+            "The only unambiguous rate we found across all twenty-six.",
+          ],
+          [
+            "Jins Savings and Loans",
+            "jinssavingsandloans.com",
+            "3.5% business, 4% personal, 4.5% micro — period not stated",
+            "Also publishes minimum deposits: GH₵20 to open, GH₵40 for SME.",
+          ],
+          [
+            "Izwe Savings and Loans",
+            "izweghana.com",
+            null,
+            "Publishes a minimum and an application route. The percentage on their site appears to be a loan-to-value ratio rather than a rate.",
+          ],
+          [
+            "Affinity Ghana Savings and Loans",
+            "affinityghana.com",
+            null,
+            "Publishes a minimum. Percentages appear on the site but not in a form we could read as a lending rate.",
+          ],
+          [
+            "Sinapi Aba Savings and Loans",
+            "sinapiaba.com",
+            null,
+            "Publishes a minimum loan and an application route. No rate.",
+          ],
+          [
+            "Bayport Savings and Loans",
+            "bayportghana.com",
+            null,
+            "Sixteen pages checked. Application route published, no rate found.",
+          ],
+          [
+            "Advans Ghana Savings and Loans",
+            "advansghana.com",
+            null,
+            "Application route published, no rate found.",
+          ],
+          [
+            "Direct Savings and Loans",
+            "directgh.com",
+            null,
+            "Application route published, no rate found.",
+          ],
+          ["ABii National Savings and Loans", "abiinational.net", null, null],
+          ["Best Point Savings and Loans", "bestpointgh.com", null, null],
+          ["Bond Savings and Loans", "bond.com.gh", null, null],
+          ["Equity Savings and Loans", "equitygh.com", null, null],
+          ["Golden Link Savings & Loans", "goldenlinkghana.com", null, null],
+          ["Golden Pride Savings and Loans", "goldenpride.com.gh", null, null],
+          ["Multi Credit Savings & Loans", "mcslghana.com", null, null],
+          [
+            "Opportunity International Savings and Loans",
+            "opportunityghana.com",
+            null,
+            null,
+          ],
+          [
+            "Pacific Savings & Loans",
+            "pacificsavingsandloansgh.com",
+            null,
+            null,
+          ],
+          ["Pan-African Savings and Loans", "panafricansl.com", null, null],
+          ["Progress Savings and Loans", "progressghana.com", null, null],
+          ["SIC Life Savings and Loans", "siclifesl.com.gh", null, null],
+          ["The Seed Funds Savings and Loans", "theseedfunds.com", null, null],
+          [
+            "Asa Savings and Loans",
+            "asasavingandloans.com",
+            null,
+            "The website on the register did not respond when we checked. They may have moved to a new domain.",
+          ],
+          [
+            "Letshego Savings and Loans",
+            "afb.com.gh",
+            null,
+            "The website on the register did not respond when we checked. They may have moved to a new domain.",
+          ],
+          [
+            "BRAC Ghana Savings and Loans",
+            null,
+            null,
+            "No website on the register. Contact by email or telephone.",
+          ],
+          [
+            "Services Integrity Savings and Loans",
+            null,
+            null,
+            "No website on the register. Telephone only.",
+          ],
+          [
+            "Utrak Savings and Loans",
+            null,
+            null,
+            "No website on the register. Contact by email or telephone.",
+          ],
+        ] as [string, string | null, string | null, string | null][]
+      ).map(([name, domain, rate, note]) => (
+        <div
+          key={name}
+          className="flex overflow-hidden rounded-xl"
+          style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+        >
+          <span
+            className="w-1 shrink-0"
+            style={{ background: rate ? "#A9662E" : C.rule }}
+            aria-hidden="true"
+          />
+          <div className="flex-1 p-3.5">
+            <p className="flex flex-wrap items-baseline gap-x-2 text-[13.5px]">
+              <strong>{name}</strong>
+              {domain && (
+                <a
+                  href={`https://${domain}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[12px] underline underline-offset-4"
+                  style={{ color: C.deep }}
+                >
+                  {domain}
+                </a>
+              )}
+            </p>
+            {rate && (
+              <p className="mt-1 text-[12.5px] font-semibold">{rate}</p>
+            )}
+            <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
+              {note ?? "No rate, minimum or application route found on their site."}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/*
+      The commitment, stated plainly. It is the same line used elsewhere on the
+      site, extended here because this sector publishes less than any other we
+      cover and the reader should know the blanks are being worked on rather
+      than accepted.
+    */}
+    <div
+      className="mt-5 rounded-2xl p-4"
+      style={{ background: "#FFF8EC", border: `1px solid ${C.gold}` }}
+    >
+      <p className="text-[13.5px] font-bold">This list will get better</p>
+      <p
+        className="mt-1.5 text-[13px] leading-relaxed"
+        style={{ color: C.muted }}
+      >
+        We are asking every one of these twenty-six for their lending rates,
+        fees, minimums and what a borrower needs to qualify — and we publish
+        whatever comes back, cited and dated, at no cost to them. Twenty-four
+        currently tell a prospective borrower nothing about price before
+        contact. That is the gap we are working to close.
+      </p>
+      <p className="mt-2 text-[12.5px]" style={{ color: C.muted }}>
+        If you run one of these firms, or you have been quoted by one, send us
+        the figures and we will publish them beside your name.
+      </p>
+    </div>
+
 
     <h3 className="mt-6 text-[14px] font-bold">And the other twenty-four</h3>
     <p
