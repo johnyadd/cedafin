@@ -207,12 +207,24 @@ export default async function LoanCalculatorPage() {
               and this says nothing about it.
             </li>
             <li>
-              <strong style={{ color: C.ink }}>
-                Anyone but banks.
-              </strong>{" "}
-              Microfinance institutions, savings and loans companies and digital
-              lenders are not in the APR report — and they are where businesses
-              refused by banks actually borrow.
+              {/* Was "microfinance institutions, savings and loans companies
+                  and digital lenders are not in the APR report". The savings
+                  and loans half is now covered on the funding page, so the
+                  claim narrows to what remains true. */}
+              <strong style={{ color: C.ink }}>Anyone but banks.</strong>{" "}
+              This calculator uses bank rates. Ghana&rsquo;s twenty-six
+              licensed savings and loans companies are not in the APR report
+              either, and the two that publish a rate charge more than any
+              bank here —{" "}
+              <Link
+                href="/funding#savings-loans"
+                className="font-semibold underline underline-offset-4"
+                style={{ color: C.deep }}
+              >
+                what they publish is here
+              </Link>
+              . Microfinance institutions and digital lenders are a separate
+              register again, and we do not cover them.
             </li>
           </ul>
           <p className="mt-4 text-[13px]">
