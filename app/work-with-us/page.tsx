@@ -307,6 +307,20 @@ export default function WorkWithUsPage() {
             so is part of the service.
           </p>
           <p>
+            {/* The durable claim. Somebody else publishing the same headline
+                does not touch it, because it is about capability rather than
+                priority. */}
+            <strong>A report is not a series.</strong> Anybody can read a
+            month&rsquo;s figures and write them up — several Ghanaian outlets
+            did exactly that with the lending data on this site, before we
+            published anything. What is harder, and what we do, is holding
+            those figures as data: extracted on a schedule, comparable across
+            categories and periods, and able to answer a question nobody
+            thought to ask when the report was written. The difference is
+            between an article about one month and something you can
+            interrogate.
+          </p>
+          <p>
             <strong>Deterministic where it matters.</strong> The extraction
             behind this site uses no language models. For financial figures
             that is deliberate — same input, same output, every time, and a

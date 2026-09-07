@@ -168,6 +168,33 @@ export default function MethodologyPage() {
           className="mt-12 text-[1.5rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
         >
+          Why a series and not a snapshot
+        </h2>
+        <p className="mt-4 text-[16px] leading-relaxed">
+          A figure read once and written up is a report. Several Ghanaian
+          outlets have reported the lending spread that appears on this site,
+          and they were right to.
+        </p>
+        <p className="mt-4 text-[16px] leading-relaxed">
+          What we do is different in kind rather than degree. The regulators
+          publish monthly; we extract on a schedule, hold what comes back as
+          data, and keep it comparable across categories and periods. That
+          means a question nobody thought to ask when a report was written can
+          still be answered — how a charge has moved over eighteen months,
+          whether the gap between an advertised rate and its true cost is
+          widening, which of two funds was dearer in a period neither
+          advertises.
+        </p>
+        <p className="mt-4 text-[16px] leading-relaxed">
+          It also means the figures here go stale visibly rather than quietly.
+          A report is right on the day it is published and silently wrong
+          afterwards. A dated series says when it was last true.
+        </p>
+
+        <h2
+          className="mt-12 text-[1.5rem] font-bold"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Dates, and why every figure carries one
         </h2>
         <p className="mt-4 text-[16px] leading-relaxed">

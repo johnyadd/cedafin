@@ -1148,6 +1148,30 @@ export default async function FundingPage({
             className="text-[18px] font-bold"
             style={{ fontFamily: "var(--font-display)" }}
           >
+            Why this is a page and not an article
+          </h2>
+          <p
+            className="mt-4 text-[14px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Bank of Ghana publishes these returns monthly and Ghanaian media
+            report them when the figures are striking. Those reports are
+            accurate and they go out of date the day after publication.
+          </p>
+          <p
+            className="mt-3 text-[14px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            This page is the data rather than a report of it — extracted on a
+            schedule, held across three credit types and three terms, and dated
+            so you can see when it was last true. When the Bank publishes
+            again, this changes. An article about May does not.
+          </p>
+
+          <h2
+            className="mt-10 text-[18px] font-bold"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             What this page doesn&rsquo;t show
           </h2>
           <ul
