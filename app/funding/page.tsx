@@ -943,10 +943,17 @@ export default async function FundingPage({
               the business.
             </li>
             <li>
-              <strong style={{ color: C.ink }}>Anyone but banks.</strong>{" "}
-              Microfinance institutions, savings and loans companies and digital
-              lenders aren&rsquo;t in Bank of Ghana&rsquo;s APR report — and
-              they&rsquo;re where businesses refused by banks actually borrow.
+              {/* Narrowed. The savings and loans half of this claim is now
+                  covered in the section above, so only microfinance and
+                  digital lenders remain outside our coverage. */}
+              <strong style={{ color: C.ink }}>
+                Microfinance and money lenders.
+              </strong>{" "}
+              Several hundred licensed institutions, mostly small and
+              regional, sit on a separate Bank of Ghana register and are not
+              covered here. Neither are digital lenders. Both are outside the
+              APR report, and both are where businesses refused by a bank
+              often end up.
             </li>
             <li>
               <strong style={{ color: C.ink }}>Security and covenants.</strong>{" "}
