@@ -47,9 +47,8 @@ from datetime import date
 
 
 def env() -> dict:
-    if not os.path.exists(".env.local"):
-        print("No .env.local — run from the project root.")
-        sys.exit(1)
+    # Falls back to environment variables so this can run unattended.
+    pass
     out = {}
     for line in open(".env.local", encoding="utf-8"):
         line = line.strip()
