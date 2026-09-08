@@ -2003,3 +2003,56 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
   // Products and firms together — a reader does not care how we model it.
   return [...productRows, ...firmRows];
 }
+
+
+/** Latest Treasury bill rate per tenor, from the nav_observations series. */
+interface TbillRateRow {
+  days: number;
+  ratePct: number;
+  asOf: string | null;
+}
+
+export async function getTbillRates(): Promise<TbillRateRow[]> {
+  const { data, error } = await publicClient()
+    .from("products")
+    .select("name, nav_observations ( as_of, yield_annualised )")
+    .eq("asset_class", "government_security")
+    .eq("status", "published");
+  if (error) throw new Error(`getTbillRates: ${error.message}`);
+
+  const out: { days: number; ratePct: number; asOf: string | null }[] = [];
+  for (const days of [91, 182, 364]) {
+    const p = (data ?? []).find((x: Record<string, unknown>) =>
+      String(x.name).includes(String(days)),
+    );
+    if (!p) continue;
+    const obs = [
+      ...((p.nav_observations ?? []) as {
+        as_of: string;
+        yield_annualised: number | null;
+      }[]),
+    ]
+      .filter((o) => o.yield_annualised !== null)
+      .sort((a, b) => a.as_of.localeCompare(b.as_of));
+    const last = obs[obs.length - 1];
+    if (!last) continue;
+    out.push({
+      days,
+      ratePct: last.yield_annualised! * 100,
+      asOf: last.as_of,
+    });
+  }
+  return out;
+}
+
+/** The most recent year-on-year inflation reading, as a percentage. */
+export async function getLatestInflation(): Promise<number | null> {
+  const { data } = await publicClient()
+    .from("macro_series")
+    .select("value")
+    .eq("series_code", "GH_CPI_YOY")
+    .order("as_of", { ascending: false })
+    .limit(1);
+  const row = (data ?? [])[0] as { value: number } | undefined;
+  return row ? Number(row.value) * 100 : null;
+}
