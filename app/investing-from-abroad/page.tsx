@@ -267,17 +267,12 @@ export default async function InvestingFromAbroadPage() {
             {/* Was "not one broker states whether they will open an account
                 for someone living abroad". One does, and continuing to assert
                 an absence after finding the exception is the error this site
-                exists to point out. */}
-            <strong style={{ color: C.ink }}>
-              One broker is an exception.
-            </strong>{" "}
-            Databank Brokerage state on their own site that they facilitate
-            trading for both local and foreign investors, individuals and
-            institutions alike — and their account opening form provides for
-            non-resident applicants, with a field for a foreign tax
-            identification number and proof of a foreign address among the
-            documents. What that means for a particular applicant is not
-            stated. The other twenty-three publish nothing on the question.
+            {/* The Databank Brokerage exception is an entry above now, so
+                repeating it here just made the reader read it twice. */}
+            Of the twenty-four licensed stockbrokers, one — listed above —
+            says anything about who it will take on. The other twenty-three
+            publish nothing on the question, and neither does any fund
+            manager we track beyond those listed.
           </p>
           <p
             className="mt-2.5 text-[13.5px] leading-relaxed"
