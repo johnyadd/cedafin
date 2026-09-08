@@ -77,12 +77,28 @@ const KIND: Record<string, string> = {
   real_estate: "Property",
 };
 
+/*
+  Seven questions, and the ceiling is deliberate.
+
+  The original five bundled funding and withdrawal into one, which is the
+  wrong way round. Getting money IN is the question people ask; getting it
+  OUT is the one that traps them. Separated.
+
+  Minimum, cost and currency were missing entirely, and any of the three can
+  rule a provider out before the access questions matter at all.
+
+  More than seven reads as a questionnaire and gets ignored. A provider
+  should be able to answer all of these in one reply without consulting
+  anybody.
+*/
 const ASK = [
   "Do you accept applications from someone resident outside Ghana?",
-  "Which identity documents — is a passport enough, or is a Ghana Card required?",
-  "Do I need a Ghanaian bank account or mobile money wallet first?",
-  "Can the application be completed without travelling to Ghana?",
-  "How can I fund it from abroad, and how would I get money out?",
+  "Which identity documents — is a passport enough, or is a Ghana Card required? Do you need proof of my address abroad?",
+  "Can the whole application be completed remotely, or does some part need me in Ghana?",
+  "Do I need a Ghanaian bank account or mobile money wallet before I can start?",
+  "How would I fund the account from abroad — international transfer, card, or something else?",
+  "How would I get money out, and can it go to a bank account outside Ghana?",
+  "What is the minimum to open, what does it cost me a year, and which currency am I holding?",
 ];
 
 export const revalidate = 3600;
