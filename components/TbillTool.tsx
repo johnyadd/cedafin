@@ -181,27 +181,52 @@ export default function TbillTool({
             />
           </label>
 
-          <label className="block">
+          {/*
+            Tenor as buttons, and the rate taken out of them.
+
+            The dropdown read "91 days — 4.75%", which bundles a choice with a
+            figure. Picking a term and knowing today rate are different
+            questions, and the second belongs below as a stated fact with its
+            date — which also gives the auction caveat somewhere to sit.
+          */}
+          <div className="block">
             <span
               className="text-[11px] font-semibold uppercase tracking-[0.12em]"
               style={{ color: C.muted }}
             >
-              Tenor
+              How long
             </span>
-            <select
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
-              className="mt-1.5 w-full cursor-pointer rounded-xl px-3 py-2.5 text-[15px]"
-              style={inputStyle}
-            >
+            <div className="mt-1.5 grid grid-cols-3 gap-2">
               {rates.map((t) => (
-                <option key={t.days} value={t.days}>
-                  {t.label} — {t.ratePct.toFixed(2)}%
-                </option>
+                <button
+                  key={t.days}
+                  type="button"
+                  onClick={() => setDays(t.days)}
+                  className="rounded-xl px-2 py-2.5 text-[14px] font-semibold transition-colors"
+                  style={
+                    days === t.days
+                      ? { background: C.deep, color: "#fff", border: `1px solid ${C.deep}` }
+                      : { background: C.card, color: C.ink, border: `1px solid ${C.rule}` }
+                  }
+                >
+                  {t.days} days
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
         </div>
+
+        {rate && (
+          <p
+            className="mt-3 text-[13px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            The {rate.days}-day bill last cleared at{" "}
+            <strong style={{ color: C.ink }}>{rate.ratePct.toFixed(2)}%</strong>
+            {rate.asOf ? ` at the auction on ${rate.asOf}` : ""}. Rates are set
+            weekly, so yours will be whatever the next auction clears at.
+          </p>
+        )}
 
         {r && rate ? (
           <>
