@@ -268,9 +268,9 @@ export default async function FundingPage({
                 "26 licensed lenders, dearer than banks",
               ],
               [
-                "/loan-calculator",
-                "What a loan would cost",
-                "Your figure against all 22 banks",
+                "/insights/loan-you-qualify-for-was-decided-months-ago",
+                "What it takes to qualify",
+                "Six months of banking history, before you need it",
               ],
             ] as [string, string, string][]
           ).map(([href, title, note]) => (
