@@ -51,14 +51,30 @@ import urllib.request
 
 
 def env() -> dict:
-    # Falls back to environment variables so this can run unattended.
-    pass
+    """
+    Credentials from .env.local locally, from the environment in CI.
+
+    A scheduled run has no .env.local — the file holds a service-role key and
+    the repository is public. It has environment variables instead, supplied
+    from repository secrets.
+    """
     out = {}
-    for line in open(".env.local", encoding="utf-8"):
-        line = line.strip()
-        if "=" in line and not line.startswith("#"):
-            k, v = line.split("=", 1)
-            out[k.strip()] = v.strip()
+    if os.path.exists(".env.local"):
+        for line in open(".env.local", encoding="utf-8"):
+            line = line.strip()
+            if "=" in line and not line.startswith("#"):
+                k, v = line.split("=", 1)
+                out[k.strip()] = v.strip()
+
+    # Environment wins, so a scheduled run is never affected by a stale file.
+    for k in ("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"):
+        if os.environ.get(k):
+            out[k] = os.environ[k]
+
+    missing = [k for k in ("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY") if not out.get(k)]
+    if missing:
+        print(f"Missing {chr(44).join(missing)} — not in .env.local or the environment.")
+        sys.exit(1)
     return out
 
 
