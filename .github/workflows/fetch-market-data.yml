@@ -1,0 +1,161 @@
+name: Fetch Ghanaian market data
+
+# WHY THIS EXISTS
+#
+# Every figure on cedafin.com was, until now, updated when somebody remembered.
+# The site argues in three places that a maintained series is different in kind
+# from a report — and a series that only updates when its author is at their
+# desk is closer to a report than it looks.
+#
+# WHAT RUNS WHEN, AND WHY
+#
+#   Gold, daily. Bank of Ghana publishes a coin circular each business day.
+#   Missing one leaves a stale price on the site with a date attached, which is
+#   honest but useless.
+#
+#   Treasury bills, Fridays. The auction runs weekly and results publish the
+#   same day. Running Friday evening Accra time catches it; running Monday
+#   would leave the weekend stale.
+#
+#   GSE monthly reports, on the 8th. The exchange publishes for the prior month
+#   in the first week or so. The 8th is late enough to find it and early enough
+#   to matter.
+#
+# WHAT DELIBERATELY DOES NOT RUN
+#
+#   The APR fetcher. It guesses filenames, and Bank of Ghana names those files
+#   inconsistently — MAY-APR-2026.pdf sits in a folder for July. It found May
+#   and missed April and March. Scheduled, it would fail silently most months
+#   and we would not notice. It stays manual until it reads the notices page
+#   instead of guessing.
+#
+#   The discovery scans. Those visit dozens of provider websites looking for
+#   published rates. Running them unattended would hammer other people's
+#   servers on a timer for no benefit — they are for occasional research, not
+#   monitoring.
+#
+# FAILURE BEHAVIOUR
+#
+# Each job continues past a failing step rather than stopping, because a gold
+# fetch failing should not prevent the T-bill load. The run is still marked
+# failed, so it shows up in the Actions tab.
+
+on:
+  schedule:
+    # Times are UTC. Ghana is UTC+0 year round, so these are local times too.
+    - cron: "30 17 * * 1-5"   # gold, weekdays at 17:30
+    - cron: "0 19 * * 5"      # treasury bills, Fridays at 19:00
+    - cron: "0 9 8 * *"       # GSE reports, the 8th at 09:00
+  workflow_dispatch:
+    # So a run can be triggered by hand after a failure, or to test a change,
+    # without waiting for the schedule.
+    inputs:
+      job:
+        description: "Which fetch to run"
+        required: true
+        default: "all"
+        type: choice
+        options: [all, gold, tbills, gse]
+
+env:
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+jobs:
+  gold:
+    # Runs on the daily schedule, or when asked for by name.
+    if: >
+      github.event.schedule == '30 17 * * 1-5' ||
+      github.event.inputs.job == 'gold' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pypdf
+        run: python -m pip install --quiet pypdf
+
+      - name: Fetch the circular
+        run: python fetch_gold_coin.py
+        continue-on-error: true
+
+      - name: Extract
+        run: python extract_gold_coin.py
+        continue-on-error: true
+
+      - name: Load
+        run: python load_gold_coin.py
+
+  tbills:
+    if: >
+      github.event.schedule == '0 19 * * 5' ||
+      github.event.inputs.job == 'tbills' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pypdf
+        run: python -m pip install --quiet pypdf
+
+      # Walks back a few tenders rather than assuming this week's number, so a
+      # missed week is picked up on the next run instead of leaving a hole.
+      - name: Fetch recent auction results
+        run: python fetch_tbills.py --count 4
+        continue-on-error: true
+
+      - name: Extract
+        run: python extract_tbills.py
+        continue-on-error: true
+
+      - name: Load
+        run: python load_tbills_as_products.py
+
+      # The T-bill yields feed the comparison pages and the calculator, both of
+      # which read precomputed metrics.
+      - name: Recompute metrics
+        run: python compute_metrics.py
+        continue-on-error: true
+
+  gse:
+    if: >
+      github.event.schedule == '0 9 8 * *' ||
+      github.event.inputs.job == 'gse' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pypdf
+        run: python -m pip install --quiet pypdf
+
+      - name: Fetch the monthly report
+        run: python fetch_gse_reports.py
+        continue-on-error: true
+
+      - name: Extract
+        run: python extract_gse.py
+        continue-on-error: true
+
+      - name: Load prices
+        run: python load_gse.py
+        continue-on-error: true
+
+      - name: Load market aggregates
+        run: python load_gse_market.py
+        continue-on-error: true
+
+      - name: Load broker activity
+        run: python load_broker_activity.py
