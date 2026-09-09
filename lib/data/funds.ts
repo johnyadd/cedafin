@@ -2056,3 +2056,48 @@ export async function getLatestInflation(): Promise<number | null> {
   const row = (data ?? [])[0] as { value: number } | undefined;
   return row ? Number(row.value) * 100 : null;
 }
+
+interface LendingSpread {
+  minPct: number;
+  maxPct: number;
+  cheapest: string;
+  dearest: string;
+  banks: number;
+  asOf: string | null;
+}
+
+/**
+ * The one-year SME APR range — the figure a reporter is most likely to want,
+ * and the one this whole site exists to make findable.
+ */
+export async function getLendingSpread(): Promise<LendingSpread | null> {
+  const { data, error } = await publicClient()
+    .from("products")
+    .select("rate_max, providers ( trading_name, legal_name )")
+    .eq("market_side", "borrow")
+    .eq("asset_class", "sme_credit")
+    .eq("lock_in_days", 365)
+    .not("rate_max", "is", null)
+    .order("rate_max", { ascending: true });
+  if (error || !data || !data.length) return null;
+
+  const name = (row: Record<string, unknown>) => {
+    const p = row.providers as {
+      trading_name?: string;
+      legal_name?: string;
+    } | null;
+    return p?.trading_name ?? p?.legal_name ?? "";
+  };
+
+  const first = data[0] as Record<string, unknown>;
+  const last = data[data.length - 1] as Record<string, unknown>;
+
+  return {
+    minPct: Number(first.rate_max) * 100,
+    maxPct: Number(last.rate_max) * 100,
+    cheapest: name(first),
+    dearest: name(last),
+    banks: data.length,
+    asOf: "May 2026",
+  };
+}

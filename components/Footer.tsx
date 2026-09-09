@@ -220,6 +220,15 @@ export default function Footer() {
               Data extraction and analysis, for organisations &rarr;
             </Link>
           </p>
+          <p className="mt-2 text-[12.5px]">
+            <Link
+              href="/for-journalists"
+              className="underline underline-offset-4"
+              style={{ color: C.muted }}
+            >
+              For journalists — figures free to use &rarr;
+            </Link>
+          </p>
 
           <p
             className="mt-5 text-[11px] leading-relaxed"

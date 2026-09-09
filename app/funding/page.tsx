@@ -29,6 +29,7 @@
 
 import Link from "next/link";
 
+import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -1139,6 +1140,24 @@ export default async function FundingPage({
   </div>
 </section>
 
+
+        {/*
+          What this data is and how to cite it.
+
+          Every page already says where its figures come from, in the prose.
+          That is enough for a reader deciding whether to trust us and not
+          enough for a journalist deciding whether to quote us — who will
+          otherwise write "according to a website".
+        */}
+        <DataProvenance
+          title="Ghanaian bank lending rates, all 22 licensed banks"
+          source="Bank of Ghana, Annual Percentage Rates and Average Interest Rates"
+          sourceUrl="https://www.bog.gov.gh/"
+          covering="May 2026"
+          checked="September 2026"
+          method="Extracted from the Bank of Ghana return and held as a series across three credit types and three terms. Figures are averages across each bank&rsquo;s whole book and are indicative, not quotes."
+          pageUrl="https://cedafin.com/funding"
+        />
         <section
           className="mt-12 rounded-3xl p-6 sm:p-8"
           style={{ background: C.card, border: `1px solid ${C.rule}` }}
