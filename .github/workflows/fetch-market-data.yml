@@ -23,11 +23,16 @@ name: Fetch Ghanaian market data
 #
 # WHAT DELIBERATELY DOES NOT RUN
 #
-#   The APR fetcher. It guesses filenames, and Bank of Ghana names those files
-#   inconsistently — MAY-APR-2026.pdf sits in a folder for July. It found May
-#   and missed April and March. Scheduled, it would fail silently most months
-#   and we would not notice. It stays manual until it reads the notices page
-#   instead of guessing.
+#   The old APR fetcher, fetch_apr.py, which guessed filenames. It is replaced
+#   here by fetch_apr_notices.py, which reads the Bank's search page and takes
+#   the PDF link out of the notice — so a new naming convention next month does
+#   not break it.
+#
+#   That job runs WEEKLY rather than monthly, deliberately. Bank of Ghana
+#   publishes the APR report late and irregularly — May 2026 appeared in July —
+#   and keeps only the current notice up. A monthly check would miss a report
+#   published and replaced between runs. A weekly one costs nothing and the
+#   fetcher skips anything already held.
 #
 #   The discovery scans. Those visit dozens of provider websites looking for
 #   published rates. Running them unattended would hammer other people's
@@ -46,6 +51,7 @@ on:
     - cron: "30 17 * * 1-5"   # gold, weekdays at 17:30
     - cron: "0 19 * * 5"      # treasury bills, Fridays at 19:00
     - cron: "0 9 8 * *"       # GSE reports, the 8th at 09:00
+    - cron: "0 10 * * 1"      # APR notice check, Mondays at 10:00
   workflow_dispatch:
     # So a run can be triggered by hand after a failure, or to test a change,
     # without waiting for the schedule.
@@ -55,7 +61,7 @@ on:
         required: true
         default: "all"
         type: choice
-        options: [all, gold, tbills, gse]
+        options: [all, gold, tbills, gse, apr]
 
 env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -159,3 +165,33 @@ jobs:
 
       - name: Load broker activity
         run: python load_broker_activity.py
+
+  apr:
+    # Weekly, because Bank of Ghana publishes late and irregularly and keeps
+    # only the current notice up. The fetcher skips anything already held, so
+    # fifty-one of the fifty-two runs a year do nothing and cost nothing.
+    if: >
+      github.event.schedule == '0 10 * * 1' ||
+      github.event.inputs.job == 'apr' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pypdf
+        run: python -m pip install --quiet pypdf
+
+      - name: Look for a new APR notice
+        run: python fetch_apr_notices.py
+        continue-on-error: true
+
+      - name: Extract
+        run: python extract_apr.py --dir data/apr
+        continue-on-error: true
+
+      - name: Load
+        run: python load_lending_products.py
