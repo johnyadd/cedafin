@@ -142,7 +142,7 @@ export default function BrokerSignals({
           the correction has to be where the blank is. */}
       {!accessRequirements && (
         <p className="mt-1.5 text-[11px]" style={{ color: C.muted }}>
-          Silence is not refusal — we have asked and they have not answered.
+          Awaiting information from the firm — this is not a refusal.
         </p>
       )}
     </div>
