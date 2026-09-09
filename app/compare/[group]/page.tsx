@@ -1174,7 +1174,7 @@ export default async function ComparePage({
               ? "Bank of Ghana weekly auction results"
               : peerGroup.startsWith("commodity")
                 ? "Bank of Ghana gold coin circulars and LBMA reference prices"
-                : "Provider factsheets and published net asset values"
+                : "provider factsheets and published net asset values"
           }
           covering={`${funds.length} products, each figure dated as its provider published it`}
           checked="September 2026"
