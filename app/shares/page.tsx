@@ -30,6 +30,7 @@
 
 import Link from "next/link";
 
+import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
@@ -333,6 +334,16 @@ export default async function SharesPage() {
             Exchange&rsquo;s published monthly reports.
           </p>
         </section>
+
+        <DataProvenance
+          title="Ghana Stock Exchange share prices, all listed companies"
+          source="Ghana Stock Exchange monthly market reports"
+          sourceUrl="https://gse.com.gh/"
+          covering="February 2025 to July 2026"
+          checked="September 2026"
+          method="Extracted from the exchange&rsquo;s published monthly reports and held as a price series per company. Monthly closes, not live prices."
+          pageUrl="https://cedafin.com/shares"
+        />
       </div>
       <Footer />
     </main>

@@ -41,6 +41,7 @@
 
 import Link from "next/link";
 
+import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
@@ -523,6 +524,16 @@ export default async function BrokersPage() {
             Stock Exchange&rsquo;s published monthly reports.
           </p>
         </section>
+
+        <DataProvenance
+          title="Ghana Stock Exchange broker market share"
+          source="Ghana Stock Exchange monthly market reports"
+          sourceUrl="https://gse.com.gh/"
+          covering="February 2025 to July 2026, 15 monthly reports"
+          checked="September 2026"
+          method="Share of value traded per dealing member, averaged across the months each firm appears. Firms absent from a report are averaged over the months they appear, not treated as zero — the month count is shown beside every figure."
+          pageUrl="https://cedafin.com/brokers"
+        />
 
         <p className="mt-8 text-[13px]">
           <Link

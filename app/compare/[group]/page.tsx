@@ -37,6 +37,7 @@
 
 import Link from "next/link";
 
+import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -342,7 +343,14 @@ export default async function ComparePage({
 
   const yieldLed =
     funds.length > 0 &&
-    funds.every((f) => (f.primary.statedChargesPct?.value ?? -1) === 0) &&
+    // Every fund that PUBLISHES a charge must publish zero. A product with
+    // no published charge should not defeat this — adding TBill4All, which
+    // publishes none, silently flipped this group back to charge-led display
+    // and produced a headline reading "Cheapest 0.00%, Priciest 0.00%".
+    funds
+      .filter((f) => f.primary.statedChargesPct !== null)
+      .every((f) => f.primary.statedChargesPct?.value === 0) &&
+    funds.some((f) => f.primary.statedChargesPct !== null) &&
     funds.some((f) => f.primary.currentYield !== null);
 
   const yields = funds
@@ -1151,6 +1159,28 @@ export default async function ComparePage({
             {BRAND.legalStatus}
           </p>
         </section>
+
+        {/*
+          The source differs by group — Treasury bills come from auction
+          results, gold from the daily circular, funds from factsheets. A
+          generic "regulator publications and provider disclosures" would tell
+          a journalist nothing about the figure in front of them, so it is
+          derived.
+        */}
+        <DataProvenance
+          title={`Ghanaian ${summary.label} — ${yieldLed ? "rates and terms" : "charges and returns"}`}
+          source={
+            peerGroup.startsWith("government_security")
+              ? "Bank of Ghana weekly auction results"
+              : peerGroup.startsWith("commodity")
+                ? "Bank of Ghana gold coin circulars and LBMA reference prices"
+                : "Provider factsheets and published net asset values"
+          }
+          covering={`${funds.length} products, each figure dated as its provider published it`}
+          checked="September 2026"
+          method="Every charge and return carries the date its provider published it. Where a provider publishes nothing the field is blank rather than estimated, and returns are total returns over the stated window unless marked otherwise."
+          pageUrl={`https://cedafin.com/compare/${group}`}
+        />
       </div>
       <Footer />
     </main>
