@@ -41,6 +41,7 @@
 
 import Link from "next/link";
 
+import BrokerSignals from "@/components/BrokerSignals";
 import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
@@ -344,6 +345,17 @@ export default async function BrokersPage() {
                     {b.avgSharePct?.toFixed(2)}%
                   </span>
                 </div>
+
+                {/* Three things a reader can check, on the card rather than
+                    buried below. Cost is the fourth and cannot be shown —
+                    none of the twenty-four publishes one. */}
+                <BrokerSignals
+                  website={b.website}
+                  email={b.contactEmail}
+                  phone={b.contactPhone}
+                  accessRequirements={b.accessRequirements}
+                  offersCustody={b.offersCustody}
+                />
 
                 {/*
                   Value share and volume share point different ways, and the

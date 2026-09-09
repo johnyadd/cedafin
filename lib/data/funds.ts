@@ -1204,6 +1204,8 @@ export interface BrokerRow {
   name: string;
   /** What the firm publishes about who it will take on. Null = nothing. */
   accessRequirements: string | null;
+  /** Says it can hold securities on your behalf. One firm of twenty-four. */
+  offersCustody: boolean | null;
   avgSharePct: number | null;
   minSharePct: number | null;
   maxSharePct: number | null;
@@ -1243,7 +1245,8 @@ export async function getBrokers(): Promise<BrokerRow[]> {
   const { data, error } = await publicClient()
     .from("providers")
     .select(
-      `slug, trading_name, legal_name, access_requirements, broker_share_avg_pct,
+      `slug, trading_name, legal_name, access_requirements, offers_custody,
+     website, contact_email, contact_phone, broker_share_avg_pct,
        broker_share_min_pct, broker_share_max_pct, broker_months_observed,
        broker_first_seen, broker_last_seen,
        broker_volume_share_avg_pct, broker_value_traded_ghs,
@@ -1262,6 +1265,8 @@ export async function getBrokers(): Promise<BrokerRow[]> {
       // Shown on their card, since somebody comparing brokers is asking the
       // same question as somebody reading the diaspora page.
       accessRequirements: (d.access_requirements as string | null) ?? null,
+      // Signals a reader can act on, all from fields already held.
+      offersCustody: (d.offers_custody as boolean | null) ?? null,
       avgSharePct: (d.broker_share_avg_pct as number | null) ?? null,
       minSharePct: (d.broker_share_min_pct as number | null) ?? null,
       maxSharePct: (d.broker_share_max_pct as number | null) ?? null,

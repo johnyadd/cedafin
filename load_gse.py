@@ -111,6 +111,38 @@ def rest(method: str, path: str, body=None, prefer: str | None = None) -> list:
                            f"{e.read().decode('utf-8', 'replace')[:300]}") from e
 
 
+# The exchange renames brokers between reports — adding and dropping
+# "Limited", switching "Capital" for "Capital Markets", and misspelling
+# "Securities" twice. Slugifying the name as printed produced THIRTY-SEVEN
+# provider records for twenty-four firms, with some months counted under one
+# name and some under another. Market shares were split and, where the ranges
+# overlapped, double-counted.
+#
+# Nothing flagged it. Each card read correctly on its own; only comparing
+# records against each other showed the problem, months after the fact.
+GSE_TYPOS = {
+    "securties": "securities",
+    "securites": "securities",
+    "firstatlantic": "first atlantic",
+}
+
+# Words the exchange uses inconsistently and which identify nobody. What is
+# left after removing them is the firm: Serengeti, Merban, First Atlantic.
+BROKER_NOISE = (
+    r"\b(limited|ltd|plc|company|co|markets?|capital|securities|brokerage|"
+    r"stockbrokers?)\b"
+)
+
+
+def broker_key(name: str) -> str:
+    """A stable identity for a broker, whatever the report called it."""
+    s = name.lower()
+    for wrong, right in GSE_TYPOS.items():
+        s = s.replace(wrong, right)
+    s = re.sub(r"[^a-z ]+", " ", s)
+    s = re.sub(BROKER_NOISE, " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
 def slugify(s: str) -> str:
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", s.lower())).strip("-")
 
@@ -149,7 +181,12 @@ def main() -> int:
         if r["ticker"] not in SKIP_TICKERS
         and (not args.etf_only or r["ticker"] in ETF_TICKERS)
     })
-    brokers = sorted({r["broker"] for r in br})
+    # One entry per FIRM, not per spelling. The display name is the most
+    # recent spelling; the key is what identifies it.
+    by_key: dict[str, str] = {}
+    for r in sorted(br, key=lambda x: x.get("as_of", "")):
+        by_key[broker_key(r["broker"])] = r["broker"]
+    brokers = sorted(by_key.values())
 
     print(f"{len(eq)} equity rows, {len(br)} broker rows")
     print(f"  latest equities {latest_eq}, latest brokers {latest_br}")
@@ -161,7 +198,9 @@ def main() -> int:
         for r in br:
             v = f(r["value_share_pct"])
             if v is not None:
-                shares.setdefault(r["broker"], []).append(v)
+                # Keyed on the firm, not the printed name — otherwise the
+                # summary reports one broker twice under two spellings.
+                shares.setdefault(broker_key(r["broker"]).upper(), []).append(v)
         ranked = sorted(
             shares.items(),
             key=lambda kv: -(sum(kv[1]) / len(kv[1])),
@@ -203,10 +242,15 @@ def main() -> int:
     existing = {p["slug"]: p["id"] for p in rest("GET", "/providers?select=id,slug")}
     made_b = 0
     for name in brokers:
-        slug = "broker-" + slugify(name)
+        # Keyed on the firm rather than the printed name, so a rename in
+        # next month's report updates the record instead of creating a rival.
+        slug = "broker-" + slugify(broker_key(name))
         if slug in existing:
             continue
-        vals = [f(r["value_share_pct"]) for r in br if r["broker"] == name]
+        key = broker_key(name)
+        vals = [
+            f(r["value_share_pct"]) for r in br if broker_key(r["broker"]) == key
+        ]
         vals = [v for v in vals if v is not None]
         avg = sum(vals) / len(vals) if vals else 0
         rest("POST", "/providers", {
