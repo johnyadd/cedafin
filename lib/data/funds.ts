@@ -1937,6 +1937,9 @@ interface AccessRecord {
   name: string;
   providerName: string;
   providerSlug: string;
+  /** The provider's own site — better than our list page for someone who
+      has just read what they publish. */
+  providerUrl: string | null;
   /** What kind of thing it is, so a reader knows before clicking. */
   assetClass: string | null;
   peerGroup: string | null;
@@ -1949,7 +1952,7 @@ interface AccessRecord {
 export async function getAccessRecords(): Promise<AccessRecord[]> {
   const { data, error } = await publicClient()
     .from("products")
-    .select("slug, name, asset_class, peer_group, eligibility_notes, access_requirements, access_verified_on, providers ( trading_name, legal_name, slug )")
+    .select("slug, name, asset_class, peer_group, eligibility_notes, access_requirements, access_verified_on, providers ( trading_name, legal_name, slug, website )")
     .not("access_requirements", "is", null)
     .eq("market_side", "invest");
   if (error) throw new Error(`getAccessRecords: ${error.message}`);
@@ -1964,7 +1967,7 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
   */
   const { data: firms, error: firmError } = await publicClient()
     .from("providers")
-    .select("slug, trading_name, legal_name, access_requirements, access_verified_on")
+    .select("slug, trading_name, legal_name, website, access_requirements, access_verified_on")
     .not("access_requirements", "is", null);
   if (firmError) throw new Error(`getAccessRecords: ${firmError.message}`);
 
@@ -1974,6 +1977,7 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       name: String(f.trading_name ?? f.legal_name ?? ""),
       providerName: String(f.trading_name ?? f.legal_name ?? ""),
       providerSlug: String(f.slug),
+      providerUrl: (f.website as string | null) ?? null,
       // A firm is not an asset class. The page shows nothing where this is
       // null, which is right — "Databank Brokerage · Shares" would imply we
       // hold share data for them, and we do not.
@@ -1989,12 +1993,14 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       trading_name?: string;
       legal_name?: string;
       slug?: string;
+      website?: string;
     } | null;
     return {
       slug: String(r.slug),
       name: String(r.name),
       providerName: p?.trading_name ?? p?.legal_name ?? "",
       providerSlug: p?.slug ?? "",
+      providerUrl: p?.website ?? null,
       assetClass: (r.asset_class as string | null) ?? null,
       peerGroup: (r.peer_group as string | null) ?? null,
       eligibilityNotes: (r.eligibility_notes as string | null) ?? null,

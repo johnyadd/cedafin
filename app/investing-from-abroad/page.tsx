@@ -205,22 +205,41 @@ export default async function InvestingFromAbroadPage() {
                           Compare charges and returns &rarr;
                         </Link>
                       )}
-                      {/* Brokers have no provider page — they live on the
-                          brokers listing — so the link has to know which
-                          kind of firm it points at. */}
+                      {/*
+                        Three links, in order of usefulness to someone who has
+                        just read what a provider publishes.
+
+                        Their own site first — the page quoted above is theirs,
+                        not ours, and somebody who wants to act goes there.
+                        Then our page about them. A broker gets an anchor into
+                        the brokers list rather than the top of it, because
+                        sending a reader to twenty-four cards to find the one
+                        they just read about is not a link, it is a search.
+                      */}
+                      {r.providerUrl && (
+                        <a
+                          href={r.providerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold underline underline-offset-4"
+                          style={{ color: C.deep }}
+                        >
+                          {r.providerName} &rarr;
+                        </a>
+                      )}
                       {r.providerSlug && (
                         <Link
                           href={
                             r.providerSlug.startsWith("broker-")
-                              ? "/brokers"
+                              ? `/brokers#${r.providerSlug}`
                               : `/providers/${r.providerSlug}`
                           }
                           className="underline underline-offset-4"
                           style={{ color: C.muted }}
                         >
                           {r.providerSlug.startsWith("broker-")
-                            ? "All 24 stockbrokers"
-                            : `About ${r.providerName}`}
+                            ? "Their share of GSE trading"
+                            : "What we hold on them"}
                         </Link>
                       )}
                     </p>
@@ -298,7 +317,7 @@ export default async function InvestingFromAbroadPage() {
           What to ask before you send money
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed" style={{ color: C.muted }}>
-          Ask before, not after. Five questions, and any provider can answer all
+          Ask before, not after. Seven questions, and any provider can answer all
           of them in one reply.
         </p>
         <ol className="mt-4 space-y-2.5">
