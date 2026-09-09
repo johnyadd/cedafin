@@ -255,6 +255,74 @@ export default async function BrokersPage() {
           recommendation.
         </p>
 
+
+        {/*
+          What to look at, because the ordering below is not a ranking.
+
+          A reader arriving from /shares has just seen a company doing well
+          and needs a broker. Until now this page gave them twenty-four firms
+          sorted by trading volume and no criteria at all — and volume is a
+          measure of institutional business, which tells a saver nothing about
+          whether a firm will open an account for them.
+
+          Deliberately not a score. The data is too thin to rank on, and an
+          unlicensed site publishing a "best broker" table is precisely what
+          the regulator warns people about.
+        */}
+        <section
+          className="mt-5 overflow-hidden rounded-2xl"
+          style={{ background: C.card, border: `1px solid ${C.gold}` }}
+        >
+          <div className="p-5">
+            <h3 className="text-[14.5px] font-bold">
+              If you are choosing one, this is what to look at
+            </h3>
+            <p
+              className="mt-2 text-[13.5px] leading-relaxed"
+              style={{ color: C.muted }}
+            >
+              Not the order below. Every firm here is licensed and any of them
+              can trade any listed share, so the choice comes down to whether
+              you can reach them and what they will do for you.
+            </p>
+            <ul
+              className="mt-3 space-y-2 text-[13.5px] leading-relaxed"
+              style={{ color: C.muted }}
+            >
+              <li>
+                <strong style={{ color: C.ink }}>Can you reach them.</strong>{" "}
+                Six of the websites on the regulator&rsquo;s register did not
+                respond when we checked, and six of the email addresses did
+                not accept mail. A card below without a website or an address
+                is one we could not reach either.
+              </li>
+              <li>
+                <strong style={{ color: C.ink }}>What it costs.</strong> Not
+                one of the twenty-four publishes a commission rate. Ask two or
+                three what they charge to buy and to sell, and whether there
+                is a minimum, before you open anything.
+              </li>
+              <li>
+                <strong style={{ color: C.ink }}>What else they do.</strong>{" "}
+                Some deal in Treasury bills and bonds as well as shares, and
+                some run funds of their own. If you want more than shares, ask
+                before choosing.
+              </li>
+              <li>
+                <strong style={{ color: C.ink }}>
+                  Whether they will take you.
+                </strong>{" "}
+                Two firms below say something about who they accept, and one
+                mentions custody. If you live outside Ghana that is the first
+                question, not the last.
+              </li>
+            </ul>
+            <p className="mt-3 text-[12.5px]" style={{ color: C.muted }}>
+              We hold no commission rates because none is published. Anything a
+              firm sends us goes on their card here, cited and dated.
+            </p>
+          </div>
+        </section>
         <ol className="mt-5 space-y-2.5">
           {withData.map((b, i) => {
             const width =

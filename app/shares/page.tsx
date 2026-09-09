@@ -319,6 +319,17 @@ export default async function SharesPage() {
             </li>
           </ul>
 
+          {/* A reader who has just seen a share doing well needs to know
+              what happens next, and that the choice is not obvious. */}
+          <p
+            className="mt-6 text-[13.5px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Buying any of these means going through one of the twenty-four
+            licensed dealing members. None of them publishes what it charges,
+            so the choice comes down to whether you can reach them and what
+            else they will do for you.
+          </p>
           <p className="mt-6 text-[13.5px]">
             <Link
               href="/brokers"
