@@ -75,11 +75,19 @@ On GH₵5,000, the difference between 1.75% and 2.25% is GH₵25 a year. Not
 enormous — but it is charged every year, on a rising balance, and it comes out
 whether the fund makes money or not.
 
-**The lowest minimum in Ghana is GH₵5, and it is not a fund.** Ecobank's
-TBill4All sells 91-day and 182-day Government of Ghana Treasury bills through
-an MTN Mobile Money wallet, from GH₵5, with no bank account required. You
-register once by dialling *770# and buy, rediscount and check statements from
-the phone.
+**The lowest minimum in Ghana is GH₵1.** IC state that GH₵1 opens and
+maintains an account in their IC Liquidity Fund, subscribed online at
+wealth.ic.africa and paid by card, mobile money, bank transfer or ExpressPay.
+They charge up to 2% a year and state there are no entry or exit fees.
+
+**And GH₵5 buys a government Treasury bill.** Ecobank's TBill4All sells 91-day
+and 182-day Government of Ghana bills through an MTN Mobile Money wallet, with
+no bank account required. You register once by dialling *770# and buy,
+rediscount and check statements from the phone.
+
+Between them these are the two cheapest ways into the Ghanaian market, and they
+are different things — a fund that can rise and fall, and a government bill
+that pays a fixed amount on a fixed date.
 
 **Among funds, the minimum and the charge are separate questions.** Stanbic
 Cash Trust takes GH₵20 to open — the lowest verified fund minimum — and charges
