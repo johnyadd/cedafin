@@ -37,6 +37,7 @@ const C = {
   bg: "#F2F6F9",
   muted: "#5F6E78",
   gold: "#E8A33D",
+  teal: "#1B8BC0",
 };
 
 export default function DataProvenance({
@@ -86,15 +87,18 @@ export default function DataProvenance({
       className="mt-8 overflow-hidden rounded-2xl"
       style={{ background: C.card, border: `1px solid ${C.rule}` }}
     >
+      {/* Coloured header, matching the section bars elsewhere on the site.
+          Grey on white read as a footnote, which is the opposite of what this
+          block is for. */}
       <div
-        className="px-5 py-2.5"
-        style={{ background: C.bg, borderBottom: `1px solid ${C.rule}` }}
+        className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-3"
+        style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        <p
-          className="text-[10.5px] font-semibold uppercase tracking-[0.14em]"
-          style={{ color: C.muted }}
-        >
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
           About this data
+        </p>
+        <p className="text-[11.5px] text-white opacity-80">
+          Free to quote &middot; no permission needed
         </p>
       </div>
 
@@ -143,8 +147,8 @@ export default function DataProvenance({
 
         {/* The point of the whole component. */}
         <div
-          className="mt-4 rounded-xl p-3.5"
-          style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+          className="mt-4 rounded-xl p-4"
+          style={{ background: "#FFF8EC", border: `1px solid ${C.gold}` }}
         >
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p
