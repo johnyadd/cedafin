@@ -1403,6 +1403,9 @@ const PEER_LABELS: Record<string, string> = {
   "deposit:GHS": "Cedi fixed deposits and savings accounts",
   "government_security:GHS": "Government Treasury bills",
   "commodity:GHS": "Gold",
+  // Added when the SEC unit trust register turned up Republic Real Estate
+  // Investment Trust. Without it the group navigation showed the raw key.
+  "real_estate:GHS": "Property funds",
 };
 
 export const MIN_DISTINCT_FUNDS_TO_RANK = 3;
