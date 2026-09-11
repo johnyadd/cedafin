@@ -134,6 +134,18 @@ BROKER_NOISE = (
 )
 
 
+# The exchange prints broker names in capitals, so .title() turns IC into
+# Ic and NTHC into Nthc. These stay as they are.
+ACRONYMS = {"IC", "SBG", "CDH", "EDC", "NTHC", "SIC", "UMB", "ETF"}
+
+
+def broker_display(name: str) -> str:
+    """Title case, except for the acronyms that are not words."""
+    return " ".join(
+        w.upper() if w.upper() in ACRONYMS else w.title() for w in name.split()
+    )
+
+
 def broker_key(name: str) -> str:
     """A stable identity for a broker, whatever the report called it."""
     s = name.lower()
@@ -255,8 +267,8 @@ def main() -> int:
         avg = sum(vals) / len(vals) if vals else 0
         rest("POST", "/providers", {
             "slug": slug,
-            "legal_name": name.title(),
-            "trading_name": name.title(),
+            "legal_name": broker_display(name),
+            "trading_name": broker_display(name),
             "status": "draft",
             "notes": (
                 f"Licensed dealing member of the Ghana Stock Exchange. "
