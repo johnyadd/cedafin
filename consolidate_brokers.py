@@ -203,6 +203,13 @@ def main() -> int:
             merged["broker_share_min_pct"] = min(vals)
             merged["broker_share_max_pct"] = max(vals)
             merged["broker_months_observed"] = len(months.get(key, set()))
+            # The month COUNT came from the CSV and the date RANGE did not, so
+            # a merged firm showed "15 months (Feb 2026 - Jul 2026)". Both now
+            # derive from the same set.
+            seen = sorted(d for d in months.get(key, set()) if d)
+            if seen:
+                merged["broker_first_seen"] = seen[0]
+                merged["broker_last_seen"] = seen[-1]
         if vols:
             merged["broker_volume_share_avg_pct"] = sum(vols) / len(vols)
 
