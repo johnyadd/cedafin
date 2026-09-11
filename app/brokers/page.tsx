@@ -341,8 +341,17 @@ export default async function BrokersPage() {
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   <h3 className="text-[14.5px] font-bold">{b.name}</h3>
+                  {/* Labelled on the card, not only in the heading above.
+                      The diaspora page anchors straight to a card, so a
+                      reader can arrive having never seen the heading. */}
                   <span className="text-[1.15rem] font-bold tabular-nums">
                     {b.avgSharePct?.toFixed(2)}%
+                    <span
+                      className="ml-1.5 text-[11px] font-semibold"
+                      style={{ color: C.muted }}
+                    >
+                      of value traded
+                    </span>
                   </span>
                 </div>
 
