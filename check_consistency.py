@@ -221,6 +221,37 @@ def check_orphan_products(quiet: bool) -> None:
         print(f"  ok    {len(prods)} published products all have a provider")
 
 
+def check_dates_in_notes(quiet: bool) -> None:
+    """
+    An access note should not restate a date the record already holds.
+
+    Three loaders wrote "Read from their own material on 9 September 2026"
+    into access_requirements, while the page renders access_verified_on
+    beneath it — so every card showed the date twice. Found by reading the
+    page, which is the slow way.
+    """
+    written = re.compile(
+        r"\bon \d{1,2} (January|February|March|April|May|June|July|August|"
+        r"September|October|November|December) \d{4}",
+        re.I,
+    )
+    hits = 0
+    for table, name_field in (("providers", "trading_name"), ("products", "name")):
+        rows = get(
+            f"/{table}?select=slug,{name_field},access_requirements"
+            "&access_requirements=not.is.null"
+        )
+        for r in rows:
+            if written.search(r.get("access_requirements") or ""):
+                warn(
+                    "date in note",
+                    f"{r['slug']} restates a date the record already holds",
+                )
+                hits += 1
+    if not hits and not quiet:
+        print("  ok    no access note restates its own verified date")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--quiet", action="store_true")
@@ -238,6 +269,7 @@ def main() -> int:
         check_charge_bounds,
         check_published_have_sources,
         check_orphan_products,
+        check_dates_in_notes,
     ):
         try:
             fn(args.quiet)
