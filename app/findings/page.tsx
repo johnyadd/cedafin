@@ -131,7 +131,7 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
           "Not one of Ghana's 24 licensed stockbrokers publishes a commission rate",
         source:
           "Every dealing member's website, checked August and September 2026",
-        why: "A Ghanaian cannot establish what buying a share costs until they have already opened an account with somebody.",
+        why: "Comparing what brokers charge means contacting them one at a time and asking. Nothing is published, so there is nothing to compare before you start.",
         href: "/brokers",
       },
       {
