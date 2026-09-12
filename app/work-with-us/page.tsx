@@ -60,6 +60,19 @@ export const metadata = {
  * what it is, who tends to need it, and what arrives at the end — because
  * "financial consulting" as a phrase tells a buyer nothing.
  */
+/*
+  Four, not seven.
+
+  Seven capabilities read as a menu of skills — extraction, modelling, FP&A,
+  analysis, reporting, AI-readiness, data engineering. All true, and a reader
+  has to work out which one their problem is.
+
+  Four problems read as a diagnosis. Somebody with a folder of PDFs nothing
+  can query recognises that sentence; they do not necessarily recognise "data
+  extraction and pipelines" as being about them.
+
+  Same work underneath. The naming is the change.
+*/
 const SERVICES: {
   title: string;
   who: string;
@@ -67,60 +80,36 @@ const SERVICES: {
   deliverable: string;
 }[] = [
   {
-    title: "Data extraction and pipelines",
-    who: "Anyone with figures locked in documents",
+    title: "Documents nothing can query",
+    who: "Anyone with figures locked in reports, filings or statements",
     body:
-      "Reports, filings, factsheets, statements and spreadsheets that hold everything you need and answer nothing you ask. Turned into a structured series that can be queried, compared and kept current — with the checks that catch it when a source changes shape.",
+      "The PDFs, factsheets and spreadsheets that hold everything you need and answer nothing you ask. Turned into a structured series you can query, compare and keep current — with the checks that catch it when a source changes shape, because sources change shape without telling you.",
     deliverable:
       "A running extractor, a documented schema, and the data in a form your own tools can read.",
   },
   {
-    title: "Financial modelling and forecasting",
+    title: "Numbers nobody can trace",
+    who: "Anyone about to put financial data into a model, a board pack or an AI system",
+    body:
+      "Where did this figure come from, when was it true, and what has changed since. Reconciliation across sources that disagree, provenance attached to every value, and a record of corrections rather than a silent overwrite. This is the work that has to happen before a model is worth trusting, and it is the work most often skipped.",
+    deliverable:
+      "A dataset where every figure carries its source and date, and a record of what changed and when.",
+  },
+  {
+    title: "A model you will have to defend",
     who: "Founders raising, boards deciding, finance teams planning",
     body:
-      "Three-statement models, scenario and sensitivity analysis, cash flow forecasting, unit economics, budgets and reforecasts. Built to be understood and changed by the people who own them rather than admired and abandoned.",
+      "A forecast somebody will challenge — an investor, a lender, a board member who used to do this for a living. Built so the assumptions are visible and each one can be answered for, rather than buried in a cell reference. Fractional CFO and FP&A work where the model needs an owner rather than a builder.",
     deliverable:
-      "A model you can drive yourself, with the assumptions visible and the logic traceable.",
+      "A model whose workings are legible, and somebody who can sit in the room while it is questioned.",
   },
   {
-    title: "Fractional CFO and FP&A",
-    who: "Businesses that need the function, not the salary",
+    title: "Reporting that rebuilds itself every month",
+    who: "Anyone assembling the same pack from the same sources, by hand, again",
     body:
-      "Management reporting, budgeting and variance analysis, cash management, pricing and margin work, board packs, and the finance discipline that turns bookkeeping into decisions. Ongoing or for a defined stretch.",
+      "The management pack that takes three days and is stale on the fourth. Pipelines that run unattended and fail loudly rather than silently, dashboards that read from them, and market or competitive analysis that updates rather than expiring. Experience across Databricks, SQL Server and SSIS, and the pragmatic end of the stack where most real work happens.",
     deliverable:
-      "A monthly rhythm — numbers that arrive on time, in a form that supports a decision.",
-  },
-  {
-    title: "Market and competitive analysis",
-    who: "Anyone who needs to know where they stand",
-    body:
-      "What competitors charge, what they publish and what they conspicuously do not, how a market has moved, where the outliers are. Assembled from public filings that everyone can see and almost nobody reads.",
-    deliverable:
-      "A findings document with every figure sourced and dated, and the working shown.",
-  },
-  {
-    title: "Reporting and dashboards",
-    who: "Teams drowning in data and short of answers",
-    body:
-      "The layer between a warehouse and a decision. Metrics defined so they mean the same thing to everyone, refreshed automatically, and presented so the exception is visible without hunting for it.",
-    deliverable:
-      "Dashboards that update themselves, and a definition of every metric on them.",
-  },
-  {
-    title: "Getting your data ready for AI",
-    who: "Anyone whose AI project stalled on the data",
-    body:
-      "Industry research is consistent that models are not the bottleneck — governance, lineage and clean pipelines are, and most organisations discover this after the pilot. Structured, documented, reproducible data with provenance on every figure: where it came from, when it was true, how it was derived. Plus the checks that catch an error before a model learns from it.",
-    deliverable:
-      "A dataset a model can be pointed at without inheriting your document problem — sourced, dated, and reproducible from the originals.",
-  },
-  {
-    title: "Data engineering",
-    who: "Organisations with sources that will not talk to each other",
-    body:
-      "Warehouse design, ingestion and transformation, migration between platforms, data quality and reconciliation. Experience across Databricks, SQL Server and SSIS, and the pragmatic end of the stack where most real work happens.",
-    deliverable:
-      "Pipelines that run unattended, fail loudly rather than silently, and can be handed over.",
+      "Something that runs without you, and can be handed to somebody else.",
   },
 ];
 
@@ -204,9 +193,10 @@ export default function WorkWithUsPage() {
           className="mt-3 text-[15px] leading-relaxed"
           style={{ color: C.muted }}
         >
-          Seven things, and most engagements are one or two of them. Each says
-          what arrives at the end, because &ldquo;financial consulting&rdquo; as
-          a phrase tells nobody anything.
+          Four problems rather than a list of skills, because most people know
+          what they are stuck with and not what it is called. Each says what
+          arrives at the end, since &ldquo;financial consulting&rdquo; as a
+          phrase tells nobody anything.
         </p>
 
         <div className="mt-5 space-y-3">
