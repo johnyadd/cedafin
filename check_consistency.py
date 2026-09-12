@@ -192,7 +192,13 @@ def check_published_have_sources(quiet: bool) -> None:
     The site's whole claim is that every figure is traceable. A published
     product with no source contradicts it.
     """
-    rows = get("/products?select=slug,min_source_id&status=eq.published")
+    # Only products that HAVE a minimum need a source for it. Most publish
+    # none, which is a blank field rather than an unsourced figure — flagging
+    # those made the check cry wolf 237 times.
+    rows = get(
+        "/products?select=slug,min_initial_minor,min_source_id"
+        "&status=eq.published&min_initial_minor=not.is.null"
+    )
     missing = [p["slug"] for p in rows if not p.get("min_source_id")]
     if missing:
         warn(
