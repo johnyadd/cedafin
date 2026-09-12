@@ -55,21 +55,21 @@ appearing in seven monthly reports and trading nothing in any of them.
 ## Who actually does the business
 
 The exchange publishes each member's share of value traded every month. Across
-the fifteen reports we hold, from February 2025 to July 2026:
+the eighteen reports we hold, from February 2025 to July 2026:
 
 | Broker | Average share | Range |
 |---|---|---|
 | **IC Securities** | **54.26%** | **19.97–78.82%** |
-| SBG Securities | 16.59% | 0.27–74.13% |
-| Databank Brokerage | 8.36% | 2.20–27.64% |
-| Blackstar Brokerage | 5.47% | 2.19–11.65% |
-| Constant Capital | 3.80% | 0.05–27.51% |
+| SBG Securities | 14.91% | 0.27–74.13% |
+| Databank Brokerage | 8.12% | 2.20–27.64% |
+| Blackstar Brokerage | 5.62% | 2.19–11.65% |
+| Laurus Securities | 3.86% | 0.32–16.18% |
 
-The top three handle about 78% of the value traded between them.
+The top three handle about 77% of the value traded between them.
 
 But read the range rather than the average. IC Securities' share, month by
-month, went 68%, 49%, 67%, 42%, 20%, 66%, 45%, 33%, 23%, 57%, 77%, 50%, 64%,
-51%, 79%.
+month, went 68%, 49%, 67%, 69%, 42%, 20%, 66%, 45%, 33%, 23%, 57%, 77%, 50%,
+64%, 45%, 72%, 51%, 79%.
 
 That is a fifty-nine point swing with no direction. It is not a firm
 consolidating power — it means a handful of large trades decide who leads in any
