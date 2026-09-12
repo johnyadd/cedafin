@@ -12,7 +12,7 @@
  * draft of this page led with it: a market rising on collapsing trade, prices
  * moving because nobody was selling. That framing was wrong.
  *
- * Fifteen months of the exchange's own reports say the opposite. February 2025
+ * Eighteen months of the exchange's own reports say the opposite. February 2025
  * to July 2026: the index rose 172.7% and volume rose 331.2%. Both climbing is
  * the healthy version — prices up because more people are buying. The
  * year-on-year figure measured one month against an exceptional July 2025.
