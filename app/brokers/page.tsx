@@ -319,7 +319,17 @@ export default async function BrokersPage() {
               </li>
             </ul>
             <p className="mt-3 text-[12.5px]" style={{ color: C.muted }}>
-              We hold no commission rates because none is published. Anything a
+              {/* The link belongs here, where a reader has just noticed the
+                  blank — not in a menu they would have to go looking in. */}
+              Not one of the twenty-four publishes a commission rate, and{" "}
+              <Link
+                href="/what-gets-published"
+                className="font-semibold underline underline-offset-4"
+                style={{ color: C.deep }}
+              >
+                most Ghanaian providers publish no price of any kind
+              </Link>
+              . We hold no commission rates because none is published. Anything a
               firm sends us goes on their card here, cited and dated.
             </p>
           </div>

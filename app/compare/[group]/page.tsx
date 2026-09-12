@@ -1115,11 +1115,19 @@ export default async function ComparePage({
                   How you open the rest.
                 </strong>{" "}
                 Not published. No Ghanaian provider we track states what is
+                Mostly not published. Six Ghanaian providers state what is
                 needed to open an account — which documents, whether a
-                Ghanaian bank account comes first, or whether someone living
-                abroad is eligible at all. We are in contact with providers to
-                close the gaps, and publish whatever they send, cited and
-                dated.
+                Ghanaian bank account comes first, whether someone living
+                abroad is eligible. The rest say nothing, and{" "}
+                <Link
+                  href="/what-gets-published"
+                  className="font-semibold underline underline-offset-4"
+                  style={{ color: C.deep }}
+                >
+                  we record the date we looked for each one
+                </Link>
+                . We are in contact with providers to close the gaps, and
+                publish whatever they send, cited and dated.
               </li>
             )}
             <li>

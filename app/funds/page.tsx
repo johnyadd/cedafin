@@ -82,7 +82,7 @@ function fmtDate(iso: string): string {
 }
 
 export const metadata = {
-  title: "Ghanaian mutual fund charges compared — 75 funds",
+  title: "Ghanaian mutual fund charges compared — 106 funds",
   description:
     "What Ghanaian mutual funds charge, from their own factsheets. Management fees, total expense ratios and minimum investments for every fund we can verify.",
 };
@@ -323,6 +323,19 @@ export default async function FundsPage() {
         <p className="mt-2 text-[13.5px]" style={{ color: C.muted }}>
           Charges, minimums and access terms taken from each provider&rsquo;s own
           published documents, with the date each figure was confirmed.
+        </p>
+        {/* Placed here rather than in a menu: a reader looking at a column of
+            blanks has just formed the question this page answers. */}
+        <p className="mt-2 text-[13.5px]" style={{ color: C.muted }}>
+          Most of them publish nothing —{" "}
+          <Link
+            href="/what-gets-published"
+            className="font-semibold underline underline-offset-4"
+            style={{ color: C.deep }}
+          >
+            six of fifty fund managers state a charge
+          </Link>
+          , and we record the date we looked for each one.
         </p>
 
         <div className="mt-6 space-y-9">
