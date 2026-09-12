@@ -53,6 +53,7 @@ on:
     - cron: "0 9 8 * *"       # GSE reports, the 8th at 09:00
     - cron: "0 10 * * 1"      # APR notice check, Mondays at 10:00
     - cron: "0 20 * * *"      # consistency checks, daily at 20:00
+    - cron: "0 6 1 * *"       # SEC register snapshot, the 1st at 06:00
   workflow_dispatch:
     # So a run can be triggered by hand after a failure, or to test a change,
     # without waiting for the schedule.
@@ -62,7 +63,7 @@ on:
         required: true
         default: "all"
         type: choice
-        options: [all, gold, tbills, gse, apr, check]
+        options: [all, gold, tbills, gse, apr, check, registers]
 
 env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -219,3 +220,36 @@ jobs:
 
       - name: Check the data hangs together
         run: python check_consistency.py
+
+  registers:
+    # The default token is read-only, and a push without this fails at the
+    # last step having already done the work.
+    permissions:
+      contents: write
+    # Monthly. Nobody publishes a history of who was licensed in Ghana — the
+    # Commission maintains a register and it shows today. This keeps the page
+    # itself, dated, so the question "when was that firm struck off" has an
+    # answer for anybody who asks it later.
+    if: >
+      github.event.schedule == '0 6 1 * *' ||
+      github.event.inputs.job == 'registers' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Snapshot the registers
+        run: python snapshot_registers.py
+
+      # An archive only committed by hand is one that stops being archived.
+      - name: Commit the snapshot
+        run: |
+          git config user.name "cedafin-bot"
+          git config user.email "data@cedafin.com"
+          git add -f data/sec/
+          git diff --staged --quiet || git commit -m "SEC register snapshot"
+          git push
