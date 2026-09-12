@@ -67,6 +67,10 @@ wrote to every licensed broker-dealer at the email the register gives, and
 recorded which of those addresses could not receive mail. Five entries on this
 site have been corrected from what that turned up.
 
+The entries we could not use have been raised with the Securities and Exchange
+Commission. The register is theirs to maintain, and as it stands those details
+reach nobody.
+
 **And the door stays open.** Any firm here that sends us a working address, a
 current website, or anything it publishes about its charges will have it on
 this site, cited and dated, at no cost. The table above describes what we

@@ -360,7 +360,7 @@ export default function WorkWithUsPage() {
         </p>
 
         {/*
-          The separation matters. Providers we have written to for data should
+          The separation matters. Providers we have approached for data should
           not wonder whether the request was really a sales approach.
         */}
         <section
@@ -368,7 +368,7 @@ export default function WorkWithUsPage() {
           style={{ background: C.card, border: `1px solid ${C.rule}` }}
         >
           <h3 className="text-[14px] font-bold">
-            If we have written to you about your data
+            If we have approached you about your data
           </h3>
           <p
             className="mt-2 text-[13.5px] leading-relaxed"

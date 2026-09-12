@@ -82,7 +82,7 @@ we had saved the PDFs as they appeared.
 
 A monthly publication with no accessible archive can tell a borrower what
 credit costs today and nothing about whether it is getting better or worse. We
-have written to Bank of Ghana to ask whether the older returns are available
+have asked Bank of Ghana whether the older returns are available
 somewhere we have not found, and will publish what they say.
 
 Meanwhile we are keeping every report as it publishes. In a year this table
