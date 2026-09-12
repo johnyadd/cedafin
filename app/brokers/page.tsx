@@ -26,7 +26,7 @@
  * with nothing at all.
  *
  * THE RANGE CARRIES THE MEANING, NOT THE AVERAGE
- * IC Securities: 52.70% average, 19.97% to 78.82% range, fifteen months.
+ * IC Securities: 54.26% average, 19.97% to 78.82% range, eighteen months.
  *
  * Publish the maximum and the exchange looks captured by one firm. Publish the
  * average and it looks like settled leadership. The truth is neither — a

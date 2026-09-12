@@ -59,7 +59,7 @@ the fifteen reports we hold, from February 2025 to July 2026:
 
 | Broker | Average share | Range |
 |---|---|---|
-| **IC Securities** | **52.70%** | **19.97–78.82%** |
+| **IC Securities** | **54.26%** | **19.97–78.82%** |
 | SBG Securities | 16.59% | 0.27–74.13% |
 | Databank Brokerage | 8.36% | 2.20–27.64% |
 | Blackstar Brokerage | 5.47% | 2.19–11.65% |

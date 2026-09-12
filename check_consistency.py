@@ -221,6 +221,35 @@ def check_orphan_products(quiet: bool) -> None:
         print(f"  ok    {len(prods)} published products all have a provider")
 
 
+def check_partial_series(quiet: bool) -> None:
+    """
+    A firm with far fewer months than its peers has a split series.
+
+    Databank showed six months against everyone else's eighteen, because the
+    Exchange renamed them mid-series and the loader keyed on the printed name.
+    Nothing flagged it — the record looked complete on its own, and the
+    average was simply wrong.
+    """
+    rows = get(
+        "/providers?select=slug,broker_months_observed&slug=like.broker-*"
+        "&broker_months_observed=not.is.null"
+    )
+    if len(rows) < 3:
+        return
+    counts = [r["broker_months_observed"] for r in rows]
+    top = max(counts)
+    # Half the maximum. A firm genuinely new to the market will trip this and
+    # that is fine — it is a prompt to look, not an assertion of error.
+    short = [r for r in rows if r["broker_months_observed"] < top / 2]
+    for r in short:
+        warn(
+            "partial series",
+            f"{r['slug']} has {r['broker_months_observed']} months against a maximum of {top}",
+        )
+    if not short and not quiet:
+        print(f"  ok    no broker series is under half the {top}-month maximum")
+
+
 def check_dates_in_notes(quiet: bool) -> None:
     """
     An access note should not restate a date the record already holds.
@@ -270,6 +299,7 @@ def main() -> int:
         check_published_have_sources,
         check_orphan_products,
         check_dates_in_notes,
+        check_partial_series,
     ):
         try:
             fn(args.quiet)

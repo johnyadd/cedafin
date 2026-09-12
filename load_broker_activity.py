@@ -50,6 +50,32 @@ import urllib.error
 import urllib.request
 
 
+# Same normalisation as load_gse.py and consolidate_brokers.py. The Exchange
+# renames firms between reports — adds and drops "Limited", switches "Capital"
+# for "Capital Markets", and misspells "Securities" twice. Keying on the
+# printed name splits a firm's series across its spellings.
+GSE_TYPOS = {
+    "securties": "securities",
+    "securites": "securities",
+    "firstatlantic": "first atlantic",
+}
+
+BROKER_NOISE = (
+    r"\b(limited|ltd|plc|company|co|markets?|capital|securities|brokerage|"
+    r"stockbrokers?)\b"
+)
+
+
+def broker_key(name: str) -> str:
+    """A stable identity for a broker, whatever the report called it."""
+    s = (name or "").lower()
+    for wrong, right in GSE_TYPOS.items():
+        s = s.replace(wrong, right)
+    s = re.sub(r"[^a-z ]+", " ", s)
+    s = re.sub(BROKER_NOISE, " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
 def env() -> dict:
     """
     Credentials from .env.local locally, from the environment in CI.
@@ -130,7 +156,11 @@ def main() -> int:
     abs_latest: dict[str, dict] = {}
 
     for r in rows:
-        key = (r["broker"], r["as_of"])
+        # Keyed on the FIRM, not the printed name. The Exchange called
+        # Databank "Databank Brokerage Limited" until January 2026 and
+        # "Databank Brokerage" after, so keying on the name gave them six
+        # months of an eighteen-month series and nothing said so.
+        key = (broker_key(r["broker"]), r["as_of"])
         try:
             by_month[key] = by_month.get(key, 0.0) + float(r["value_share_pct"])
         except (TypeError, ValueError):
@@ -140,7 +170,7 @@ def main() -> int:
         except (TypeError, ValueError):
             pass
         if r["as_of"] == latest:
-            a = abs_latest.setdefault(r["broker"], {"value": 0.0, "volume": 0.0})
+            a = abs_latest.setdefault(broker_key(r["broker"]), {"value": 0.0, "volume": 0.0})
             try:
                 a["value"] += float(r["value_traded_ghs"])
             except (TypeError, ValueError):
@@ -196,9 +226,24 @@ def main() -> int:
         print("\nDry run — nothing written.")
         return 0
 
+    # Map normalised key -> the slug the record actually has.
+    slug_for = {}
+    for p in rest("GET", "/providers?slug=like.broker-*&select=slug,trading_name"):
+        slug_for[broker_key(p.get("trading_name") or p["slug"])] = p["slug"]
+
     updated = 0
     for name, s in ranked:
-        slug = "broker-" + slugify(name)
+        # The key groups the series; the SLUG is whatever the record was
+        # created with, which is not derivable from it. Look it up.
+        #
+        # Building a slug from the key produced "broker-databank" while the
+        # record is "broker-databank-brokerage", so the PATCH matched nothing
+        # and returned success — an update that silently touches zero rows is
+        # indistinguishable from one that worked.
+        slug = slug_for.get(name)
+        if not slug:
+            print(f"    no provider matches {name!r} — skipped")
+            continue
         vals, dates = s["vals"], sorted(s["dates"])
         try:
             vols = s.get("vols") or []
