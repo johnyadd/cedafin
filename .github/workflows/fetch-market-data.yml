@@ -226,6 +226,10 @@ jobs:
     # last step having already done the work.
     permissions:
       contents: write
+    # The default token is read-only, and a push without this fails at the
+    # last step having already done the work.
+    permissions:
+      contents: write
     # Monthly. Nobody publishes a history of who was licensed in Ghana — the
     # Commission maintains a register and it shows today. This keeps the page
     # itself, dated, so the question "when was that firm struck off" has an
