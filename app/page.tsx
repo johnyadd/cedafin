@@ -277,10 +277,10 @@ export default async function Home() {
             className="text-[1.3rem] font-bold"
             style={{ fontFamily: "var(--font-display)", color: C.ink }}
           >
-            Check it before you decide
+            Check it first
           </h2>
           <p className="text-[12.5px]" style={{ color: C.muted }}>
-            Six things worth knowing before money moves
+            Six things worth knowing while you are still deciding
           </p>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -288,32 +288,32 @@ export default async function Home() {
               [
                 [
                   "/funding",
-                  "Before you borrow",
+                  "Borrowing money",
                   "The same loan costs 11.03% at one bank and 33.58% at another",
                 ],
                 [
                   "/funds",
-                  "Before you invest",
+                  "Choosing a fund",
                   "Six of fifty fund managers publish what they charge",
                 ],
                 [
                   "/brokers",
-                  "Before you buy shares",
+                  "Buying shares",
                   "No Ghanaian broker publishes what a trade costs",
                 ],
                 [
                   "/compare/commodity-GHS",
-                  "Before you buy gold",
+                  "Buying gold",
                   "The smallest coin carries the largest premium",
                 ],
                 [
                   "/investing-from-abroad",
-                  "Before you invest from abroad",
+                  "Investing from abroad",
                   "Six of ninety-seven providers say whether they will take you",
                 ],
                 [
                   "/is-it-licensed",
-                  "Before you send money anywhere",
+                  "Checking a platform",
                   "How to check a platform is licensed, in a few seconds",
                 ],
               ] as [string, string, string][]
