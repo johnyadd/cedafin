@@ -1147,6 +1147,12 @@ export default async function FundingPage({
 </section>
 
 
+        <ShareThis
+          path="/funding"
+          audience="somebody about to borrow"
+          message="The same one-year SME loan costs 11.03% at one Ghanaian bank and 33.58% at another."
+        />
+
         {/*
           What this data is and how to cite it.
 
