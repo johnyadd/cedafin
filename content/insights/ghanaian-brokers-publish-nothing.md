@@ -34,20 +34,43 @@ The Securities and Exchange Commission publishes where each broker is, its
 telephone number, its email and its licence status. It does not require them to
 publish what they charge, and none volunteers it.
 
-## The six that did not respond
+## The six whose websites did not load
 
 | Firm | Website |
 |---|---|
-| Bullion Securities | no response |
-| CDH Securities | no response |
-| FirstBanc Brokerage | no response |
-| Petra Securities | no response |
-| **Sarpong Capital Markets** | **no response** |
-| Strategic African Securities | no response |
+| Bullion Securities | did not load |
+| CDH Securities | did not load |
+| FirstBanc Brokerage | did not load |
+| Petra Securities | did not load |
+| **Sarpong Capital Markets** | **did not load** |
+| Strategic African Securities | did not load |
 
 All six hold current SEC broker-dealer licences. Their telephone numbers and
 email addresses are on the regulator's register, so they are reachable — but an
 investor searching online finds nothing.
+
+**A website that does not load says little about the firm behind it.** A
+company may have moved without the register being updated. A domain
+registration may have lapsed or been renewed under another name. A site may be
+down temporarily, blocked to automated requests, or served in a way our checks
+do not accept. Any of those produces the same silence from outside.
+
+What it does establish is that somebody looking a firm up, using the details
+the regulator publishes, arrives nowhere. That is a records problem rather
+than a trading one — and it still costs the person looking, who cannot tell
+the difference.
+
+**What we have done about it.** We checked every website on the register in
+August and again in September, and where the registered address failed we
+searched for the firm by name to see whether it trades somewhere else. We
+wrote to every licensed broker-dealer at the email the register gives, and
+recorded which of those addresses could not receive mail. Five entries on this
+site have been corrected from what that turned up.
+
+**And the door stays open.** Any firm here that sends us a working address, a
+current website, or anything it publishes about its charges will have it on
+this site, cited and dated, at no cost. The table above describes what we
+could find in September 2026, not a verdict on anybody.
 
 Sarpong Capital Markets is marked because the exchange's reports show it
 appearing in seven monthly reports and trading nothing in any of them.
