@@ -277,10 +277,10 @@ export default async function Home() {
             className="text-[1.3rem] font-bold"
             style={{ fontFamily: "var(--font-display)", color: C.ink }}
           >
-            Check it first
+            Show me the number
           </h2>
           <p className="text-[12.5px]" style={{ color: C.muted }}>
-            Six things worth knowing while you are still deciding
+            Six questions with an answer, and the document behind each one
           </p>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
