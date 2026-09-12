@@ -37,7 +37,7 @@ const MENUS: { label: string; items: Item[] }[] = [
   {
     label: "Invest",
     items: [
-      ["/funds", "Every fund", "75 catalogued, charges compared"],
+      ["/funds", "Every fund", "106 catalogued, charges compared"],
       // Near the top because it is a starting point rather than a product —
       // somebody abroad needs to know what they can reach before they can
       // usefully compare anything.
@@ -105,6 +105,42 @@ const MENUS: { label: string; items: Item[] }[] = [
         "/work-with-us",
         "Analysis and data work",
         "Modelling, pipelines, reporting — for organisations",
+      ],
+    ],
+  },
+  {
+    // The question a sceptical reader actually has, which is a better menu
+    // label than "About the data" and reads as an invitation to check
+    // rather than a claim.
+    //
+    // These four pages carry the argument that this is not just a comparison
+    // site, and all four were reachable only from the footer.
+    label: "How we know",
+    items: [
+      [
+        "/the-archive",
+        "The archive",
+        "Documents their issuers no longer keep",
+      ],
+      [
+        "/what-gets-published",
+        "What gets published",
+        "And what does not, provider by provider",
+      ],
+      [
+        "/methodology",
+        "How we source every figure",
+        "Dates, corrections, and what a blank means",
+      ],
+      [
+        "/for-journalists",
+        "For journalists",
+        "Figures free to quote, no permission needed",
+      ],
+      [
+        "/is-it-licensed",
+        "Is it licensed?",
+        "Before you send money anywhere",
       ],
     ],
   },
