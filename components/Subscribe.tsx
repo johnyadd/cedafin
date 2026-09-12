@@ -8,8 +8,8 @@
  * point at when a fund manager asks who reads this.
  *
  * WHAT THE FORM PROMISES, AND WHY IT SAYS IT
- * "A note when we publish something." Not "insights", not "exclusive market
- * intelligence", not a weekly cadence we have no intention of keeping. The
+ * "When the numbers move, what moved and where it came from." Not "insights",
+ * not "exclusive market intelligence", and no weekly cadence. The
  * site's whole argument is that it says what it can prove; a subscribe box
  * that oversells is the same failure in miniature.
  *
@@ -117,21 +117,32 @@ export default function Subscribe({
         className={compact ? "text-[15px] font-bold" : "text-[22px] font-bold"}
         style={{ fontFamily: "var(--font-display)" }}
       >
-        {/* "the next one" made sense at the foot of an article, where the
-            referent was the piece just read. On the home page it referred to
-            nothing. */}
-        Get the next article
+        {/* The heading follows the promise. It used to say "Get the next
+            article", which was about what we write; the offer is now about
+            what changes, and the two have to agree. */}
+        Know when the numbers change
       </h2>
       <p
         className={`mt-2 leading-relaxed opacity-90 ${compact ? "text-[12px]" : "text-[14.5px]"}`}
       >
         {/*
-          Says what it is, not what it could be sold as. We publish
-          irregularly and there is no honest way to promise a schedule.
+        {/*
+          The promise changed once the collection became automatic. It used
+          to be "a note when we publish something", which is about us and
+          gives a reader no reason to act. We now know when a figure moves —
+          Treasury bills weekly, gold daily, the exchange and the registers
+          monthly — so a promise about CHANGE is one we can keep.
+
+          Still no frequency promised. "Monthly" would be a commitment made
+          before the send exists; "when something changes" is honest and is
+          also the more useful offer.
         */}
-        A note when we publish something — what the numbers show about Ghanaian
-        funds, credit, gold and shares. Irregular, because we write when we find
-        something rather than to a schedule.
+        When the numbers move, what moved and where it came from. Treasury
+        bill rates, bank lending costs, fund charges, inflation, and who is on
+        the regulators&rsquo; registers — taken from Bank of Ghana, the Ghana
+        Stock Exchange, the Statistical Service and the Securities and
+        Exchange Commission as they publish. No schedule, because the
+        institutions do not keep one either.
       </p>
 
       <div className={compact ? "mt-3" : "mt-4 flex flex-wrap gap-2"}>
