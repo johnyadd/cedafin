@@ -30,6 +30,7 @@
 import Link from "next/link";
 
 import DataProvenance from "@/components/DataProvenance";
+import ShareThis from "@/components/ShareThis";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
