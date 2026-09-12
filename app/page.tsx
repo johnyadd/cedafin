@@ -259,6 +259,88 @@ export default async function Home() {
     >
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
         {/* ───────────────────────── INVESTING ───────────────────────── */}
+        {/*
+          Routing by moment rather than by product category.
+
+          Everything below this is organised the way the market is organised —
+          investing, then borrowing, then the sections within each. That is
+          correct and it assumes a reader who already knows which product they
+          want.
+
+          Most people arrive with a DECISION instead: they are about to borrow,
+          or about to send money home, or about to buy a coin. Six moments, six
+          pages that already exist. Nothing new underneath — the routing is
+          the whole of it.
+        */}
+        <section className="mb-12">
+          <h2
+            className="text-[1.3rem] font-bold"
+            style={{ fontFamily: "var(--font-display)", color: C.ink }}
+          >
+            Check it before you decide
+          </h2>
+          <p className="text-[12.5px]" style={{ color: C.muted }}>
+            Six things worth knowing before money moves
+          </p>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {(
+              [
+                [
+                  "/funding",
+                  "Before you borrow",
+                  "The same loan costs 11.03% at one bank and 33.58% at another",
+                ],
+                [
+                  "/funds",
+                  "Before you invest",
+                  "Six of fifty fund managers publish what they charge",
+                ],
+                [
+                  "/brokers",
+                  "Before you buy shares",
+                  "No Ghanaian broker publishes what a trade costs",
+                ],
+                [
+                  "/compare/commodity-GHS",
+                  "Before you buy gold",
+                  "The smallest coin carries the largest premium",
+                ],
+                [
+                  "/investing-from-abroad",
+                  "Before you invest from abroad",
+                  "Six of ninety-seven providers say whether they will take you",
+                ],
+                [
+                  "/is-it-licensed",
+                  "Before you send money anywhere",
+                  "How to check a platform is licensed, in a few seconds",
+                ],
+              ] as [string, string, string][]
+            ).map(([href, moment, why]) => (
+              <Link
+                key={href}
+                href={href}
+                className="rounded-2xl p-4 transition-shadow hover:shadow-md"
+                style={{ background: C.card, border: `1px solid ${C.rule}` }}
+              >
+                <span
+                  className="block text-[13.5px] font-bold"
+                  style={{ color: C.deep }}
+                >
+                  {moment}
+                </span>
+                <span
+                  className="mt-1 block text-[12px] leading-relaxed"
+                  style={{ color: C.muted }}
+                >
+                  {why}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <SectionHead
           label="Investing"
           colour={C.deep}
