@@ -43,6 +43,7 @@ import Link from "next/link";
 
 import BrokerSignals from "@/components/BrokerSignals";
 import DataProvenance from "@/components/DataProvenance";
+import ShareThis from "@/components/ShareThis";
 import Footer from "@/components/Footer";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
@@ -625,6 +626,12 @@ export default async function BrokersPage() {
             Stock Exchange&rsquo;s published monthly reports.
           </p>
         </section>
+
+        <ShareThis
+          path="/brokers"
+          audience="somebody about to buy shares"
+          message="Not one of Ghana's 24 licensed stockbrokers publishes what a trade costs."
+        />
 
         <DataProvenance
           title="Ghana Stock Exchange broker market share"

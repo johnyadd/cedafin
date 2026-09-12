@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import Footer from "@/components/Footer";
+import ShareThis from "@/components/ShareThis";
 import { BRAND } from "@/lib/brand";
 import { getAccessRecords } from "@/lib/data/funds";
 
@@ -391,6 +392,11 @@ export default async function InvestingFromAbroadPage() {
             Why sending money home is not the same as investing it &rarr;
           </Link>
         </p>
+        <ShareThis
+          path="/investing-from-abroad"
+          audience="a Ghanaian abroad wondering what they can invest in"
+          message="Six of 97 Ghanaian providers say whether somebody living abroad can open an account."
+        />
       </div>
 
       <Footer />
