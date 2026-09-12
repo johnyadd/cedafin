@@ -90,6 +90,8 @@ function fmtDate(iso: string): string {
 }
 
 export const metadata = {
+  openGraph: { images: ["/api/card/broker-commissions"] },
+  twitter: { card: "summary_large_image", images: ["/api/card/broker-commissions"] },
   title: "Ghanaian stockbrokers — fees, contacts and market share",
   description:
     "All 24 licensed dealing members of the Ghana Stock Exchange: market share, contact details, and what none of them publishes about what a trade costs.",

@@ -78,6 +78,11 @@ function fmtDate(iso: string): string {
 }
 
 export const metadata = {
+  // A link pasted into WhatsApp shows a bare URL without this. With it, the
+  // figure travels — and a link is shared on WhatsApp in Ghana far more often
+  // than anywhere else.
+  openGraph: { images: ["/api/card/lending-spread"] },
+  twitter: { card: "summary_large_image", images: ["/api/card/lending-spread"] },
   title: "SME and business loan rates in Ghana — 22 banks compared",
   description:
     "What Ghanaian banks actually charge for business, personal and corporate credit, from Bank of Ghana's own APR returns. The rate with the fees counted.",

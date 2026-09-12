@@ -55,6 +55,8 @@ const C = {
 };
 
 export const metadata = {
+  openGraph: { images: ["/api/card/diaspora"] },
+  twitter: { card: "summary_large_image", images: ["/api/card/diaspora"] },
   title: "Investing in Ghana from abroad — what providers actually say",
   description:
     "Can a Ghanaian living overseas open an investment account without travelling home? What each provider states in their own material, and how much of it is simply unpublished.",
