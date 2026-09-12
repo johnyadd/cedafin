@@ -247,6 +247,15 @@ export default function Footer() {
               What gets published, and what doesn&rsquo;t &rarr;
             </Link>
           </p>
+          <p className="mt-2 text-[12.5px]">
+            <Link
+              href="/the-archive"
+              className="underline underline-offset-4"
+              style={{ color: C.muted }}
+            >
+              The archive — documents their issuers no longer keep &rarr;
+            </Link>
+          </p>
 
           <p
             className="mt-5 text-[11px] leading-relaxed"

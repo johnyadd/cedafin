@@ -314,7 +314,7 @@ export default async function Home() {
                 What Ghanaian funds, Treasury bills, listed shares and gold have
                 actually returned, and what business credit really costs once
                 fees are counted. Every figure taken from documents providers
-                publish themselves, dated and sourced.
+                publish themselves — dated, sourced, and kept.
               </p>
 
               <div className="mt-5 grid grid-cols-2 gap-4">
@@ -762,6 +762,74 @@ export default async function Home() {
               interest rate on the poster. Three of the twenty-two banks
               mention a rate on their own website.
             </p>
+          </section>
+
+          {/*
+            The three pages that make this more than a comparison site were
+            reachable only from the footer, which is where things go to be
+            unfound. They sit here, last, because each means something only
+            once a visitor has seen what the site actually does.
+          */}
+          <section
+            className="mt-6 overflow-hidden rounded-2xl"
+            style={{ background: C.card, border: `1px solid ${C.rule}` }}
+          >
+            <div
+              className="px-5 py-3 text-white"
+              style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
+            >
+              <h3 className="text-[13.5px] font-bold">
+                Why the figures here can be checked
+              </h3>
+            </div>
+            <div className="p-5">
+              <p className="text-[13.5px] leading-relaxed">
+                Ghanaian institutions publish and then remove. Bank of Ghana
+                takes down last month&rsquo;s lending return. Fund managers
+                replace a factsheet rather than versioning it. So the question
+                a saver or a borrower actually has —{" "}
+                <em>has this got better or worse</em> — usually cannot be
+                answered at all.
+              </p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                {(
+                  [
+                    [
+                      "/the-archive",
+                      "We keep the documents",
+                      "Including returns the regulator no longer publishes",
+                    ],
+                    [
+                      "/what-gets-published",
+                      "And record what is missing",
+                      "What each provider discloses, and when we last looked",
+                    ],
+                    [
+                      "/methodology",
+                      "Every figure carries its source",
+                      "Dated, cited, and blank where nothing is published",
+                    ],
+                  ] as [string, string, string][]
+                ).map(([href, title, note]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="rounded-xl p-3.5 transition-shadow hover:shadow-md"
+                    style={{ background: C.bg, border: `1px solid ${C.rule}` }}
+                  >
+                    <span className="block text-[12.5px] font-bold">
+                      {title}
+                    </span>
+                    <span
+                      className="mt-0.5 block text-[11.5px] leading-relaxed"
+                      style={{ color: C.muted }}
+                    >
+                      {note}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </section>
         </div>
       </div>
