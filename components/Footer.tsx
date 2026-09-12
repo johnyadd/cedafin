@@ -238,6 +238,15 @@ export default function Footer() {
               Is it licensed? — before you send money &rarr;
             </Link>
           </p>
+          <p className="mt-2 text-[12.5px]">
+            <Link
+              href="/what-gets-published"
+              className="underline underline-offset-4"
+              style={{ color: C.muted }}
+            >
+              What gets published, and what doesn&rsquo;t &rarr;
+            </Link>
+          </p>
 
           <p
             className="mt-5 text-[11px] leading-relaxed"

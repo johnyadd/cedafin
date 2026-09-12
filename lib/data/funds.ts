@@ -2115,3 +2115,54 @@ export async function getLendingSpread(): Promise<LendingSpread | null> {
     asOf: "May 2026",
   };
 }
+
+
+export interface DisclosureField {
+  field: string;
+  total: number;
+  published: number;
+  /** Named because they publish it. We do not list the silent ones. */
+  publishers: { name: string; slug: string; date: string | null }[];
+}
+
+/**
+ * What Ghanaian providers disclose, from the record of looking.
+ *
+ * A row with no published_on and a recent checked_on is the finding: we
+ * looked, on that date, and there was nothing. That is not scrapeable — a
+ * crawler records what it finds, and absence needs somebody to have looked.
+ */
+export async function getDisclosure(): Promise<DisclosureField[]> {
+  const { data, error } = await publicClient()
+    .from("provider_disclosure")
+    .select("field, published_on, checked_on, providers ( trading_name, legal_name, slug )");
+  if (error) throw new Error(`getDisclosure: ${error.message}`);
+
+  const by = new Map<string, DisclosureField>();
+  for (const r of data ?? []) {
+    const row = r as Record<string, unknown>;
+    const f = String(row.field);
+    if (!by.has(f)) {
+      by.set(f, { field: f, total: 0, published: 0, publishers: [] });
+    }
+    const e = by.get(f)!;
+    e.total += 1;
+    if (row.published_on) {
+      e.published += 1;
+      const p = row.providers as {
+        trading_name?: string;
+        legal_name?: string;
+        slug?: string;
+      } | null;
+      e.publishers.push({
+        name: p?.trading_name ?? p?.legal_name ?? "",
+        slug: p?.slug ?? "",
+        date: String(row.published_on),
+      });
+    }
+  }
+  for (const e of by.values()) {
+    e.publishers.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return [...by.values()].sort((a, b) => b.total - a.total);
+}
