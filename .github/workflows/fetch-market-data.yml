@@ -52,6 +52,7 @@ on:
     - cron: "0 19 * * 5"      # treasury bills, Fridays at 19:00
     - cron: "0 9 8 * *"       # GSE reports, the 8th at 09:00
     - cron: "0 10 * * 1"      # APR notice check, Mondays at 10:00
+    - cron: "0 20 * * *"      # consistency checks, daily at 20:00
   workflow_dispatch:
     # So a run can be triggered by hand after a failure, or to test a change,
     # without waiting for the schedule.
@@ -61,7 +62,7 @@ on:
         required: true
         default: "all"
         type: choice
-        options: [all, gold, tbills, gse, apr]
+        options: [all, gold, tbills, gse, apr, check]
 
 env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -195,3 +196,26 @@ jobs:
 
       - name: Load
         run: python load_lending_products.py
+
+  check:
+    # Its own job, running daily after the loads rather than appended to each
+    # of them — the data either hangs together or it does not, and checking
+    # once a day answers that for every dataset at once.
+    #
+    # NOT continue-on-error anywhere. If this goes red something is wrong,
+    # and the broker duplication sat unnoticed for five months precisely
+    # because nothing ever looked.
+    if: >
+      github.event.schedule == '0 20 * * *' ||
+      github.event.inputs.job == 'check' ||
+      github.event.inputs.job == 'all'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check the data hangs together
+        run: python check_consistency.py
