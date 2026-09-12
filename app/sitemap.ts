@@ -54,6 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/is-it-licensed`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/what-gets-published`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/the-archive`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/findings`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/work-with-us`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
   ];
 

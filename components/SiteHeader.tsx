@@ -118,6 +118,11 @@ const MENUS: { label: string; items: Item[] }[] = [
     label: "How we know",
     items: [
       [
+        "/findings",
+        "What we have found",
+        "Twenty findings, each with the working behind it",
+      ],
+      [
         "/the-archive",
         "The archive",
         "Documents their issuers no longer keep",
