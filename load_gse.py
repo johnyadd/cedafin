@@ -251,13 +251,24 @@ def main() -> int:
     # Brokers as providers. Market share goes in the notes rather than as a
     # score — it measures activity, not quality, and a page that ranked on it
     # would be telling savers something it cannot support.
-    existing = {p["slug"]: p["id"] for p in rest("GET", "/providers?select=id,slug")}
+    # Keyed on the FIRM, not the slug. Matching on slug meant a record
+    # created under an older spelling was never found, so every run added a
+    # rival rather than updating — twice, before a unique index on the
+    # normalised name made it impossible.
+    #
+    # That index is the real fix. This lookup just means the loader updates
+    # cleanly instead of being rejected.
+    existing = {}
+    for p in rest("GET", "/providers?select=id,slug,trading_name"):
+        if p["slug"].startswith("broker-"):
+            existing[broker_key(p.get("trading_name") or p["slug"])] = p["id"]
+        existing[p["slug"]] = p["id"]
     made_b = 0
     for name in brokers:
         # Keyed on the firm rather than the printed name, so a rename in
         # next month's report updates the record instead of creating a rival.
         slug = "broker-" + slugify(broker_key(name))
-        if slug in existing:
+        if broker_key(name) in existing or slug in existing:
             continue
         key = broker_key(name)
         vals = [
