@@ -206,12 +206,21 @@ export default async function LenderPage({
           className="mt-12 text-[24px] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          What Bank of Ghana reports
+          What this bank charges
         </h2>
+        {/* The heading used to say "What Bank of Ghana reports", which was
+            accurate when every row came from the regulatory return. Republic
+            now has four rates it published itself, and describing those as a
+            supervisory statistic understates them — they are prices, fixed,
+            from the bank&rsquo;s own page. */}
         <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: C.muted }}>
-          Average annualised rates across whatever {lender.name} lent in the
-          period — a supervisory statistic, not a price list. What a given
-          borrower is offered depends on the bank&rsquo;s assessment of them.
+          Two kinds of figure. Where a section names a product, the rate is one
+          {" "}{lender.name} publishes itself — a price, with fees charged on
+          top. Where it gives only a term, the figure is from Bank of
+          Ghana&rsquo;s monthly return: an average across whatever the bank
+          lent in the period, which is a supervisory statistic rather than a
+          price list. What any borrower is offered depends on the
+          bank&rsquo;s assessment of them.
         </p>
 
         <div className="mt-5 space-y-7">
@@ -263,10 +272,22 @@ export default async function LenderPage({
                       <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
                         {r.lendingRatePct !== null && (
                           <>
+                            {/* "No additional charges reported" is true of a
+                                Bank of Ghana return, where a nil fee column
+                                means the bank reported none. It is NOT true
+                                of a price a bank published on its own site:
+                                Republic advertises 18% and their tariff guide
+                                lists a 1.5% facility fee, 1.5% processing and
+                                1% annual review. Saying no charges were
+                                reported would read as no charges apply. */}
                             Lending rate {r.lendingRatePct.toFixed(2)}%
                             {r.feeGapPct !== null && r.feeGapPct > 0.05
                               ? `, fees add ${r.feeGapPct.toFixed(2)} points`
-                              : ", no additional charges reported"}
+                              : ["personal_credit", "sme_credit", "corporate_credit"].includes(
+                                    r.category,
+                                  )
+                                ? ", no additional charges reported"
+                                : ", as published. Fees are charged separately"}
                             .{" "}
                           </>
                         )}
