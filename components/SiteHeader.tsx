@@ -120,7 +120,7 @@ const MENUS: { label: string; items: Item[] }[] = [
       [
         "/findings",
         "What we have found",
-        "Twenty findings, each with the working behind it",
+        "Every finding, with the working behind it",
       ],
       [
         "/the-archive",
