@@ -1995,7 +1995,7 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
 
   const { data: firms, error: firmError } = await publicClient()
     .from("providers")
-    .select("slug, trading_name, legal_name, website, access_requirements, access_verified_on")
+    .select("id, slug, trading_name, legal_name, website, access_requirements, access_verified_on")
     .not("access_requirements", "is", null);
   if (firmError) throw new Error(`getAccessRecords: ${firmError.message}`);
 
