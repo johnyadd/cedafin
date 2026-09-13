@@ -243,7 +243,18 @@ export default async function LenderPage({
                     >
                       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                         <span className="text-[13.5px] font-semibold">
-                          {r.tenorYears} year{r.tenorYears > 1 ? "s" : ""}
+                          {/* Bank of Ghana APR rows carry no product name —
+                              they are averages across a category, so the
+                              tenor is all there is to label them with.
+
+                              A published mortgage HAS a name, and it matters:
+                              11.50% at 15 years is the DOLLAR product. Shown
+                              as "15 years 11.50%" a reader could reasonably
+                              conclude cedi mortgages start at 11.5%, when
+                              they start at 18%. */}
+                          {r.name && !r.name.match(/^(SME|Personal|Corporate)/i)
+                            ? r.name
+                            : `${r.tenorYears} year${r.tenorYears > 1 ? "s" : ""}`}
                         </span>
                         <span className="text-[1.25rem] font-bold tabular-nums">
                           {r.aprPct !== null ? `${r.aprPct.toFixed(2)}%` : "—"}
@@ -259,7 +270,13 @@ export default async function LenderPage({
                             .{" "}
                           </>
                         )}
-                        {vsMarket !== null && mkt && (
+                        {/* More than one bank, or there is no market to be
+                            above or below. Republic's four published mortgage
+                            rates were being averaged against each other and
+                            the result shown as "4.83pp above the 3-bank
+                            average" — a comparison of a bank with itself,
+                            stated as a market position. */}
+                        {vsMarket !== null && mkt && mkt.count > 1 && (
                           <span
                             style={{
                               color: vsMarket <= 0 ? C.good : C.clay,

@@ -921,17 +921,19 @@ export async function getMarketAverages(): Promise<
 > {
   const { data, error } = await publicClient()
     .from("products")
-    .select("asset_class, lock_in_days, rate_min, rate_max")
+    .select("asset_class, lock_in_days, rate_min, rate_max, provider_id")
     .eq("market_side", "borrow")
     .eq("status", "published");
   if (error) throw new Error(`getMarketAverages: ${error.message}`);
 
   const buckets = new Map<string, number[]>();
+  const firmsIn = new Map<string, Set<string>>();
   for (const r of (data ?? []) as {
     asset_class: string | null;
     lock_in_days: number | null;
     rate_min: number | null;
     rate_max: number | null;
+    provider_id: string | null;
   }[]) {
     // The APR shown elsewhere is the maximum — what the loan can cost — so
     // the average is of those, not of the advertised minimums.
@@ -941,13 +943,29 @@ export async function getMarketAverages(): Promise<
     const k = `${r.asset_class}:${years}`;
     if (!buckets.has(k)) buckets.set(k, []);
     buckets.get(k)!.push(Number((apr * 100).toFixed(2)));
+    /*
+      Distinct banks, not rows.
+
+      For the Bank of Ghana return one row IS one bank, so this changed
+      nothing — until Republic published four mortgage rates, three of them
+      at twenty years. The page then read "4.83pp above the 3-bank average",
+      which was Republic compared with itself.
+    */
+    if (r.provider_id) {
+      if (!firmsIn.has(k)) firmsIn.set(k, new Set());
+      firmsIn.get(k)!.add(String(r.provider_id));
+    }
   }
 
   const out = new Map<string, { avg: number; count: number }>();
   for (const [k, vals] of buckets) {
     out.set(k, {
       avg: Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2)),
-      count: vals.length,
+      // Banks, not rows. The average is still across every rate in the
+      // bucket; the count says how many institutions those came from, which
+      // is what "the 22-bank average" claims and what the page checks before
+      // showing a comparison at all.
+      count: firmsIn.get(k)?.size ?? vals.length,
     });
   }
   return out;
