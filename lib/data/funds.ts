@@ -1950,6 +1950,11 @@ interface AccessRecord {
   peerGroup: string | null;
   /** What it invests in, where the asset class does not say. */
   eligibilityNotes: string | null;
+  /** True where the provider LENDS rather than takes investment. A mortgage
+      is the opposite transaction from everything else on the diaspora page,
+      and these firms have no provider page — their data lives at /lenders.
+      Derived from having a published borrow-side product. */
+  lending: boolean;
   accessRequirements: string;
   accessVerifiedOn: string | null;
 }
@@ -2031,6 +2036,7 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       eligibilityNotes: (r.eligibility_notes as string | null) ?? null,
       accessRequirements: String(r.access_requirements),
       accessVerifiedOn: (r.access_verified_on as string | null) ?? null,
+      lending: false,
     };
   });
 

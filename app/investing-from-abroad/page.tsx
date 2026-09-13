@@ -233,9 +233,17 @@ export default async function InvestingFromAbroadPage() {
                       {r.providerSlug && (
                         <Link
                           href={
+                            /* Three destinations, because a provider page
+                               only exists for firms with funds. A broker has
+                               no fund and no provider page; a bank has
+                               mortgages rather than funds, and its lending
+                               data lives at /lenders. Pointing all three at
+                               /providers gave Republic and Absa a 404. */
                             r.providerSlug.startsWith("broker-")
                               ? `/brokers#${r.providerSlug}`
-                              : `/providers/${r.providerSlug}`
+                              : r.lending
+                                ? `/lenders/${r.providerSlug}`
+                                : `/providers/${r.providerSlug}`
                           }
                           className="underline underline-offset-4"
                           style={{ color: C.muted }}
