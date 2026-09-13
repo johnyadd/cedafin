@@ -144,6 +144,23 @@ def current() -> dict:
             continue
         out[f"fee::{prod.get('name')}"] = round(float(f["rate"]) * 100, 2)
 
+    # Things that are not figures but are still news. A month where no rate
+    # moves is common; a month where nothing at all happened is not, and a
+    # reader who hears from us twice a year does not have a relationship with
+    # us.
+    for table in ("products", "providers"):
+        rows = call(
+            "GET", f"/{table}?select=id&status=eq.published"
+        ) or []
+        out[f"count::{table}"] = len(rows)
+
+    # The archive grows every week without anybody doing anything — gold
+    # daily, Treasury bills weekly. It is the one line that is always true.
+    total = 0
+    for root, _dirs, files in os.walk("data"):
+        total += len(files)
+    out["count::archive"] = total
+
     # How many providers publish anything, per field. Movement here is the
     # outreach working.
     disc = call("GET", "/provider_disclosure?select=field,published_on")
@@ -166,8 +183,25 @@ def describe(key: str, old, new) -> str | None:
         name = key.split("::", 1)[1]
         if old is None:
             return f"{name} published a charge for the first time: {new}% a year."
+        # Unchanged is not news. Without this every fee produced a line
+        # reading "raised its charge from 2.25% to 2.25%", which is the
+        # precise failure this whole design exists to avoid.
+        if abs(new - old) < 0.005:
+            return None
         direction = "cut" if new < old else "raised"
         return f"{name} {direction} its charge from {old}% to {new}% a year."
+
+    if key.startswith("count::"):
+        what = key.split("::", 1)[1]
+        if old is None or new <= old:
+            return None
+        added = new - old
+        labels = {
+            "products": f"{added} product(s) added to the comparison — {new} now listed.",
+            "providers": f"{added} provider(s) added — {new} now covered.",
+            "archive": f"{added} source documents added to the archive, which now holds {new}.",
+        }
+        return labels.get(what)
 
     if key.startswith("publish::"):
         field = key.split("::", 1)[1].replace("_", " ")
