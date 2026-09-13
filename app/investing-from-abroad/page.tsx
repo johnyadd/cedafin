@@ -286,13 +286,16 @@ export default async function InvestingFromAbroadPage() {
             about access, from anybody.
             <br />
             <br />
-            {/* Was "not one broker states whether they will open an account
-                for someone living abroad". One does, and continuing to assert
-                an absence after finding the exception is the error this site
-            {/* The Databank Brokerage exception is an entry above now, so
-                repeating it here just made the reader read it twice. */}
-            Of the twenty-four licensed stockbrokers, one — listed above —
-            says anything about who it will take on. The other twenty-three
+            {/* Was "one — listed above". Three brokers now publish a position:
+                SBG, EDC and Databank Brokerage. Continuing to assert an
+                absence after finding exceptions is the error this site exists
+                to object to, so this count has to move when the page does.
+
+                It is still hard-coded, which is wrong — the entries above are
+                read from the database and this is typed. It will go stale the
+                next time a provider replies. */}
+            Of the twenty-four licensed stockbrokers, three — listed above —
+            say anything about who they will take on. The other twenty-one
             publish nothing on the question, and neither does any fund
             manager we track beyond those listed.
           </p>

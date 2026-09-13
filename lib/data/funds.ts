@@ -1970,6 +1970,24 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
     model it — they want to know who will take them — so the two are unioned
     and sorted together.
   */
+  /*
+    Which providers lend, rather than take investment.
+
+    Republic and Absa publish access terms for MORTGAGES — the opposite
+    transaction from everything else on this page. A reader scanning for
+    where to place money should not read a home loan as an offer to take it.
+
+    Derived rather than listed, so the third bank sorts itself.
+  */
+  const { data: borrowRows } = await publicClient()
+    .from("products")
+    .select("provider_id")
+    .eq("market_side", "borrow")
+    .eq("status", "published");
+  const lendingProviderIds = new Set(
+    (borrowRows ?? []).map((r: Record<string, unknown>) => String(r.provider_id)),
+  );
+
   const { data: firms, error: firmError } = await publicClient()
     .from("providers")
     .select("slug, trading_name, legal_name, website, access_requirements, access_verified_on")
@@ -1991,8 +2009,10 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       eligibilityNotes: null,
       accessRequirements: String(f.access_requirements),
       accessVerifiedOn: (f.access_verified_on as string | null) ?? null,
+      lending: lendingProviderIds.has(String(f.id)),
     }),
   );
+  // Always false: the products query above filters to market_side=invest.
   const productRows: AccessRecord[] = (data ?? []).map((r: Record<string, unknown>) => {
     const p = r.providers as {
       trading_name?: string;
