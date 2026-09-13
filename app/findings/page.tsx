@@ -114,10 +114,11 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "One Ghanaian bank publishes its mortgage rates — on a calculator, not on the mortgage page",
-        source: "Four banks' own websites, September 2026",
+          "Nobody in Ghana publishes what a mortgage costs — including the only licensed mortgage company",
+        source:
+          "Four banks and the Bank of Ghana Mortgage Finance register, September 2026",
         why:
-          "Republic publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator. Their Home Purchase Mortgage page says only \"Competitive Interest rates\". Absa publishes loan-to-value, tenor and debt service ratio and no rate at all; Fidelity the same; GCB lists no mortgage product. Four banks of twenty-two, so this is a sample rather than the market.",
+          "Bank of Ghana licenses a category called Mortgage Finance. It has one member, NorthStar Home Finance, and they publish four service lines and no price — no rate, no minimum, no loan-to-value, no term. Absa publishes terms and no rate; Fidelity no rate; GCB no mortgage product. The single exception is Republic, which publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator, and none on the page describing the mortgage.",
         href: "/lenders/republic-bank-ghana",
       },
       {
