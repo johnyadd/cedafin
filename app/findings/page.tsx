@@ -114,6 +114,14 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
+          "One Ghanaian bank publishes its mortgage rates — on a calculator, not on the mortgage page",
+        source: "Four banks' own websites, September 2026",
+        why:
+          "Republic publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator. Their Home Purchase Mortgage page says only \"Competitive Interest rates\". Absa publishes loan-to-value, tenor and debt service ratio and no rate at all; Fidelity the same; GCB lists no mortgage product. Four banks of twenty-two, so this is a sample rather than the market.",
+        href: "/lenders/republic-bank-ghana",
+      },
+      {
+        claim:
           "A savings and loans company publishes 42% on a public sector loan — eight points above the dearest bank",
         source: "Adehyeman Savings and Loans' own website, September 2026",
         why: "A business refused by a bank may assume the alternative is gentler. On the only clear published figure, it costs materially more.",
