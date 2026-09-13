@@ -123,6 +123,17 @@ export default async function LenderPage({
     list.sort((a, b) => a.tenorYears - b.tenorYears);
   }
 
+  /*
+    Does this lender publish any price of its own?
+
+    Twenty-one of twenty-two have only the Bank of Ghana return, and telling
+    them there are "two kinds of figure" when they can see one is the kind of
+    small dishonesty that costs more than it saves.
+  */
+  const hasPublished = [...byCategory.keys()].some(
+    (c) => !["personal_credit", "sme_credit", "corporate_credit"].includes(c),
+  );
+
   return (
     <main
       className={`${display.variable} ${body.variable} min-h-screen`}
@@ -214,13 +225,24 @@ export default async function LenderPage({
             supervisory statistic understates them — they are prices, fixed,
             from the bank&rsquo;s own page. */}
         <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: C.muted }}>
-          Two kinds of figure. Where a section names a product, the rate is one
-          {" "}{lender.name} publishes itself — a price, with fees charged on
-          top. Where it gives only a term, the figure is from Bank of
-          Ghana&rsquo;s monthly return: an average across whatever the bank
-          lent in the period, which is a supervisory statistic rather than a
-          price list. What any borrower is offered depends on the
-          bank&rsquo;s assessment of them.
+          {hasPublished ? (
+            <>
+              Two kinds of figure. Where a section names a product, the rate
+              is one {lender.name} publishes itself — a price, with fees
+              charged on top. Where it gives only a term, the figure is from
+              Bank of Ghana&rsquo;s monthly return: an average across whatever
+              the bank lent in the period, which is a supervisory statistic
+              rather than a price list.
+            </>
+          ) : (
+            <>
+              Average annualised rates across whatever {lender.name} lent in
+              the period — a supervisory statistic, not a price list. This
+              bank publishes no rate of its own that we have found.
+            </>
+          )}{" "}
+          What any borrower is offered depends on the bank&rsquo;s assessment
+          of them.
         </p>
 
         <div className="mt-5 space-y-7">
