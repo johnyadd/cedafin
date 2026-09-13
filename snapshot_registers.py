@@ -63,6 +63,37 @@ except ImportError:  # pragma: no cover
     sys.exit(1)
 
 
+# Bank of Ghana keeps its own registers, and nobody was watching them.
+#
+# The site said "all 22 licensed banks" for weeks. Ghana licenses 23 — National
+# Investment Bank is licensed and absent from the APR return, which is a finding
+# in itself and was found by accident rather than by looking.
+#
+# Note the path: the All Institutions page links to
+# /register-of-licensed-institutions/, and the pages actually live at
+# /registered-institutions/. The links on the regulator's own index are wrong.
+BOG_PAGES = [
+    (
+        "BoG Banks",
+        "https://www.bog.gov.gh/supervision-regulation/banking-supervision/banks",
+    ),
+    (
+        "BoG Savings and Loans",
+        "https://www.bog.gov.gh/supervision-regulation/registered-institutions/savings-loans/",
+    ),
+    (
+        "BoG Mortgage Finance",
+        "https://www.bog.gov.gh/supervision-regulation/registered-institutions/mortgage-finance/",
+    ),
+    (
+        "BoG Finance Houses",
+        "https://www.bog.gov.gh/supervision-regulation/registered-institutions/finance-houses/",
+    ),
+]
+
+REGISTERS = SEC_PAGES + BOG_PAGES
+
+
 def slug(s: str) -> str:
     return "".join(c if c.isalnum() else "-" for c in s.lower()).strip("-")
 
@@ -110,7 +141,7 @@ def main() -> int:
     month = date.today().strftime("%Y-%m")
     out_dir = os.path.join(OUT_ROOT, month)
 
-    print(f"  {len(SEC_PAGES)} register(s), snapshot for {month}")
+    print(f"  {len(REGISTERS)} register(s), snapshot for {month}")
     print()
 
     if not args.dry_run:
@@ -118,7 +149,7 @@ def main() -> int:
 
     saved = failed = changed = 0
 
-    for category, url in SEC_PAGES:
+    for category, url in REGISTERS:
         name = f"{slug(category)}.html"
         time.sleep(args.delay)
         status, body = fetch(url)
