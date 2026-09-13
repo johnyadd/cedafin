@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="List of licensed fund managers">
+    <meta name="robots" content="index, follow">
+    <title>SEC Ghana - Licensed Fund Managers</title>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css" as="style">
+    <link rel="preload" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap" as="font" crossorigin>
+
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="../css/backbutton.css">
+
+    <!-- JavaScript Libraries (Deferred Loading) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js" defer></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js" defer></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.fomanticui.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #2f4862;
+            --accent-color: #d3a304;
+            --error-color: #dc3545;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: "Quicksand", sans-serif;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+
+        .btn:hover {
+            background-color: #d3a304;
+        }
+
+        .btn {
+            border: 2px solid #2f4862;
+            transition: border-color 0.3s ease;
+        }
+
+        .btn:hover {
+            border-color: #2f4862;
+        }
+
+        .button {
+            color: #2f4862;
+
+        }
+
+        /* Layout */
+        .container-main {
+            max-width: 99%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Typography */
+        .page-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background-color: var(--accent-color) !important;
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 12px 15px;
+	
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-good {
+            background-color: var(--accent-color);
+        }
+
+        .status-issue {
+            background-color: var(--error-color);
+        }
+
+        /* Modal */
+        .modal-header {
+            background-color: var(--error-color);
+            color: white;
+            border-radius: 0;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        /* Tooltip Styles */
+        .regulatory-tooltip {
+            position: fixed;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .regulatory-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .regulatory-tooltip.show {
+            opacity: 1;
+        }
+
+        /* Disclaimer Modal Styles */
+        .disclaimer-modal .modal-content {
+            border-radius: 12px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .disclaimer-modal .modal-header {
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 20px 25px;
+        }
+
+        .disclaimer-modal .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .disclaimer-modal .modal-body {
+            padding: 30px 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .disclaimer-modal .modal-body h4 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.4rem;
+        }
+
+        .disclaimer-modal .modal-body p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .disclaimer-modal .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 15px 25px;
+            justify-content: center;
+        }
+
+        .disclaimer-modal .modal-footer .btn-accept {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 40px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .disclaimer-modal .modal-footer .btn-accept:hover {
+            background-color: #1e3247;
+            color: white;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.7;
+        }
+
+        .disclaimer-modal .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .disclaimer-modal .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .disclaimer-modal .modal-body::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .disclaimer-modal .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #1e3247;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-labels {
+                margin-top: 10px;
+            }
+            
+            .regulatory-tooltip {
+                max-width: 200px;
+                font-size: 12px;
+            }
+        }
+
+        /* Existing color styles preserved */
+        .active .page-link {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .page-link {
+            color: var(--accent-color);
+        }
+
+        .page-link:hover {
+            color: var(--primary-color);
+        }
+
+        div.dt-container div.dt-search input,
+        div.dt-container div.dt-length select {
+            border-color: var(--accent-color);
+        }
+
+        button.dt-paging-button,
+        button.dt-paging-button.current {
+            background-color: var(--accent-color);
+        }
+
+        .dt-input.selection.ui.dropdown {
+            border-color: var(--accent-color);
+        }
+
+        div.dt-layout-row {
+            border-color: var(--accent-color);
+        }
+
+        .legendlbl {
+            font-size: 20px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .goldlbl {
+            color: var(--accent-color);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .redlbl {
+            color: var(--error-color);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .redrow {
+            background-color: rgba(255, 0, 0, 0.2) !important;
+        }
+
+        tr.highlight-gold {
+            background-color: var(--accent-color) !important;
+            border-left: 3px solid var(--accent-color) !important;
+        }
+
+        tr.highlight-gold:hover {
+            background-color: #ffecb3 !important;
+        }
+
+        tr.highlight-red {
+            background-color: var(--error-color) !important;
+            border-left: 3px solid #f44336 !important;
+        }
+
+        tr.highlight-red:hover {
+            background-color: #ffcdd2 !important;
+        }
+
+        tr.highlight-red td,
+        tr.highlight-gold td {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
+        
+        /* Make red rows more obvious for tooltip testing */
+        tr.highlight-red {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+  
+    <!-- DISCLAIMER MODAL - Auto-opens on page load -->
+    <div class="modal fade disclaimer-modal" id="disclaimerModal" tabindex="-1" aria-labelledby="disclaimerModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="disclaimerModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>COLOUR CODING FRAMEWORK
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>DISCLAIMER</h4>
+                    <p>
+                        As part of its statutory mandate to protect investors, promote transparency and safeguard the integrity of Ghana's capital market, the Securities and Exchange Commission (SEC) uses a system of colour codes to classify regulated entities pursuant to its investor protection mandate under section 3 of the Securities Industry Act, 2016 (Act 929). The colours assigned to a regulated entity reflect the SEC's supervisory assessment based on information available at the time of publication and is intended solely for provision of information on regulatory compliance of regulated entities to investors for general guidance and does not constitute an endorsement, recommendation, guarantee of the financial soundness or performance of any regulated entity or its products. It does not also represent investment, legal or financial advice by the SEC.
+                    </p>
+                    <p>
+                        Investors are advised to conduct their own due diligence and to seek independent professional advice prior to making any investment decision as past performance or status may not guarantee future performance or be indicative of current regulatory compliance status. The regulatory status and risk profile of a regulated entity may change at any time based on emerging issues or outcomes of regulatory monitoring. The SEC reserves the right to review, amend, suspend or withdraw any coloured classification without prior notice to the public.
+                    </p>
+                    <p>
+                        Consequently, the SEC displaying the colour code system shall not be liable for any loss or claim arising from reliance upon the colour code system or any other information provided on its website or any related platforms.
+                    </p>
+                    <p>
+                        Nothing in this disclaimer limits or affects the Commission's statutory powers, regulatory discretion, legal protections or immunities available to it under applicable laws.
+                    </p>
+                    <p>
+                        <strong>Use of any information on the SEC website or reliance on the colour code system constitutes acceptance of this disclaimer.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-accept" data-bs-dismiss="modal">
+                        <i class="fas fa-check me-2"></i>I Understand &amp; Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regulatory Issues Modal -->
+    <div class="modal fade" id="regulatoryModal" tabindex="-1" aria-labelledby="regulatoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="regulatoryModalLabel">Regulatory Issues Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="regulatoryModalBody">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        This licensee has regulatory issues that require attention.
+                    </div>
+                    <div class="issue-details">
+                        <h6 class="fw-bold">Specific Issues:</h6>
+                        <div id="regulatoryDetailsContent" style="white-space: pre-line;">
+                                                    </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-main">
+        <!-- Page Header -->
+        <div class="header-section d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+                <h1 class="page-title">
+                    <i class="fas fa-chart-line me-2"></i>Licensed Fund Managers
+                </h1>
+                <div class="status-labels d-flex flex-wrap">
+                    <span class="status-label goldlbl">
+                        <span class="status-indicator status-good"></span>
+                        Licensees with NO Regulatory Issues
+                    </span>
+                    <span class="status-label redlbl">
+                        <span class="status-indicator status-issue"></span>
+                        Licensees with Regulatory Issues
+                    </span>
+                </div>
+            </div>
+            <a href="https://licensees.sec.gov.gh/" class="btn button back-button">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
+            </a>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="data-table-container">
+            <table id="fundManagersTable" class="table table-hover table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th width="250">Licensee Name</th>
+                        <th width="198">Address</th>
+                        <th width="198">Location</th>
+                        <th width="198">Telephone</th>
+                        <th width="198">Website</th>
+                        <th width="198">Email Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                                                                                   <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        10th Capital Investments Limited    </td>
+    <td>P.O.Box 7788, Accra-North</td>
+    <td>Y21B Agostinho Neto Road,
+Airport Residential,
+Accra, Ghana</td>
+    <td>0209104369</td>
+    <td>
+                                <a href="https://10thcapital.investments" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                10thcapital.investments            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@10thcapital.investments"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@10thcapital.investments            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement 
+2.Non-compliance with Investment Guidelines 
+3.Unresolved Clients complaints   
+4.Failure to respond to correspondence from the SEC.
+5.Non-submission of statutory reports 
+6.Failure to renew operating license. 
+7.Failure to pay annual market levy                                
+8.Failure to pay penalties levied.  " data-operator-name="Africa Trust Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Africa Trust Capital Limited    </td>
+    <td>P.O.Box CO 2021, Community 1, Tema</td>
+    <td>No.19, Mulberry Street East Legon, Accra </td>
+    <td>(0303)-974834 / (0303)97835</td>
+    <td>
+                                <a href="https://africatrustcapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                africatrustcapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@africatrustcapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@africatrustcapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Algebra Capital Management Limited    </td>
+    <td>P.O.Box GP 18469, Accra</td>
+    <td>5th Floor,Nester Square,North Liberation Link,Airport City</td>
+    <td>(0302)-778553</td>
+    <td>
+                                <a href="https://algebracapital.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                algebracapital.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@algebracapital.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@algebracapital.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Aligned Investment Management LTD    </td>
+    <td>P.O Box CT 8169,
+Cantonment</td>
+    <td>RIVIERA RESIDENCE, 14 BOUNDARY ROAD, EAST LEGON</td>
+    <td>0597888345</td>
+    <td>
+                                <a href="https://www.alignedim.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.alignedim.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:hello@alignedim.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                hello@alignedim.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Altasset Investment Managers LTD    </td>
+    <td>P.O.Box, GP 1800, Accra</td>
+    <td>Hse No. F276/5A, 4TH DADE WALK, NORTH LABONE, ACCRA        
+GL-042-1875</td>
+    <td>0505767119</td>
+    <td>
+                                <a href="https://salemestate.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                salemestate.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:salemfinancialservice@gmail.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                salemfinancialservice@gmail.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Ashfield Investment Managers LTD    </td>
+    <td>P.O Box 14001
+Accra</td>
+    <td>The Investment House
+18 Noi Fetreke Street
+Airport West, Accra</td>
+    <td>0553051313/0596921098</td>
+    <td>
+                                <a href="https://ashfieldinvest.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ashfieldinvest.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@ashfieldinvest.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@ashfieldinvest.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement.             
+2.Non-submission of statutory reports.
+3.Failure to renew operating licence.
+4.Failure to pay annual market levy
+5.Closure of office premises without notice to the SEC.
+6.Failure to pay penalties levied" data-operator-name="Avant Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Avant Capital Limited    </td>
+    <td>P.O. Box CT 8360, Cantonmens, Accra</td>
+    <td>House # C101/1 Nsawam Highway, Opposite Tesano Baptist Church, Off Nsawam Highway, Tesano.</td>
+    <td>(0302)-201703/(0302)-201718</td>
+    <td>
+                                <a href="https://eccapitalpartners.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                eccapitalpartners.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@eccapitalpartners.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@eccapitalpartners.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Black Star Advisors Limited    </td>
+    <td>PMB 59, Osu</td>
+    <td>The Rhombus
+Plot No. 24 Tumu Avenue
+Kanda Estates, Accra</td>
+    <td>0302227698</td>
+    <td>
+                                <a href="https://blackstaradvisors.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                blackstaradvisors.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@blackstaradvisors.com / compliance@blackstargroup.ai"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@blackstaradvisors.com / compliance@blackstargroup.ai            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement 
+2.Non-submission of statutory reports
+3.Failure to renew operating licence 
+4.Failure to pay annual market levy
+5.Failure to pay penalties levied." data-operator-name="Blaze Financial Services Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Blaze Financial Services Ltd    </td>
+    <td>P. O. BOX KN 492, 
+KANESHIE,ACCRA</td>
+    <td>M2 TONGOGARI ROAD, LABONE</td>
+    <td>0302 975 949</td>
+    <td>
+                                <a href="http://www.blazefinancialservices.com.gh/" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                http://www.blazefinancialservices.com.gh/            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@blazefinancialservices.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@blazefinancialservices.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Bora Capital Advisors LTD    </td>
+    <td>P. O. Box CT 10524 Cantonments, Accra</td>
+    <td>No. 3 Dano Court, Boundary Road, East Legon</td>
+    <td>(0507)-712343</td>
+    <td>
+                                <a href="https://boradvisors.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                boradvisors.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@boradvisors.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@boradvisors.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Brassica Capital Limited Company    </td>
+    <td>P. 0 . BOX CT 6389 CANTONMENTS, ACCRA </td>
+    <td>2ND FLOOR, SKYLIGHT SQUARE, 211C OSU BADU STREET, AIRPORT WEST</td>
+    <td>0303944356</td>
+    <td>
+                                <a href="https://www.brassicagroup.com/brassica-capital/home" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.brassicagroup.com/brassica-capital/home            </a>
+            </td>
+    <td>
+                                <a href="mailto:capital@brassicagroup.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                capital@brassicagroup.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        CAL Asset Management Company LTD    </td>
+    <td>P.O. Box 14596, Accra</td>
+    <td>6th Floor, CAL Bank Towers
+No. 23 Independence Avenue,
+Accra</td>
+    <td>0302680052/ 0501678606</td>
+    <td>
+                                <a href="https://calassetmanagement.net" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                calassetmanagement.net            </a>
+            </td>
+    <td>
+                                <a href="mailto:assetmgt@calbank.net"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                assetmgt@calbank.net            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Late submission of statutory reports
+2. Failure to renew operating licence
+3. Non-compliance with Investment Guidelines" data-operator-name="Capstone Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Capstone Capital Limited    </td>
+    <td>P. O. Box CT 9201 Cantonments, Accra Ghana</td>
+    <td>3rd Floor Suite 305 &amp; 306, Christman House(Former Aviation House) Airport Residential Area, Accra</td>
+    <td>(0302)-798775 / (0541)-061292 / (0264) 303657</td>
+    <td>
+                                <a href="https://capstoneghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                capstoneghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@capstoneghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@capstoneghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Cardinalstone Capital Advisers (Ghana) LTD    </td>
+    <td>C/O. Africa Works, 4th Floor, Stanbic Height- Airport City, Accra</td>
+    <td>Africa Works 2, 4th Floor, Stankbic Height, Airport Road, Airport Residential Area, Accra</td>
+    <td>+233 24 224 6957/+233 59 540 1888</td>
+    <td>
+                                <a href="https://cardinalstonepe.com/" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                https://cardinalstonepe.com/            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@cardinalstonepe.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@cardinalstonepe.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Chapel Hill Denham Management Ghana Limited    </td>
+    <td>PMB CT 384, Cantonments
+Accra</td>
+    <td>Suite 2 Labone Office Park, North Sithole Street, Labone, Accra</td>
+    <td>0302 766 865</td>
+    <td>
+                                <a href="https://chapelhilldenham.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                chapelhilldenham.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:ghana.info@chapelhilldenham.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                ghana.info@chapelhilldenham.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        CIDAN Investments Limited    </td>
+    <td>P.O Box CT 7991, Cantonments, Accra</td>
+    <td>Cidan House, H/No. 161 Block Haatso, North Legon. </td>
+    <td>0559899935 / 0276900011</td>
+    <td>
+                                <a href="https://cidaninvestments.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                cidaninvestments.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@cidaninvestments.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@cidaninvestments.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Failure to meet the Minimum Capital Requirement
+2. Non-compliance with Investment Guidelines
+3. Non-payment of annual market levy
+4. Non-submission of statutory reports" data-operator-name="Cititrust Capital Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Cititrust Capital Ltd    </td>
+    <td>P.O.BOX 18646
+ Accra. </td>
+    <td>Claydord Plaza
+No. 10342 Block 15
+Madina Zongo</td>
+    <td>(0244)-379107 / (0302)-231102</td>
+    <td>
+                                <a href="https://cititrustcapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                cititrustcapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@cititrustghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@cititrustghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Non-submission of statutory reports
+2. Failure to renew operating licence
+3. Non-compliance with Investment Guidelines
+4. Failure to meet the Minimum Capital Requirement
+5. Closure of office premises without notice to the SEC" data-operator-name="Continental Capital limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Continental Capital limited    </td>
+    <td>P.O.Box G22393</td>
+    <td>NO.55/1Coastal Estates,Spintex Digital address GT-358-0851</td>
+    <td>(0302)-433477 / (0289)-556036</td>
+    <td>
+                                <a href="https://continentalcapitalghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                continentalcapitalghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@continentalcapitalghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@continentalcapitalghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Cornerstone Capital Advisors Limited    </td>
+    <td>P.O Box CT 3001
+Accra</td>
+    <td>H/No. C 584/3
+30 Samora Machel Road
+Asylum Down, Accra</td>
+    <td>(0302)-264453</td>
+    <td>
+                                <a href="https://cscapital-group.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                cscapital-group.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@cscapital-group.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@cscapital-group.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Non-compliance with Investment Guidelines" data-operator-name="Crystal Capital &amp; Investments Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Crystal Capital &amp; Investments Limited    </td>
+    <td>P.O Box CT 1650, Cantonments</td>
+    <td>56 Nii Nortei Nyanchi Street
+Dzorwulu, Accra</td>
+    <td>(0302)-818721</td>
+    <td>
+                                <a href="https://crystalcapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                crystalcapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@crystalcapitalgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@crystalcapitalgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Databank Asset Management Services LTD    </td>
+    <td> PMB, Ministries Post Office</td>
+    <td>No. 61 Barnes Rd, Adabraka</td>
+    <td>(0302)-610610 / (0302)-681443</td>
+    <td>
+                                <a href="https://databankgroup.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                databankgroup.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@databankgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@databankgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Non-compliance with Investment Guidelines
+" data-operator-name="Delta Capital Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Delta Capital Ltd    </td>
+    <td>P.O.Box TU 15, TUC, Accra</td>
+    <td>Grant House, Barnes Road
+Accra
+Delta House, 5 Farrar Avenue, Adabraka</td>
+    <td>(0302)-260255/ (0303)-936754</td>
+    <td>
+                                <a href="https://deltacapitalghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                deltacapitalghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@deltacapitalghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@deltacapitalghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement
+2.Non-compliance with Investment Guidelines.
+3.Unresolved clients complaints.
+4.Non-submission of statutory returns
+5.Failure to renew operating licence. 
+6.Failure to pay annual market levy
+7.Failure to pay penalties levied.                        " data-operator-name="Dusk Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Dusk Capital Limited    </td>
+    <td>P.O.Box AN 10730, Accra-North</td>
+    <td>No. 20 Odanta Street, Asylum Down, Accra</td>
+    <td>(0244)-750597</td>
+    <td>
+                                <a href="https://duskcapitalghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                duskcapitalghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@duskcapitalghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@duskcapitalghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Ecobank Investment Managers LTD    </td>
+    <td>P.M.B  GPO 
+Accra</td>
+    <td>2 Morocco Lane
+Off The Independence Avenue</td>
+    <td>(228) 22 21 03 03</td>
+    <td>
+                                <a href="https://www.ecobank.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.ecobank.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:iml@ecobank.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                iml@ecobank.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        EcoCapital Investment Management Limited    </td>
+    <td>P.O.Box AD 443, Adabraka</td>
+    <td>3 Hackman Street Adjacent Del International  Hospital 
+East-legon, Accra
+Nii Shai Street
+GPS:   GA-487-0436</td>
+    <td>(0303)-935531-2 / (0302)-540786</td>
+    <td>
+                                <a href="https://ecocapinvestment.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ecocapinvestment.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:invest@ecocapinvestment.com / dela@ecocapinvestment.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                invest@ecocapinvestment.com / dela@ecocapinvestment.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        EDC Investments Limited    </td>
+    <td>P.O.Box  AN 16746</td>
+    <td>2 Morocco Lane,Off the Independence Avenue,2nd Floor,Ecobank Head Office.</td>
+    <td>(0302)-251720-4 / (0302)-251734</td>
+    <td>
+                                <a href="https://ecobank.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ecobank.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:edc@ecobank.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                edc@ecobank.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Failure to meet the Minimum Capital Requirement
+2. Non-compliance with the Investment Guidelines
+" data-operator-name="Family Fountain Assets and Securities Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Family Fountain Assets and Securities Limited    </td>
+    <td>P.O.Box 4164,  Accra</td>
+    <td>HNo. 9, Abotsi Link
+East Legon.</td>
+    <td>(0504)-028667 / (0503)-264385</td>
+    <td>
+                                <a href="https://familyfountainghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                familyfountainghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@familyfountainghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@familyfountainghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Fidelity Securities Limited    </td>
+    <td>PMB 43, Cantonments</td>
+    <td>8th Floor, Ridge Tower
+10 Ambassadorial Enclave,  West Ridge</td>
+    <td>(0302)-214490 / Ext. 555631</td>
+    <td>
+                                <a href="https://fidelitysecurities.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                fidelitysecurities.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:FSL@MYFIDELITYBANK.NET "
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                FSL@MYFIDELITYBANK.NET             </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        First Atlantic Asset Management Co. Limited    </td>
+    <td>P.O Box CT 1620, Cantonments</td>
+    <td>No. C/00/3 Dr. Issert Road, North Ridge</td>
+    <td>(0302)-218030 / (0302)-218035</td>
+    <td>
+                                <a href="https://firstatlanticbank.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                firstatlanticbank.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:assetmanagement@firstatlanticbank.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                assetmanagement@firstatlanticbank.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        First Finance Company Ltd    </td>
+    <td>P. O Box CT 10535 Cantonments Accra</td>
+    <td>House No. 63, Ring Road Central</td>
+    <td>0302231536/0302231546</td>
+    <td>
+                                <a href="https://firstfinancecompany.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                firstfinancecompany.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@firstfinancecompany.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@firstfinancecompany.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Non-submission of statutory reports
+2.Closure of office premises without notice to the SEC
+3.Failure to pay penalties levied
+4.Unresolved client complaint
+5.Operation of Branch office without notification and approval from the SEC.
+6.Failure to respond to correspondence from the SEC
+7.Failure to renew operating licence
+8.Failure to pay penalties levied." data-operator-name="Gateway Wealth Management Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Gateway Wealth Management Limited    </td>
+    <td>P.O. Box NT 243</td>
+    <td>No 5 Oleander Street, East Legon</td>
+    <td>(0277)-899987-8</td>
+    <td>
+                                <a href="https://gatewaygh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                gatewaygh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@gatewaygh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@gatewaygh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        GCB Capital Limited    </td>
+    <td>P. O. Box 134, Accra</td>
+    <td>House No.F138/6, North Labone
+Near Cal Bank Labone Branch</td>
+    <td>0302945848/03022945838</td>
+    <td>
+                                <a href="https://www.gcbcapital.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.gcbcapital.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:info.gcbcapital@gcb.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info.gcbcapital@gcb.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        GLICO Capital Limited    </td>
+    <td>P. O Box GP 4251, Accra.
+</td>
+    <td>No. 48 J.A. Kufour Avenue, Avenor</td>
+    <td>(0302)-766871 </td>
+    <td>
+                                <a href="https://glicocapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                glicocapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@glicocapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@glicocapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Glorygate Capital Ltd.    </td>
+    <td>P.O Box CT 8092, Cantonments
+Accra</td>
+    <td>Glorygate House 
+Golf Road, near Achimota DVLA</td>
+    <td>(0302)-710148-9</td>
+    <td>
+                                <a href="https://glorygatecapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                glorygatecapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@glorygatecapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@glorygatecapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Halifax Asset Management    </td>
+    <td>P.O.Box AT 1318, New Market Achimota</td>
+    <td>H/# C119/27,  East Legon</td>
+    <td>(030)-254994</td>
+    <td>
+                                <a href="https://halifax-am.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                halifax-am.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@halifax-am.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@halifax-am.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement
+2.Operation of Branch office without notification and approval from the SEC
+3.Failure to pay penalties levied
+4.Non-compliance with Investment Guidelines
+5.Non-submission of statutory reports" data-operator-name="HMI Management Services Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        HMI Management Services Limited    </td>
+    <td>P.O. BOX 19400 ACCRA –GHANA
+DIGITAL ADDRESS: GA-207-4965
+</td>
+    <td>(NEW) 1B LOMOKO STREET-TESANO (SAME BUILDING WITH FORBES ET CONSULT INTERNATIONAL)</td>
+    <td>+233 (0)30 277 5678/0245124120/0245110640</td>
+    <td>
+                                <a href="https://hmi-management.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                hmi-management.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@hmi-management.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@hmi-management.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        IC Asset Managers (Ghana) Ltd.    </td>
+    <td>PMB GP 104
+Accra</td>
+    <td>No. 2 Johnson Sirleaf Road
+North Ridge, Accra</td>
+    <td>(0302)-765086/0308250051</td>
+    <td>
+                                <a href="https://icassetmanagers.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                icassetmanagers.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@icassetmanagers.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@icassetmanagers.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement.
+2.Non-compliance with Investment Guidelines
+3.Failure to renew operating licence
+4.Failure to pay annual market levy  
+5.Non-submission of statutory reports.
+6.Failure to pay penalties levied." data-operator-name="IFS Capital Management Ltd."    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        IFS Capital Management Ltd.    </td>
+    <td>P.O Box SR 344, Accra</td>
+    <td>Plot No.7 Nii Yemoh Street, Boundary Road, East Legon</td>
+    <td>(0302)-777233 / (0302)-777081</td>
+    <td>
+                                <a href="https://ifscapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ifscapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@ifscapitalgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@ifscapitalgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        IGS Financial Services Limited    </td>
+    <td>PMB SK 4 Sakumono, Tema</td>
+    <td>House No. 42 Walnut Street,
+Kotobabi Spintex, Accra.</td>
+    <td>0302260367/0302260370</td>
+    <td>
+                                <a href="https://igsghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                igsghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@igsghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@igsghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Injaro Investment Advisors Ltd.    </td>
+    <td>P.O.Box CT 7761, Cantonments</td>
+    <td># 11A Noi Fetreke Street, Airport West</td>
+    <td>(0302)-950917</td>
+    <td>
+                                <a href="https://www.injaroinvestments.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.injaroinvestments.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@iachl.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@iachl.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Integrity Fund Management Limited    </td>
+    <td>P.O.Box SE 1099, Suame</td>
+    <td>First Floor, SIC Insurance PLC Building, Bompata, Kumasi.
+Digital Address: AK-020-1788</td>
+    <td>(0322)-027475</td>
+    <td>
+                                <a href="https://integrityghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                integrityghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@integrityghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@integrityghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement.
+2.Submission of inaccurate reports to the SEC.
+3.Failure to meet the required number of licensed fund manager’s representatives.
+4.Non-submission of statutory reports.                            
+5.Failure to renew operating licence. 
+6.Failure to pay annual market levy 
+7.Unresolved clients complaints." data-operator-name="Investa Capital Fund Management Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Investa Capital Fund Management Ltd    </td>
+    <td>P.O Box 16850
+Accra</td>
+    <td>B801/7 EDUARDO MODHLANA CLOSE
+AWUDOME ROUNDABOUT
+ACCRA-NORTH.</td>
+    <td>(0302)-250287</td>
+    <td>
+                                <a href="https://investacapitalghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                investacapitalghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:investacapitalghan@gmail.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                investacapitalghan@gmail.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        InvestCorp Asset Management Ltd    </td>
+    <td>P.O.Box GP 22493, Accra.</td>
+    <td># 15 Wawa Drive, North Dzorwulu</td>
+    <td>+233(0)302 509 045</td>
+    <td>
+                                <a href="https://investcorpgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                investcorpgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@investcorpgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@investcorpgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        InvestEye Capital Partners Ltd    </td>
+    <td>P.O Box GP 13730, Accra</td>
+    <td>Flat 1, Damba 13, Adowa Street Borteyman Estates, SSNIT Flat</td>
+    <td>(0302)-520054 / (0540)-121262-4</td>
+    <td>
+                                <a href="https://investeyecapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                investeyecapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@investeyecapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@investeyecapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Investiture Capital Ltd    </td>
+    <td> P.O. Box 6945, Accra-North</td>
+    <td>NO. 3 Fifth Crescent, Asylum Down</td>
+    <td>(0342)-291297 / (0244)-721000</td>
+    <td>
+                                <a href="https://investituregh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                investituregh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:investiture@investituregh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                investiture@investituregh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement.
+2.Non-submission of statutory reports.
+3.Failure to renew operating licence.
+4.Failure to pay annual market levy
+5.Failure to respond to correspondence from the SEC.
+6.Failure to pay penalties levied" data-operator-name="Investrust Capital Ltd."    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Investrust Capital Ltd.    </td>
+    <td>P O Box DT316, Adenta, Accra
+GA-158-5401</td>
+    <td>Hse No. 724/14, Efua Sutherland Street, Dzorwulu, Accra. 
+</td>
+    <td>055-825-0678/020-820-0791</td>
+    <td>
+                                <a href="https://investrust.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                investrust.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:investrustghana@gmail.com, info@investrust.com.gh/kwasinkansah@gmail.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                investrustghana@gmail.com, info@investrust.com.gh/kwasinkansah@gmail.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Unresolved clients complaints  
+2.Non-compliance with Investment Guidelines 
+3.Non-submission of statutory reports 
+4.Failure to renew operating licence 
+5.Failure to pay annual market levy
+6.Failure to pay penalties levied " data-operator-name="Legacy Fund Management Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Legacy Fund Management Limited    </td>
+    <td>P.O.Box GP 19210, Accra</td>
+    <td>No. 6 Lily Street
+GZ-005-5881 Teshie Nungua Estate</td>
+    <td>(0303)-966046/ (0303)-977335</td>
+    <td>
+                                <a href="https://legacygh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                legacygh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@legacygh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@legacygh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Non-compliance with Investment Guidelines
+2.Unresolved client complaint" data-operator-name="Linx Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Linx Capital Limited    </td>
+    <td>P.O. Box AT 415, Achimota</td>
+    <td>1st Floor E-Plaza Building 
+Nii Nortei Nyanchi Street
+GA-156-5874
+</td>
+    <td>0244619705/0204619705</td>
+    <td>
+                                <a href="https://linxcapitalltd.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                linxcapitalltd.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@linxcapitalltd.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@linxcapitalltd.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Merban Capital LTD    </td>
+    <td>P.O Box CT 1317, Cantonments - Accra</td>
+    <td>No. 1 Abdul Diouf Street, South Ridge, GA-052-5000</td>
+    <td>(0302)-251137 / (0302)-251138</td>
+    <td>
+                                <a href="https://merbancapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                merbancapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@merbancapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@merbancapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement
+2.Non-compliance with Investment Guidelines
+3.Non-submission of statutory reports 
+4.Failure to renew operating licence
+5.Failure to pay annual market levy
+6.Unresolved Clients complaints
+7.Closure of office without notification " data-operator-name="Met Capital Group Ltd."    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Met Capital Group Ltd.    </td>
+    <td>P. O. Box 10090
+Accra-North, Ghana</td>
+    <td>Decorbuild Plaza, Opposite East Legon Melcom, East Legon, Accra</td>
+    <td>0302-985443 / 0501339481 / 0244228704</td>
+    <td>
+                                <a href="https://www.metcapitalgroupgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.metcapitalgroupgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@metcapitalgroup.gh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@metcapitalgroup.gh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Mirepa Investment Advisors Ltd    </td>
+    <td>Nii Afrotse St, West Legon, Greater Accra, GE-313-6735 (SB), Ghana.</td>
+    <td>56 Nii Afrotse Street Westlands-Accra</td>
+    <td>0303957098/0257957909</td>
+    <td>
+                                <a href="https://www.mirepaadvisors.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.mirepaadvisors.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@mirepaadvisors.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@mirepaadvisors.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Non-compliance with Investment Guidelines" data-operator-name="Monarch Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Monarch Capital Limited    </td>
+    <td>P.O.Box TF 50, Trade Fair Site</td>
+    <td>201A Yiyiwa Street, Abelenkpe, Accra</td>
+    <td>(0302)-766761/2</td>
+    <td>
+                                <a href="https://monarchcapital.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                monarchcapital.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@monachcapital.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@monachcapital.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Regulatory issues
+" data-operator-name="NA Jones Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        NA Jones Capital Limited    </td>
+    <td>P.O.Box CT 508, Cantoments</td>
+    <td>Hse No. B702, The Octagon-Barnes Road, Accra</td>
+    <td>(0302)-748009</td>
+    <td>
+                                <a href="https://najonescapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                najonescapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@najonescapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@najonescapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Unresolved client complaints
+2. Non-compliance with Investment Guidelines
+3. Failure to meet the Minimum Capital Requirement" data-operator-name="National Trust Holding Company Limited (NTHC)"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        National Trust Holding Company Limited (NTHC)    </td>
+    <td>P.O Box KIA 9563, Airport</td>
+    <td>Martco House,  No. D542/2 Okai-Mensah Link, Adabraka</td>
+    <td>(0302)-238495 /  240242 / 235814-5</td>
+    <td>
+                                <a href="https://nthcghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                nthcghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:nthc@ghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                nthc@ghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        New Generation Investment Services Limited    </td>
+    <td>P.O Box KS 8425, Kumasi</td>
+    <td>Cocobod Jubilee, 1st Floor, Guggisberg, Road, Adum</td>
+    <td>(0322)-91608 / (0269)-740903</td>
+    <td>
+                                <a href="https://ngis-group.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ngis-group.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info.ngis@ngis-group.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info.ngis@ngis-group.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement
+2.Non-submission of statutory reports.    
+3.Closure of office premises without notice to the SEC
+4.Submission of inaccurate statutory report
+5.Failure to renew operating licence.  
+6.Failure to pay annual market levy
+7.Non-compliance with Investment Guidelines.
+8.Failure to pay penalties levied." data-operator-name="NewCase Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        NewCase Capital Limited    </td>
+    <td>P.O Box MD 1366, Madina</td>
+    <td>House No. 2, 3rd Right Close, Lake Avenue, off Trassacco-Adjiringanor Road</td>
+    <td>(0302)-998407 / 998408</td>
+    <td>
+                                <a href="https://newcasefinance.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                newcasefinance.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@newcasefinance.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@newcasefinance.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Nimed Capital LTD.    </td>
+    <td>PMB CT 7021, Cantonments</td>
+    <td>Plot 95, Ambassadorial Drive, East Legon, Accra</td>
+    <td>(0302)-543837 / (0267)-548339</td>
+    <td>
+                                <a href="https://nimedcapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                nimedcapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@nimedcapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@nimedcapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Unresolved Clients Complaints" data-operator-name="OctaneDC Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        OctaneDC Limited    </td>
+    <td>P. O. Box CT 10091
+Cantonments, Accra</td>
+    <td>House No. 169, Block 6
+GE-229-1643
+South-East Haatso 9 (off the Atomic Kwabenya Road)</td>
+    <td>0302544178/9 / 0540122278</td>
+    <td>
+                                <a href="https://octanedc.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                octanedc.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@octanedc.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@octanedc.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Orialles Capital Ltd    </td>
+    <td>P.O.Box CT 5411, Accra</td>
+    <td>1 Norfo Close,
+North Dzorwulu, Accra</td>
+    <td>(0302)-775442 / (0303)-934412 / (0246)-551586</td>
+    <td>
+                                <a href="https://N/A" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                N/A            </a>
+            </td>
+    <td>
+                                <a href="mailto:oriallescapital5411@gmail.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                oriallescapital5411@gmail.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Non-compliance with the Investment Guidelines
+2.Unresolved clients complaints
+3.Change of ownership without prior approval
+4.Use of clients funds for operational activities
+5.Non-submission of statutory returns 
+6.Failure to renew operating licence.
+7.Failure to pay annual market levy" data-operator-name="Pent Asset &amp; Wealth Management Ltd."    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Pent Asset &amp; Wealth Management Ltd.    </td>
+    <td>P.O.Box, AN 19058, Accra-North</td>
+    <td>No. 26, 2nd Street, Manu Avenue, Westland, Accra.</td>
+    <td>+233 30 243 6887 </td>
+    <td>
+                                <a href="https://pentassets.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                pentassets.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:pent@lumgint.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                pent@lumgint.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        PLUTUS INVESTMENT LTD    </td>
+    <td>P. O. Box STC 163
+Accra</td>
+    <td>#35 Ofori Tibo Lane East Legon, Accra</td>
+    <td>0302- 738 961</td>
+    <td>
+                                <a href="https://www.plutusinvestmentltd.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.plutusinvestmentltd.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@plutusinvestmentltd.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@plutusinvestmentltd.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Premium Place Investments Ltd.    </td>
+    <td>P. O. Box CT 6578, Cantonments
+GA-207-6571</td>
+    <td># 2 Kotei Anum Lane
+West Legon
+GPS: GA - 426-4489</td>
+    <td>(0302)-798704 / (0307)-034122 / (0302)-971320</td>
+    <td>
+                                <a href="https://premiumplaceinvestments.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                premiumplaceinvestments.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@premuimplaceinvestments.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@premuimplaceinvestments.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Non-compliance with Investment Guidelines
+2.Unresolved clients complaints" data-operator-name="Prestige Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Prestige Capital Limited    </td>
+    <td>P.O.Box KS 16662, Adum</td>
+    <td>3rd Floor Dufie Towers
+Adum Kumasi</td>
+    <td>(0235)-080719 / (0501)-295775 / (0501)-277234</td>
+    <td>
+                                <a href="https://prestigecapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                prestigecapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@prestigecapitalgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@prestigecapitalgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Prudential Securities Limited    </td>
+    <td>P.O. Box CT 628 Cantoments</td>
+    <td>8 Nima Avenue, Kanda, Ring Road Central</td>
+    <td>(0302)-771284 / 770963 / 768386</td>
+    <td>
+                                <a href="https://prudentialsecuritiesghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                prudentialsecuritiesghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@prudentialsecuritiesghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@prudentialsecuritiesghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Failure to operate fund management activity." data-operator-name="RAD Business Advisory Network Centre Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        RAD Business Advisory Network Centre Ltd    </td>
+    <td>P. O Box PMB KIA 108, Accra</td>
+    <td>Premium Place
+No. 25 Osu Badu Avenue
+Ring road East</td>
+    <td>(0307)-088888 / (0244)-266662</td>
+    <td>
+                                <a href="https://radbanc.net" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                radbanc.net            </a>
+            </td>
+    <td>
+                                <a href="mailto:rosemondansah@hotmail.co.uk"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                rosemondansah@hotmail.co.uk            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Regal Alliance Investment Ltd.    </td>
+    <td>P.O Box SK 1016, Sakumono</td>
+    <td>1st Floor, The Word Plaza
+7 Freedom Street Opposite Tema Community 25 Mall </td>
+    <td>(0302)-818416 / (0317)-031470</td>
+    <td>
+                                <a href="https://regalallianceghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                regalallianceghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@regalallianceghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@regalallianceghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Republic Investments (Ghana) Limited    </td>
+    <td>P. O Box CT 4603, Cantonments</td>
+    <td>No. 35, Sixth Avenue North Ridge</td>
+    <td>(0302)-664214 /664430</td>
+    <td>
+                                <a href="http://www.republicinvestmentsgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                http://www.republicinvestmentsgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:investments@republicghana.com,	investments@republicinvestmentsgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                investments@republicghana.com,	investments@republicinvestmentsgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Resurgence Securities LTD    </td>
+    <td>P. O. Box MB 318, Accra.</td>
+    <td>PwC Tower, 1st Floor
+Cantonments City, Accra</td>
+    <td>+233(0)506843668</td>
+    <td>
+                                <a href="https://resurgecap.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                resurgecap.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:kwabena@resurgecap.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                kwabena@resurgecap.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        SAS Investment Management Limited    </td>
+    <td>No. C939/3, 2nd Ridge Link, North Ridge
+P.O Box KA 16446</td>
+    <td>14th Floor, World Trade Centre Accra</td>
+    <td>(0302)-661770 / (0302)-661008</td>
+    <td>
+                                <a href="https://sasghana.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                sasghana.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@sasghana.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@sasghana.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="Breach of Paragraph 4 of Investment Guidelines for Fund Managers" data-operator-name="SDC Capital  Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        SDC Capital  Limited    </td>
+    <td>P.O Box 14198</td>
+    <td>Hse # F155/6 Orphans Crescent
+North-Labone
+Accra,</td>
+    <td>(0302)-0302786754</td>
+    <td>
+                                <a href="https://sdcgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                sdcgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:capital@sdccapital.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                capital@sdccapital.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        SEM Capital Advisors Limited    </td>
+    <td>P.O Box CT 2069, Cantonments</td>
+    <td>Suite A-205, The Octagon, 11 Independence Ave, Accra</td>
+    <td>(0302)-235400 / (0302)-238382</td>
+    <td>
+                                <a href="https://semcapitaladvisors.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                semcapitaladvisors.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:capital@semcapitaladvisors.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                capital@semcapitaladvisors.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Sentinel Asset Management Ltd    </td>
+    <td>P.O. Box CT 10027, Cantonments - Accra</td>
+    <td>1st Floor, 1 Airport Square, Airport City, Accra.</td>
+    <td>(054)-0113507</td>
+    <td>
+                                <a href="https://www.sentinelaml.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.sentinelaml.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@sentinelaml.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@sentinelaml.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Serengeti Asset Management Limited    </td>
+    <td>P.O.Box CT 2868</td>
+    <td>5 Abafun Crescent
+Labone Accra</td>
+    <td>0303939382</td>
+    <td>
+                                <a href="https:// www.serengeticapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                 www.serengeticapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:service@serengeticapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                service@serengeticapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Non-compliance with Investment Guidelines 
+2.Unresolved clients complaints " data-operator-name="SIC Financial Services Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        SIC Financial Services Limited    </td>
+    <td>PMB CT 314, Cantoments</td>
+    <td>No.67 A&amp;B Switchback Road, Cantonments</td>
+    <td>(0302)-767051 / 767163 / 767117</td>
+    <td>
+                                <a href="https://sic-fsl.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                sic-fsl.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@sic-fsl.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@sic-fsl.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Stanbic Investment Management Services LTD    </td>
+    <td>P. O  Box CT 2344, Cantonments</td>
+    <td>4th Floor, Stanbic Heights, 215 South Liberation Link, Airport City</td>
+    <td>0302610690</td>
+    <td>
+                                <a href="https://sims.com.gh" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                sims.com.gh            </a>
+            </td>
+    <td>
+                                <a href="mailto:SIMSRegulatoryTeam@stanbic.com.gh"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                SIMSRegulatoryTeam@stanbic.com.gh            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement 
+2.Non-submission of statutory reports
+3.Failure to renew operating licence.
+4.Failure to pay annual market levy
+5.Failure to pay penalties levied.  
+6.Failure to respond to correspondence from the SEC." data-operator-name="Star Asset Fund Management Ltd"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Star Asset Fund Management Ltd    </td>
+    <td>P.O Box KIA 9635, Airport</td>
+    <td>40, Boundary Road. East Legon</td>
+    <td>(0302)-542962 / (0289)-601821</td>
+    <td>
+                                <a href="https://stargroupgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                stargroupgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@stargroupgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@stargroupgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1.Failure to meet the Minimum Capital Requirement
+2.Failure to pay annual market levy
+3.Failure to pay penalties levied
+4.Closure of office premises without notice to the SEC
+5.Non-submission of statutory reports
+6.Failure to renew operating licence" data-operator-name="Steward Capital Partners Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        Steward Capital Partners Limited    </td>
+    <td>P.O.Box GP 14863, Accra</td>
+    <td>Plot 113 A Mbabane Avenue,Opposite Hotel Obama East Legon Residential Area</td>
+    <td>(0302)-221940-1</td>
+    <td>
+                                <a href="https://steward-capital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                steward-capital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@steward-capital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@steward-capital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Temple Investments LTD    </td>
+    <td>P. O. Box CT  9828, Cantonments</td>
+    <td>HNO F305/6 Adebeto Close Labone, Accra</td>
+    <td>(0303)-931514</td>
+    <td>
+                                <a href="https://templeinvest.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                templeinvest.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@templeinvest.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@templeinvest.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Tesah Capital Limited    </td>
+    <td>P.O. Box GP 2222, Accra </td>
+    <td>8th Floor
+SSNIT Emporium
+Accra
+</td>
+    <td>030-2977813/ 0302977471</td>
+    <td>
+                                <a href="https://www.tesahcapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                www.tesahcapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@tesahcapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@tesahcapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Thamani Investment Management Ltd    </td>
+    <td>P.O. Box CT 4984, Cantonments, Accra</td>
+    <td>4th Floor, Gulf House, Casio Link Street, East Legon, Accra,</td>
+    <td>(0302)-544747</td>
+    <td>
+                                <a href="https://reliancecapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                reliancecapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@reliancecapitalgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@reliancecapitalgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-red" data-bs-toggle="modal" data-bs-target="#regulatoryModal" data-regulatory-remarks="1. Failure to meet the Minimum Capital Requirement
+ 2. Non-submission of statutory reports
+3. Failure to renew operating licence
+4. Failure to pay annual market levy
+5. Non-compliance with Investment Guidelines
+6. Unresolved client complaint " data-operator-name="TTL Capital Limited"    style="cursor: pointer;"
+    data-regulatory-tooltip="Click to view regulatory issues">
+    <td>
+        TTL Capital Limited    </td>
+    <td>P.O.Box SK 1081, Sakumono</td>
+    <td>H/No. C122/3, 1st Floor, Farrar Avenue, Asylum Down</td>
+    <td>(0302)-201222 / (0307)-002624</td>
+    <td>
+                                <a href="https://ttlcapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                ttlcapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@ttlcapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@ttlcapital.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        Union Capital Limited    </td>
+    <td>P.O.Box KN 5569 Kaneshie,</td>
+    <td>NO. 735 Pawpaw Street / East Legon</td>
+    <td>(0303)-973847</td>
+    <td>
+                                <a href="https://unioncapitalgh.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                unioncapitalgh.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@unioncapitalgh.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@unioncapitalgh.com            </a>
+            </td>
+</tr>
+                                                                               <tr class="highlight-gold"     style="cursor: default;"
+    >
+    <td>
+        WAICA RE Capital Limited    </td>
+    <td>P.O.Box CT 11008, Cantonments Accra</td>
+    <td>4th Floor Gulf House Left Wing
+Gulf Street Accra</td>
+    <td>(0302)-631164 / (0501)-577546-8</td>
+    <td>
+                                <a href="https://waicarecapital.com" target="_blank" rel="noopener noreferrer"
+                class="text-truncate d-inline-block" style="max-width: 180px;"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-external-link-alt me-1"></i>
+                waicarecapital.com            </a>
+            </td>
+    <td>
+                                <a href="mailto:info@waicarecapital.com"
+                onclick="event.stopPropagation();">
+                <i class="fas fa-envelope me-1"></i>
+                info@waicarecapital.com            </a>
+            </td>
+</tr>
+                                                            </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show disclaimer modal every time the page loads
+            var disclaimerModal = new bootstrap.Modal(document.getElementById('disclaimerModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            disclaimerModal.show();
+
+            // Initialize DataTables
+            const table = $('#fundManagersTable').DataTable({
+                responsive: true,
+                dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex align-items-center"f>>rt<"d-flex justify-content-between align-items-center"ip>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search fund managers...",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "No entries found",
+                    infoFiltered: "(filtered from _MAX_ total entries)"
+                },
+                initComplete: function() {
+                    // Add custom class to search input
+                    $('.dataTables_filter input').addClass('form-control');
+                    // Move the info text to the right
+                    $('.dataTables_info').addClass('float-end');
+                }
+            });
+
+            // Handle regulatory modal
+            $('#regulatoryModal').on('show.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const remarks = button.data('regulatory-remarks') || 'No additional details available';
+                const licenseeName = button.data('operator-name') || 'Licensee';
+
+                $('#regulatoryModalLabel').html(`
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    ${licenseeName}
+                `);
+
+                $('#regulatoryDetailsContent').text(remarks);
+            });
+
+            // Prevent click propagation on links in table rows
+            $('#fundManagersTable').on('click', 'a', function(e) {
+                e.stopPropagation();
+            });
+
+            // Tooltip functionality for licensees with regulatory issues
+            function initTooltips() {
+                // Create tooltip element if it doesn't exist
+                let tooltip = document.querySelector('.regulatory-tooltip');
+                if (!tooltip) {
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'regulatory-tooltip';
+                    document.body.appendChild(tooltip);
+                }
+
+                // Get all red rows (licensees with regulatory issues)
+                const redRows = document.querySelectorAll('tr.highlight-red');
+                
+                console.log('Found ' + redRows.length + ' rows with regulatory issues');
+                
+                redRows.forEach(row => {
+                    const tooltipText = row.getAttribute('data-regulatory-tooltip');
+                    
+                    console.log('Row tooltip text:', tooltipText);
+                    
+                    if (tooltipText && tooltipText.trim() !== '') {
+                        row.addEventListener('mouseenter', function(e) {
+                            tooltip.textContent = tooltipText;
+                            tooltip.classList.add('show');
+                            updateTooltipPosition(e, tooltip);
+                        });
+                        
+                        row.addEventListener('mouseleave', function() {
+                            tooltip.classList.remove('show');
+                        });
+                        
+                        row.addEventListener('mousemove', function(e) {
+                            updateTooltipPosition(e, tooltip);
+                        });
+                    }
+                });
+            }
+
+            function updateTooltipPosition(e, tooltip) {
+                const x = e.clientX + 10;
+                const y = e.clientY + 10;
+                
+                tooltip.style.left = x + 'px';
+                tooltip.style.top = y + 'px';
+                
+                // Adjust if tooltip goes off screen
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                
+                if (tooltipRect.right > windowWidth) {
+                    tooltip.style.left = (x - tooltipRect.width - 20) + 'px';
+                }
+                
+                if (tooltipRect.bottom > windowHeight) {
+                    tooltip.style.top = (y - tooltipRect.height - 20) + 'px';
+                }
+            }
+
+            // Initialize tooltips after a short delay to ensure DOM is ready
+            setTimeout(initTooltips, 100);
+            
+            // Re-initialize tooltips when DataTables redraws
+            table.on('draw', function() {
+                setTimeout(initTooltips, 100);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
