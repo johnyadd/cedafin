@@ -159,7 +159,7 @@ export default async function IsItLicensedPage() {
                 [
                   ["106 funds", "SEC register of licensed collective investment schemes"],
                   ["24 stockbrokers", "SEC register of licensed dealing members"],
-                  ["22 banks", "Bank of Ghana APR returns and register"],
+                  ["22 banks", "Bank of Ghana APR returns — 23 are licensed"],
                   ["26 savings and loans companies", "Bank of Ghana register"],
                   ["9 private funds", "SEC register of licensed private funds"],
                   ["39 listed companies", "Ghana Stock Exchange monthly reports"],
@@ -224,7 +224,7 @@ export default async function IsItLicensedPage() {
             [
               ["/funds", "106 funds", "Every licensed scheme we found"],
               ["/brokers", "24 brokers", "Every licensed dealing member"],
-              ["/funding", "22 banks + 26 lenders", "Everyone regulated to lend"],
+              ["/funding", "22 banks + 26 lenders", "Those in the APR return and the savings and loans register"],
             ] as [string, string, string][]
           ).map(([href, title, note]) => (
             <Link
