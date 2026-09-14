@@ -116,9 +116,9 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
         claim:
           "Nobody in Ghana publishes what a mortgage costs — including the only licensed mortgage company",
         source:
-          "Four banks and the Bank of Ghana Mortgage Finance register, September 2026",
+          "Five institutions' own websites and the Bank of Ghana Mortgage Finance register, September 2026",
         why:
-          "Bank of Ghana licenses a category called Mortgage Finance. It has one member, NorthStar Home Finance, and they publish four service lines and no price — no rate, no minimum, no loan-to-value, no term. Absa publishes terms and no rate; Fidelity no rate; GCB no mortgage product. The single exception is Republic, which publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator, and none on the page describing the mortgage.",
+          "Bank of Ghana licenses a category called Mortgage Finance. It has one member, NorthStar Home Finance, and they publish four service lines and no price — no rate, no minimum, no loan-to-value, no term. Absa publishes terms and no rate; Stanbic seven products, four currencies and no rate; Fidelity no rate; GCB no mortgage product. The single exception is Republic, which publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator, and none on the page describing the mortgage.",
         href: "/lenders/republic-bank-ghana",
       },
       {
