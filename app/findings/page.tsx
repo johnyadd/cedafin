@@ -229,9 +229,9 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "Getting documents certified abroad is required by both providers who say how a non-resident applies — neither says what it costs",
-        source: "EDC Stockbrokers and Absa Bank Ghana, their own material, September 2026",
-        why: "EDC require copies notarised by a foreign authority. Absa go further: certification by a lawyer, notary public or court of competent jurisdiction is mandatory for Ghanaians living abroad, on every account type, and the certifier must be contactable. A notary outside Ghana charges per document and an apostille costs more again — which on a small opening balance may exceed what somebody intends to deposit. Neither provider states the cost, because it is not theirs to charge.",
+          "Every Ghanaian provider that explains how a non-resident applies wants a different document obtained abroad — and none says what it costs",
+        source: "EDC Stockbrokers, Absa and Fidelity, their own material, September 2026",
+        why: "EDC want copies notarised by a foreign authority. Absa want certification by a lawyer, notary public or court of competent jurisdiction, mandatory on every account type, with the certifier contactable. Fidelity want a Power of Attorney where a mortgage applicant is non-resident. Three providers, three different instruments, each obtained abroad at the applicant's expense — and Zenith, who ask only for an emailed copy of a passport, show none of it is inevitable. On an account with no minimum balance the paperwork can cost more than the opening deposit.",
         href: "/investing-from-abroad",
       },
     ],
