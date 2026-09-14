@@ -1,5 +1,5 @@
 ---
-title: "Four Ghanaian banks will open an account for you from abroad. They disagree about almost everything else."
+title: "Four Ghanaian banks will open an account for you from abroad. They disagree on who qualifies, where you must be, and what paper you need."
 summary: "Who counts as diaspora, where you have to be standing, and what paper you need — answered four different ways by four banks, all of them published, none of them wrong."
 date: 2026-09-14
 tags: [diaspora, banking, accounts]
@@ -8,8 +8,8 @@ tags: [diaspora, banking, accounts]
 Somebody in London who wants a bank account in Ghana has a short list of
 questions. Will they take me? Do I have to fly there? What do I need to send?
 
-Four Ghanaian banks answer all three in public. They give four different
-answers, and the differences are larger than anything in the interest rates.
+Four Ghanaian banks answer all three in public, and they give four different
+answers. What one will accept by email, another wants certified by a lawyer.
 
 ## Who counts as diaspora
 
