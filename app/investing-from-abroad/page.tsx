@@ -371,7 +371,20 @@ export default async function InvestingFromAbroadPage() {
         </h2>
         <div className="mt-4 space-y-4 text-[15px] leading-relaxed">
           <p>
-            <strong>An online form is not a policy.</strong> Several Ghanaian
+            <strong>The Ghana Card may matter more than it looks.</strong> The
+          National Identification Authority states that the card is mandatory
+          for transactions requiring an applicant to establish their identity,
+          and names banking among the services it covers. Every provider above
+          currently accepts a passport as an alternative. Ghanaians abroad can
+          register for the card at Ghana Missions, so it is worth asking
+          whichever provider you approach whether a passport remains
+          acceptable to them.
+        </p>
+        <p
+          className="mt-2.5 text-[13.5px] leading-relaxed"
+          style={{ color: C.muted }}
+        >
+          <strong>An online form is not a policy.</strong> Several Ghanaian
             providers have web application forms, and some of those forms have
             fields for a foreign address. That establishes that the form
             accommodates a non-resident. It does not establish that the
