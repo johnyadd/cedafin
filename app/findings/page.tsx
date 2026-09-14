@@ -229,9 +229,9 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "Only one Ghanaian provider mentions the cost of the paperwork for a non-resident",
-        source: "EDC Stockbrokers' trading portal, September 2026",
-        why: "Documents notarised by a foreign authority. A notary outside Ghana charges per document — which may cost more than somebody intends to invest.",
+          "Getting documents certified abroad is required by both providers who say how a non-resident applies — neither says what it costs",
+        source: "EDC Stockbrokers and Absa Bank Ghana, their own material, September 2026",
+        why: "EDC require copies notarised by a foreign authority. Absa go further: certification by a lawyer, notary public or court of competent jurisdiction is mandatory for Ghanaians living abroad, on every account type, and the certifier must be contactable. A notary outside Ghana charges per document and an apostille costs more again — which on a small opening balance may exceed what somebody intends to deposit. Neither provider states the cost, because it is not theirs to charge.",
         href: "/investing-from-abroad",
       },
     ],
