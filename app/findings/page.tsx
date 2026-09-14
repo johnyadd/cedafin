@@ -158,7 +158,7 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "Six of 97 Ghanaian providers say anything about whether somebody living abroad can open an account",
+          "Eight of 97 Ghanaian providers say anything about whether somebody living abroad can open an account",
         source: "Provider material across funds, brokers and banks",
         why: "Ghanaians abroad sent home US$7.8bn in 2025. Almost none of them can establish, before committing money, whether a product is open to them.",
         href: "/investing-from-abroad",
