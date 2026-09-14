@@ -128,6 +128,14 @@ approach, rather than discovering the answer later.
 
 ---
 
+**One thing this piece does not cover.** First National Bank publish four
+home loan products, each available to resident and non-resident Ghanaians in
+cedis, dollars or pounds, over up to twenty years. That is lending rather than
+an account to hold money in, so it sits outside the comparison above — but for
+somebody abroad buying property in Ghana it may matter more than any of it.
+
+---
+
 *Every figure here is from the bank's own published material, read in
 September 2026. Where a bank publishes nothing on a question, we say so rather
 than filling the gap. If any of these terms have changed, tell us and we will
