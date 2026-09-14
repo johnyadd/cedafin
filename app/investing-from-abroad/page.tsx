@@ -173,8 +173,33 @@ export default async function InvestingFromAbroadPage() {
             Nothing yet. We have asked.
           </p>
         ) : (
-          <div className="mt-5 space-y-3">
-            {records.map((r: (typeof records)[number]) => (
+          <div className="mt-5 space-y-8">
+            {/* Three subjects, because a mortgage is the opposite
+                transaction from a savings account and a reader scanning for
+                where to place money should not meet a home loan. Absa and
+                Fidelity appear in two sections, with the relevant half of
+                what they publish. */}
+            {(
+              [
+                ["invest", "Where you can invest", "Funds and brokerage accounts."],
+                ["deposit", "Where you can hold money", "Bank accounts for Ghanaians abroad."],
+                ["borrow", "Where you can borrow against Ghanaian property", "Mortgages. The opposite transaction — you are taking money, not placing it."],
+              ] as [string, string, string][]
+            ).map(([key, heading, note]) => {
+              const rows = records.filter(
+                (r: (typeof records)[number]) => r.subject === key,
+              );
+              if (!rows.length) return null;
+              return (
+                <div key={key}>
+                  <h3 className="text-[1.15rem] font-bold" style={{ fontFamily: "var(--font-display)" }}>
+                    {heading}
+                  </h3>
+                  <p className="mt-1 text-[13px]" style={{ color: C.muted }}>
+                    {note}
+                  </p>
+                <div className="mt-4 space-y-3">
+            {rows.map((r: (typeof records)[number]) => (
               <section
                 key={r.slug}
                 className="overflow-hidden rounded-2xl"
@@ -289,7 +314,11 @@ export default async function InvestingFromAbroadPage() {
                   </div>
                 </div>
               </section>
-            ))}
+              ))}
+                </div>
+              </div>
+            );
+          })}
           </div>
         )}
 

@@ -126,6 +126,43 @@ export default function MethodologyPage() {
           ))}
         </ul>
 
+        {/* Added after a bank's site turned our reader away and the question
+            of what the reader claims to be became unavoidable. */}
+        <div
+          className="mt-6 rounded-2xl p-5"
+          style={{ background: C.card, border: `1px solid ${C.rule}` }}
+        >
+          <p className="text-[14px] font-bold">How the pages are read</p>
+          <p
+            className="mt-2 text-[14px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Provider websites are read by a program that follows each
+            site&rsquo;s own navigation rather than guessing addresses. It
+            identifies itself as CedafinBot, links to this page, and honours
+            robots.txt where a site publishes one.
+          </p>
+          <p
+            className="mt-2.5 text-[14px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Some sites refuse anything that is not a browser. Where that
+            happens we do not disguise the reader to get past it — a person
+            opens the page instead, and the figure is recorded as read by
+            hand. Republic Bank&rsquo;s mortgage rates, the only published
+            ones in Ghana, were read that way.
+          </p>
+          <p
+            className="mt-2.5 text-[14px] leading-relaxed"
+            style={{ color: C.muted }}
+          >
+            Nothing is extracted by a language model. Figures are read by
+            deterministic parsing, so the same document gives the same answer
+            every time and a wrong number is a fault rather than a plausible
+            guess.
+          </p>
+        </div>
+
         <h2
           className="mt-12 text-[1.5rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}

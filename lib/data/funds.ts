@@ -1973,6 +1973,10 @@ interface AccessRecord {
       and these firms have no provider page — their data lives at /lenders.
       Derived from having a published borrow-side product. */
   lending: boolean;
+  /** What these terms concern: deposit, invest or borrow. A provider with
+      terms on two subjects appears twice, which is why the page can now
+      separate holding money from borrowing it. */
+  subject: string;
   accessRequirements: string;
   accessVerifiedOn: string | null;
 }
@@ -2011,29 +2015,55 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
     (borrowRows ?? []).map((r: Record<string, unknown>) => String(r.provider_id)),
   );
 
+  /*
+    Provider terms now come from provider_access, one row per provider per
+    SUBJECT — deposit, invest or borrow.
+
+    The old providers.access_requirements held one block per provider covering
+    whatever we had read, so Absa's mortgage terms sat inside their diaspora
+    account entry and the page could not separate holding money from
+    borrowing it. Every available signal was wrong: the `lending` flag means
+    "has a borrow-side product", which is true of three banks whose terms are
+    mostly about accounts.
+
+    A provider with two subjects now yields two records, which is the point.
+  */
   const { data: firms, error: firmError } = await publicClient()
-    .from("providers")
-    .select("id, slug, trading_name, legal_name, website, access_requirements, access_verified_on")
-    .not("access_requirements", "is", null);
+    .from("provider_access")
+    .select(
+      "subject, terms, verified_on, providers ( id, slug, trading_name, legal_name, website )",
+    );
   if (firmError) throw new Error(`getAccessRecords: ${firmError.message}`);
 
   const firmRows: AccessRecord[] = (firms ?? []).map(
-    (f: Record<string, unknown>) => ({
-      slug: String(f.slug),
-      name: String(f.trading_name ?? f.legal_name ?? ""),
-      providerName: String(f.trading_name ?? f.legal_name ?? ""),
-      providerSlug: String(f.slug),
-      providerUrl: (f.website as string | null) ?? null,
-      // A firm is not an asset class. The page shows nothing where this is
-      // null, which is right — "Databank Brokerage · Shares" would imply we
-      // hold share data for them, and we do not.
-      assetClass: null,
-      peerGroup: null,
-      eligibilityNotes: null,
-      accessRequirements: String(f.access_requirements),
-      accessVerifiedOn: (f.access_verified_on as string | null) ?? null,
-      lending: lendingProviderIds.has(String(f.id)),
-    }),
+    (f: Record<string, unknown>) => {
+      // The provider now arrives nested, because the row belongs to
+      // provider_access rather than to providers.
+      const p = f.providers as {
+        id?: string;
+        slug?: string;
+        trading_name?: string;
+        legal_name?: string;
+        website?: string;
+      } | null;
+      const name = p?.trading_name ?? p?.legal_name ?? "";
+      return {
+        // A provider with two subjects yields two records, so the slug alone
+        // is no longer unique. The subject makes the key.
+        slug: `${p?.slug ?? ""}::${String(f.subject)}`,
+        name,
+        providerName: name,
+        providerSlug: p?.slug ?? "",
+        providerUrl: p?.website ?? null,
+        assetClass: null,
+        peerGroup: null,
+        eligibilityNotes: null,
+        accessRequirements: String(f.terms),
+        accessVerifiedOn: (f.verified_on as string | null) ?? null,
+        lending: String(f.subject) === "borrow",
+        subject: String(f.subject),
+      };
+    },
   );
   // Always false: the products query above filters to market_side=invest.
   const productRows: AccessRecord[] = (data ?? []).map((r: Record<string, unknown>) => {
@@ -2055,6 +2085,9 @@ export async function getAccessRecords(): Promise<AccessRecord[]> {
       accessRequirements: String(r.access_requirements),
       accessVerifiedOn: (r.access_verified_on as string | null) ?? null,
       lending: false,
+      // The products query filters to market_side=invest, so every row here
+      // is an investment — a fund or a security, never an account or a loan.
+      subject: "invest",
     };
   });
 
