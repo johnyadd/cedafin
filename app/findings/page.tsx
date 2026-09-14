@@ -3,6 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/brand";
+import { getDisclosureCounts } from "@/lib/data/funds";
 
 /**
  * app/findings/page.tsx — everything we have established, in one place.
@@ -158,7 +159,7 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "Eight of 97 Ghanaian providers say anything about whether somebody living abroad can open an account",
+          "{ACCESS_PUBLISHED} of {ACCESS_TOTAL} Ghanaian providers say anything about whether somebody living abroad can open an account",
         source: "Provider material across funds, brokers and banks",
         why: "Ghanaians abroad sent home US$7.8bn in 2025. Almost none of them can establish, before committing money, whether a product is open to them.",
         href: "/investing-from-abroad",
@@ -260,7 +261,16 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
 
 export const revalidate = 3600;
 
-export default function FindingsPage() {
+export default async function FindingsPage() {
+  /*
+    One claim on this page is a count, and counts drift. "Six of 97 providers
+    say anything about non-resident access" was true when written, then eight,
+    then nine — within two days, wrong on the site in between each time.
+
+    The disclosure table knows. Ask it.
+  */
+  const counts = await getDisclosureCounts();
+  const access = counts["non_resident_access"] ?? { published: 0, total: 0 };
   const total = GROUPS.reduce((n, g) => n + g.findings.length, 0);
 
   return (
@@ -335,7 +345,13 @@ export default function FindingsPage() {
                     />
                     <div className="flex-1 p-5">
                       <p className="text-[15px] font-bold leading-snug">
-                        {f.claim}
+                        {/* Counts substituted at render, so a claim about
+                            how many providers disclose something cannot go
+                            stale. This one has been six, eight and nine
+                            within two days. */}
+                        {f.claim
+                          .replace("{ACCESS_PUBLISHED}", String(access.published))
+                          .replace("{ACCESS_TOTAL}", String(access.total))}
                       </p>
                       {f.why && (
                         <p

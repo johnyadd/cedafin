@@ -2210,3 +2210,33 @@ export async function getDisclosure(): Promise<DisclosureField[]> {
   }
   return [...by.values()].sort((a, b) => b.total - a.total);
 }
+
+
+/**
+ * Disclosure counts, for claims that would otherwise go stale.
+ *
+ * "Six of 97 providers say anything about non-resident access" was true when
+ * it was written, then eight, then nine — within two days. Each time it was
+ * wrong on the site until somebody noticed.
+ *
+ * The disclosure table knows the answer. A page asserting a count should ask
+ * it rather than carry a number somebody typed.
+ */
+export async function getDisclosureCounts(): Promise<
+  Record<string, { published: number; total: number }>
+> {
+  const { data, error } = await publicClient()
+    .from("provider_disclosure")
+    .select("field, published_on");
+  if (error) throw new Error(`getDisclosureCounts: ${error.message}`);
+
+  const out: Record<string, { published: number; total: number }> = {};
+  for (const r of data ?? []) {
+    const row = r as Record<string, unknown>;
+    const f = String(row.field);
+    if (!out[f]) out[f] = { published: 0, total: 0 };
+    out[f].total += 1;
+    if (row.published_on) out[f].published += 1;
+  }
+  return out;
+}
