@@ -146,6 +146,21 @@ export default async function InvestingFromAbroadPage() {
           style={{ borderColor: C.gold, borderTopWidth: "3px" }}
         />
 
+        {/* The entries below are eleven providers stated one at a time.
+            Somebody wanting to choose between them needs the comparison,
+            which is an article rather than a list. */}
+        <p className="mt-6 text-[14px] leading-relaxed">
+          <Link
+            href="/insights/four-banks-four-definitions"
+            className="font-semibold underline underline-offset-4"
+            style={{ color: C.deep }}
+          >
+            Four banks will open an account for you from abroad — and they
+            disagree on who qualifies, where you must be, and what paper you
+            need &rarr;
+          </Link>
+        </p>
+
         <h2
           className="mt-10 text-[1.4rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
@@ -367,7 +382,7 @@ export default async function InvestingFromAbroadPage() {
           className="mt-10 text-[1.4rem] font-bold"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Two things worth knowing regardless
+          Three things worth knowing regardless
         </h2>
         <div className="mt-4 space-y-4 text-[15px] leading-relaxed">
           <p>
