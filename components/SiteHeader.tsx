@@ -83,6 +83,7 @@ const MENUS: { label: string; items: Item[] }[] = [
     items: [
       ["/funding", "Business credit", "22 banks, real APRs"],
       ["/funding/match", "Find funding that fits"],
+      ["/mortgages", "Mortgages", "One bank of 21 publishes a rate"],
     ],
   },
   {
