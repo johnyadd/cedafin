@@ -231,9 +231,10 @@ export default async function MortgagesPage() {
                 term.
               </p>
               <p className="mt-2.5 text-[13px]" style={{ color: C.muted }}>
-                Two banks, Fidelity and GCB, returned redirects our reader
-                could not follow. We say so rather than counting them either
-                way.
+                Two banks, Fidelity and GCB, returned redirects our automated
+                reader could not follow — so neither is counted in the
+                twenty-one. Both were then read by hand, and neither publishes
+                a mortgage rate either.
               </p>
             </div>
           </div>
