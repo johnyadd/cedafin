@@ -137,58 +137,72 @@ export default async function MortgagesPage() {
         >
           The published rates
         </h2>
+        {/* Grouped by LENDER, not by product.
+
+            Four cards each showing a different percentage, under a headline
+            saying one bank publishes a rate, read as a contradiction — the
+            eye counts cards before it reads "all from one lender". They are
+            four products from Republic; the page should look like one bank. */}
         {mortgages.length === 0 ? (
           <p className="mt-3 text-[15px]" style={{ color: C.muted }}>
             None currently held.
           </p>
         ) : (
-          <>
-            <p className="mt-2 text-[13.5px]" style={{ color: C.muted }}>
-              All from {lenders.size === 1 ? "one lender" : `${lenders.size} lenders`}
-              , read from their own material. Fees are charged on top.
-            </p>
-            <div className="mt-4 space-y-2">
-              {mortgages.map((m) => (
-                <div
-                  key={m.slug}
-                  className="rounded-2xl p-4 sm:p-5"
-                  style={{ background: C.card, border: `1px solid ${C.rule}` }}
+          <div className="mt-4 space-y-3">
+            {[...new Set(mortgages.map((m) => m.provider.slug))].map((slug) => {
+              const rows = mortgages.filter((m) => m.provider.slug === slug);
+              return (
+                <section
+                  key={slug}
+                  className="overflow-hidden rounded-2xl"
+                  style={{ background: C.card, border: `1px solid ${C.gold}` }}
                 >
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <div>
-                      <p className="text-[14.5px] font-bold">{m.name}</p>
-                      <p className="text-[12px]" style={{ color: C.muted }}>
-                        {/* The product name already carries the currency —
-                            "Home Purchase Mortgage (USD)" — so there is
-                            nothing to add here. */}
-                        {m.provider.name}
-                      </p>
-                    </div>
-                    <span
-                      className="text-[1.4rem] font-bold tabular-nums"
-                      style={{ color: C.deep }}
-                    >
-                      {m.aprPct !== null ? `${m.aprPct.toFixed(2)}% ` : "— "}
-                      <span
-                        className="ml-1.5 text-[11px] font-semibold"
-                        style={{ color: C.muted }}
-                      >
-                        a year
-                      </span>
-                    </span>
-                  </div>
-                  {m.caveat && (
-                    <p
-                      className="mt-2 text-[13px] leading-relaxed"
-                      style={{ color: C.muted }}
-                    >
-                      {m.caveat}
+                  <div
+                    className="px-5 py-3 text-white"
+                    style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
+                  >
+                    <p className="text-[14.5px] font-bold">
+                      {rows[0].provider.name}
                     </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
+                    {lenders.size === 1 && (
+                      <p className="text-[11.5px] opacity-90">
+                        The only published mortgage rates we have found in Ghana
+                      </p>
+                    )}
+                  </div>
+                  <div className="divide-y" style={{ borderColor: C.rule }}>
+                    {rows.map((m) => (
+                      <div key={m.slug} className="p-5">
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                          <p className="text-[14px] font-semibold">{m.name}</p>
+                          <span
+                            className="text-[1.35rem] font-bold tabular-nums"
+                            style={{ color: C.deep }}
+                          >
+                            {m.aprPct !== null ? `${m.aprPct.toFixed(2)}% ` : "— "}
+                            <span
+                              className="text-[11px] font-semibold"
+                              style={{ color: C.muted }}
+                            >
+                              a year
+                            </span>
+                          </span>
+                        </div>
+                        {m.caveat && (
+                          <p
+                            className="mt-1.5 text-[12.5px] leading-relaxed"
+                            style={{ color: C.muted }}
+                          >
+                            {m.caveat}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         )}
 
         {/* The absence. This is the actual finding. */}
