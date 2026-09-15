@@ -182,7 +182,10 @@ def main() -> int:
 
     # Temporary: which database are we actually writing to? The job reports
     # nine writes and the site's database receives none.
-    print(f"  writing to {BASE}")
+    # Just the project ref — enough to identify the database without
+    # printing a secret GitHub would mask anyway.
+    _ref = BASE.split("//")[-1].split(".")[0]
+    print(f"  project ref starts {_ref[:6]}, length {len(_ref)}")
 
     status, html = fetch(PAGE)
     if status != 200 or not html:
