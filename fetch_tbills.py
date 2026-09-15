@@ -180,6 +180,10 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
+    # Temporary: which database are we actually writing to? The job reports
+    # nine writes and the site's database receives none.
+    print(f"  writing to {BASE}")
+
     status, html = fetch(PAGE)
     if status != 200 or not html:
         print(f"  {status_word(status)} — {PAGE}")
