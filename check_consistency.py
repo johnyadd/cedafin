@@ -250,6 +250,77 @@ def check_partial_series(quiet: bool) -> None:
         print(f"  ok    no broker series is under half the {top}-month maximum")
 
 
+def check_freshness(quiet: bool) -> None:
+    """
+    A series that has stopped updating, while every job reported success.
+
+    The Treasury bill benchmark sat three weeks stale and the gold series
+    eighteen days, because the fetchers could not tell "nothing published
+    today" from "could not reach the source" and the workflow marked both
+    steps continue-on-error. Nothing said a word.
+
+    That is worse than a missing figure. A blank is honest; a stale number is
+    confident and wrong, and every real return on this site is computed
+    against the Treasury bill.
+
+    Tolerances are deliberately generous — a check that cries wolf over a
+    public holiday gets ignored, and a late warning costs far less than one
+    nobody reads.
+    """
+    today = date.today()
+
+    def newest(path: str, field: str = "as_of") -> str | None:
+        try:
+            rows = get(f"{path}&order={field}.desc&limit=1")
+        except Exception:  # noqa: BLE001
+            return None
+        return rows[0][field] if rows else None
+
+    series = [
+        ("Gold coin prices", 5, 15,
+         "/nav_observations?select=as_of&product_id=in."
+         "(select id from products where asset_class=eq.commodity)"),
+        ("Treasury bill rates", 14, 42, None),
+        ("Inflation", 60, 120,
+         "/macro_series?select=as_of&series_code=eq.GH_CPI_YOY"),
+    ]
+
+    # The T-bill and gold queries need product ids, which PostgREST cannot
+    # subquery. Fetch them first.
+    def newest_for_class(asset_class: str) -> str | None:
+        prods = get(f"/products?select=id&asset_class=eq.{asset_class}")
+        ids = ",".join(p["id"] for p in prods or [])
+        if not ids:
+            return None
+        rows = get(
+            f"/nav_observations?select=as_of&product_id=in.({ids})"
+            "&order=as_of.desc&limit=1"
+        )
+        return rows[0]["as_of"] if rows else None
+
+    checks = [
+        ("Gold coin prices", newest_for_class("commodity"), 5, 15),
+        ("Treasury bill rates", newest_for_class("government_security"), 14, 42),
+        ("Inflation", newest("/macro_series?select=as_of&series_code=eq.GH_CPI_YOY"), 60, 120),
+    ]
+
+    ok = 0
+    for name, latest, warn_after, fail_after in checks:
+        if not latest:
+            warn("freshness", f"{name}: no observations at all")
+            continue
+        age = (today - date.fromisoformat(latest[:10])).days
+        if age > fail_after:
+            fail("freshness", f"{name} last updated {latest} — {age} days ago")
+        elif age > warn_after:
+            warn("freshness", f"{name} last updated {latest} — {age} days ago")
+        else:
+            ok += 1
+
+    if ok == len(checks) and not quiet:
+        print(f"  ok    {ok} series updating on schedule")
+
+
 def check_dates_in_notes(quiet: bool) -> None:
     """
     An access note should not restate a date the record already holds.
@@ -300,6 +371,7 @@ def main() -> int:
         check_orphan_products,
         check_dates_in_notes,
         check_partial_series,
+        check_freshness,
     ):
         try:
             fn(args.quiet)
