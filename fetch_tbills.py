@@ -219,6 +219,27 @@ def main() -> int:
         fh.write(html)
     print(f"  page saved to {snap}")
 
+    # Every observation must cite a document — the schema enforces it, which
+    # is the site's own standard made unavoidable. One source row for the
+    # rates table, reused by every rate read from it.
+    have = call("GET", f"/sources?url=eq.{PAGE}&select=id")
+    source_id = (
+        have[0]["id"]
+        if have
+        else call(
+            "POST",
+            "/sources",
+            {
+                "kind": "manual_entry",
+                "publisher": "Bank of Ghana",
+                "title": "Treasury bill rates — weekly tender results",
+                "url": PAGE,
+                "retrieved_at": date.today().isoformat(),
+            },
+            prefer="return=representation",
+        )[0]["id"]
+    )
+
     products = call(
         "GET",
         "/products?asset_class=eq.government_security&select=id,name,lock_in_days",
@@ -244,6 +265,7 @@ def main() -> int:
                     "product_id": prod["id"],
                     "as_of": r["as_of"],
                     "yield_annualised": r["interest"],
+                    "source_id": source_id,
                 }
             ],
             prefer="resolution=merge-duplicates",
