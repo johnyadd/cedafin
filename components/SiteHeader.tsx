@@ -38,6 +38,7 @@ const MENUS: { label: string; items: Item[] }[] = [
     label: "Invest",
     items: [
       ["/funds", "Every fund", "106 catalogued, charges compared"],
+      ["/savings", "Savings accounts", "What banks pay, and what they want first"],
       // Near the top because it is a starting point rather than a product —
       // somebody abroad needs to know what they can reach before they can
       // usefully compare anything.

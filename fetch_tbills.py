@@ -1,222 +1,260 @@
 """
-fetch_tbills.py — Bank of Ghana weekly T-bill auction results.
+fetch_tbills.py — read Bank of Ghana's rates table instead of guessing at PDFs.
 
-ON WHETHER THIS SHOULD EXIST AT ALL
-An earlier version of this file was deleted on the belief that bog.gov.gh
-disallowed automated access. That was wrong: the site serves no robots.txt at
-all — https://www.bog.gov.gh/robots.txt returns 404 — so no crawl preference
-has been expressed by anyone. The refusal that prompted the deletion came from
-a tool applying its own conservative default when it could not confirm a
-policy, not from Bank of Ghana asking crawlers to stay away.
+WHY THIS IS A REWRITE
+The previous version enumerated tender numbers and tried each against three
+upload folders and six filename forms — eighteen requests a week, guessing.
+It worked until it did not, and then reported "0 downloaded, 0 missing" for
+three consecutive weeks while the 91-day rate fell from 5.08% to 4.69%.
 
-With no stated policy, the standard is ordinary politeness rather than
-permission: a truthful user agent, a delay between requests, weekly rather than
-constant, and caching so nothing is fetched twice. All of that is below.
+Every page on this site that shows a real return was reading a stale
+benchmark, and nothing said so. That is worse than a missing figure: a blank
+is honest, a stale number is confident and wrong.
 
-WHY THE SERIES MATTERS
-Without a risk-free rate there is no risk-adjusted return, and without
-inflation no real return. But the sharper reason is that rates have collapsed:
+WHAT IT READS NOW
+https://www.bog.gov.gh/treasury-and-the-markets/treasury-bill-rates/
 
-    91-day, Feb 2025    23-25%
-    91-day, Jul 2026     5.79%
-    91-day, Aug 21 2026  5.08%
+A table, published by the Bank, with one row per tender per security:
 
-A fund's 14% last year and a fund's 14% next year are not the same claim. The
-benchmark series is what lets a page say which environment a return was earned
-in — and a trailing figure without that context is what a fund's own marketing
-prints.
+    Issue Date | Tender | Security Type | Discount Rate | Interest Rate
+    07 Sep 2026 | 2023  | 91 DAY BILL   | 4.7480        | 4.8050
 
-THE SOURCE
-BoG runs GoG tenders every Friday and publishes a PDF per tender, numbered
-sequentially:
+One request. No tender arithmetic, no folder window, no filename variants.
+This is the third fetcher on this project to be rewritten from guessing
+addresses to reading a page, after the APR notices and the GSE reports. The
+lesson has now cost more rounds than anything else here.
 
-    .../wp-content/uploads/2026/07/Auctresults-2017.pdf
+WHICH COLUMN
+Interest Rate, not Discount Rate. The existing series matches it — the 21
+August tender shows 5.0795 interest against 5.0158 discount, and the database
+holds 0.050795 — and "weighted average interest rate" is the language the
+Bank and the press both use.
 
-Tender numbers are consecutive weeks — 2017 was 24 July 2026 — so the series is
-enumerable. The year/month folder is NOT derivable from the number, so each
-tender is tried against a small window of plausible folders, and several
-filename forms are tried per tender.
+WHY IT STILL SAVES A FILE
+The old fetcher left an archive of 24 auction PDFs. A table scrape leaves
+nothing, and this project's most defensible asset is documents whose
+publishers no longer have them. So the page itself is saved, dated, the way
+the regulators' registers are: the table changes every week and we keep what
+it said.
 
 Usage:
-    python fetch_tbills.py --probe --from-tender 2021
-    python fetch_tbills.py --from-tender 2021 --count 24
+    python fetch_tbills.py --dry-run
+    python fetch_tbills.py
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
-import ssl
 import sys
-import time
 import urllib.error
 import urllib.request
-from datetime import date, timedelta
+from datetime import date
 
-BASE = "https://www.bog.gov.gh/wp-content/uploads"
-LISTING = "https://www.bog.gov.gh/gog_auction_results/"
+from polite_fetch import fetch, status_word
 
-# Each tender also has a landing page at a fully predictable URL:
-#   /gog_auction_results/results-of-gog-tender-2021/
-# It carries the download link, so when a filename guess fails the page can be
-# read for the real one instead of guessing again — which is what cost several
-# rounds before the convention change was spotted.
-TENDER_PAGE = LISTING + "results-of-gog-tender-{tender}/"
+PAGE = "https://www.bog.gov.gh/treasury-and-the-markets/treasury-bill-rates/"
+SNAPSHOT_DIR = "data/tbills"
 
-HEADERS = {
-    "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                   "(KHTML, like Gecko) Chrome/126.0 Safari/537.36"),
-    "Accept": "application/pdf,text/html,*/*",
-    "Referer": LISTING,
+# 91 DAY BILL -> 91. Bonds carry a term in years and are skipped for now —
+# they belong in a series of their own rather than mixed into the bill curve.
+BILL_RX = re.compile(r"(\d{2,3})\s*DAY\s*BILL", re.I)
+
+MONTHS = {
+    m: i
+    for i, m in enumerate(
+        ["jan", "feb", "mar", "apr", "may", "jun",
+         "jul", "aug", "sep", "oct", "nov", "dec"],
+        start=1,
+    )
 }
 
-# Anchor: tender 2019 was held 7 August 2026. Tenders run weekly, so any other
-# tender's approximate date follows from the difference.
-# Read off the listing page rather than inferred: tender 2021 was 21 Aug 2026.
-ANCHOR_TENDER = 2021
-ANCHOR_DATE = date(2026, 8, 21)
 
-
-def _ctx() -> ssl.SSLContext:
-    c = ssl.create_default_context()
-    c.check_hostname = False
-    c.verify_mode = ssl.CERT_NONE
-    return c
-
-
-def approx_date(tender: int) -> date:
-    return ANCHOR_DATE - timedelta(weeks=ANCHOR_TENDER - tender)
-
-
-def candidate_urls(tender: int) -> list[str]:
-    """
-    The folder is the upload month, which is usually the tender month but can
-    slip either side, so a small window is tried. Filenames vary between a bare
-    form and a longer notice form.
-    """
-    d = approx_date(tender)
-    folders = []
-    for delta in (0, 1, -1):
-        m = d.month + delta
-        y = d.year + (1 if m > 12 else -1 if m < 1 else 0)
-        m = 12 if m < 1 else 1 if m > 12 else m
-        folders.append(f"{y}/{m:02d}")
-
-    # BoG changed the filename convention mid-2026 and both forms are live:
-    #   tender 2017 (24 Jul)  Auctresults-2017.pdf   plural, hyphenated
-    #   tender 2021 (21 Aug)  Auctresult2021.pdf     singular, no hyphen
-    # Newest form first, since recent tenders are what gets fetched weekly.
-    names = [
-        f"Auctresult{tender}.pdf",
-        f"Auctresults-{tender}.pdf",
-        f"Auctresults{tender}.pdf",
-        f"Auctresult-{tender}.pdf",
-        f"Auctresult{tender}-1.pdf",
-        f"Auctresults-{tender}-1.pdf",
-    ]
-    out: list[str] = []
-    for folder in folders:
-        for name in names:
-            u = f"{BASE}/{folder}/{name}"
-            if u not in out:
-                out.append(u)
+def env() -> dict:
+    out = {}
+    if os.path.exists(".env.local"):
+        for line in open(".env.local", encoding="utf-8"):
+            line = line.strip()
+            if "=" in line and not line.startswith("#"):
+                k, v = line.split("=", 1)
+                out[k.strip()] = v.strip()
+    for k in ("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"):
+        if os.environ.get(k):
+            out[k] = os.environ[k]
+    if not out.get("SUPABASE_SERVICE_ROLE_KEY"):
+        print("Missing Supabase credentials — run from the project root.")
+        sys.exit(1)
     return out
 
 
-def fetch(url: str, timeout: int = 40) -> tuple[int, bytes]:
-    req = urllib.request.Request(url, headers=HEADERS)
+E = env()
+BASE = E["NEXT_PUBLIC_SUPABASE_URL"].rstrip("/") + "/rest/v1"
+KEY = E["SUPABASE_SERVICE_ROLE_KEY"]
+
+
+def call(method: str, path: str, body=None, prefer: str | None = None):
+    req = urllib.request.Request(
+        BASE + path,
+        method=method,
+        data=json.dumps(body).encode() if body is not None else None,
+    )
+    req.add_header("apikey", KEY)
+    req.add_header("Authorization", f"Bearer {KEY}")
+    req.add_header("Content-Type", "application/json")
+    if prefer:
+        req.add_header("Prefer", prefer)
     try:
-        with urllib.request.urlopen(req, timeout=timeout, context=_ctx()) as r:
-            return getattr(r, "status", 200), r.read()
+        with urllib.request.urlopen(req, timeout=60) as r:
+            raw = r.read()
+            return json.loads(raw) if raw else None
     except urllib.error.HTTPError as e:
-        return e.code, b""
-    except Exception:                                        # noqa: BLE001
-        return 0, b""
+        print(f"\n  {e.code} on {method} {path}")
+        print(f"  {e.read().decode('utf-8', 'replace')[:400]}\n")
+        raise
 
 
-def is_pdf(b: bytes) -> bool:
-    return b[:5] == b"%PDF-"
-
-
-def url_from_page(tender: int) -> str | None:
-    """Read the tender's own page for the real download link."""
-    status, blob = fetch(TENDER_PAGE.format(tender=tender))
-    if status != 200 or not blob:
+def parse_date(s: str) -> str | None:
+    """'07 Sep 2026' -> '2026-09-07'."""
+    m = re.match(r"(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})", s.strip())
+    if not m:
         return None
-    html = blob.decode("utf-8", errors="replace")
-    m = re.search(r'href=["\'](https?://[^"\']*?/wp-content/uploads/[^"\']*?\.pdf)',
-                  html, re.I)
-    return m.group(1) if m else None
+    day, mon, year = m.groups()
+    month = MONTHS.get(mon.lower()[:3])
+    if not month:
+        return None
+    return f"{year}-{month:02d}-{int(day):02d}"
 
 
-def get_tender(tender: int, delay: float) -> tuple[str, bytes] | None:
-    for url in candidate_urls(tender):
-        status, blob = fetch(url)
-        if status == 200 and is_pdf(blob):
-            return url, blob
-        time.sleep(delay)
+def strip_tags(h: str) -> str:
+    return re.sub(r"<[^>]+>", "\t", h)
 
-    # Guesses exhausted: ask the page. Slower, but it cannot be wrong about a
-    # filename convention the way a guess can.
-    real = url_from_page(tender)
-    if real:
-        status, blob = fetch(real)
-        if status == 200 and is_pdf(blob):
-            return real, blob
-    return None
+
+def parse_table(html: str) -> list[dict]:
+    """
+    One row per tender per security.
+
+    The table is read row by row rather than by column position, because a
+    column inserted upstream would silently shift every figure by one — and a
+    rate that is quietly the discount rate instead of the interest rate is
+    exactly the kind of error nobody notices.
+    """
+    rows: list[dict] = []
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S | re.I):
+        cells = [
+            re.sub(r"\s+", " ", strip_tags(td)).replace("\t", " ").strip()
+            for td in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", tr, re.S | re.I)
+        ]
+        if len(cells) < 5:
+            continue
+
+        as_of = parse_date(cells[0])
+        if not as_of:
+            continue
+
+        bill = BILL_RX.search(cells[2])
+        if not bill:
+            continue  # a bond, not a bill
+
+        try:
+            interest = float(re.sub(r"[^\d.]", "", cells[4]))
+        except ValueError:
+            continue
+        if not 0 < interest < 100:
+            continue
+
+        rows.append(
+            {
+                "as_of": as_of,
+                "tender": cells[1].strip(),
+                "days": int(bill.group(1)),
+                "interest": round(interest / 100, 6),
+            }
+        )
+    return rows
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--from-tender", type=int, default=ANCHOR_TENDER)
-    ap.add_argument("--count", type=int, default=12,
-                    help="how many tenders back to walk")
-    ap.add_argument("--out", default="data/tbills")
-    ap.add_argument("--delay", type=float, default=0.8)
-    ap.add_argument("--probe", action="store_true",
-                    help="try 3 tenders and report which URL form worked")
+    ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    if args.probe:
-        print("Probing three recent tenders\n")
-        for t in range(args.from_tender, args.from_tender - 3, -1):
-            print(f"  tender {t} (~{approx_date(t).isoformat()})")
-            got = get_tender(t, args.delay)
-            if got:
-                url, blob = got
-                print(f"    HIT  {len(blob):>8,} bytes")
-                print(f"    {url}")
-            else:
-                print("    miss — none of the candidate URLs returned a PDF")
-                for u in candidate_urls(t)[:4]:
-                    print(f"      tried {u}")
-        print("\nIf all three missed, open the listing page in a browser,")
-        print(f"right-click a result link and paste the URL: {LISTING}")
+    status, html = fetch(PAGE)
+    if status != 200 or not html:
+        print(f"  {status_word(status)} — {PAGE}")
+        print()
+        print("  Nothing written. A fetcher that cannot reach its source should")
+        print("  say so, not report zero rows as though the week was quiet.")
+        return 1
+
+    rows = parse_table(html)
+    if not rows:
+        print("  Page fetched but no bill rows parsed.")
+        print("  The table structure may have changed — read it before assuming")
+        print("  the Bank has stopped publishing.")
+        return 1
+
+    latest = max(r["as_of"] for r in rows)
+    by_tenor = {
+        d: next((r for r in rows if r["as_of"] == latest and r["days"] == d), None)
+        for d in (91, 182, 364)
+    }
+
+    print()
+    print(f"  {len(rows)} bill row(s) parsed, latest {latest}")
+    for d, r in by_tenor.items():
+        if r:
+            print(f"    {d:>3}-day  {r['interest'] * 100:>7.4f}%   tender {r['tender']}")
+
+    if args.dry_run:
+        print()
+        print("  Dry run — nothing written.")
         return 0
 
-    os.makedirs(args.out, exist_ok=True)
-    ok = miss = 0
-    for t in range(args.from_tender, args.from_tender - args.count, -1):
-        path = os.path.join(args.out, f"tender-{t}.pdf")
-        if os.path.exists(path):
-            continue
-        got = get_tender(t, args.delay)
-        if got:
-            url, blob = got
-            with open(path, "wb") as f:
-                f.write(blob)
-            ok += 1
-            print(f"  tender {t}  ~{approx_date(t).isoformat()}  "
-                  f"{len(blob):>8,} bytes")
-        else:
-            miss += 1
-            print(f"  tender {t}  ~{approx_date(t).isoformat()}  not found")
-        time.sleep(args.delay)
+    # Keep the page. The table changes weekly and the Bank keeps no history.
+    os.makedirs(SNAPSHOT_DIR, exist_ok=True)
+    snap = os.path.join(SNAPSHOT_DIR, f"tbill-rates-{date.today().isoformat()}.html")
+    with open(snap, "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print(f"  page saved to {snap}")
 
-    print(f"\n  {ok} downloaded, {miss} missing -> {args.out}")
-    if ok:
-        print("  Next: extract the 91/182/364-day rates from these PDFs.")
+    products = call(
+        "GET",
+        "/products?asset_class=eq.government_security&select=id,name,lock_in_days",
+    )
+    written = 0
+    for r in rows:
+        prod = next(
+            (
+                p
+                for p in products or []
+                if str(r["days"]) in str(p.get("name", ""))
+                or p.get("lock_in_days") == r["days"]
+            ),
+            None,
+        )
+        if not prod:
+            continue
+        call(
+            "POST",
+            "/nav_observations?on_conflict=product_id,as_of",
+            [
+                {
+                    "product_id": prod["id"],
+                    "as_of": r["as_of"],
+                    "yield_annualised": r["interest"],
+                }
+            ],
+            prefer="resolution=merge-duplicates",
+        )
+        written += 1
+
+    print(f"  {written} observation(s) written")
+    print()
+    print("  The old fetcher guessed eighteen PDF URLs a week and reported")
+    print("  success when it found none. Three weeks passed. This reads one")
+    print("  page and fails loudly.")
     return 0
 
 
