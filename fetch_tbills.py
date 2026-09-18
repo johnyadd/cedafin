@@ -264,7 +264,7 @@ def main() -> int:
         )
         if not prod:
             continue
-        res = call(
+        call(
             "POST",
             "/nav_observations?on_conflict=product_id,as_of",
             [
@@ -275,9 +275,9 @@ def main() -> int:
                     "source_id": source_id,
                 }
             ],
-            prefer="return=representation,resolution=merge-duplicates",
+            prefer="resolution=merge-duplicates",
         )
-        print(f"    inserted: {res}"); written += 1
+        written += 1
 
     print(f"  {written} observation(s) written")
     print()
