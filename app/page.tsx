@@ -35,7 +35,7 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Subscribe from "@/components/Subscribe";
 import { BRAND } from "@/lib/brand";
-import { getPeerGroups, getPublishedFunds } from "@/lib/data/funds";
+import { getDisclosureCounts, getPeerGroups, getPublishedFunds } from "@/lib/data/funds";
 import { getArticles, type Article } from "@/lib/insights";
 
 const display = Fraunces({
@@ -218,8 +218,10 @@ function SectionHead({
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [groups, funds, articles] = await Promise.all([
+  const [groups, access, funds, articles] = await Promise.all([
     getPeerGroups(),
+    // Counts drift. This one has been six, eight and nine within a week.
+    getDisclosureCounts(),
     getPublishedFunds(),
     Promise.resolve(getArticles()),
   ]);
@@ -309,7 +311,7 @@ export default async function Home() {
                 [
                   "/investing-from-abroad",
                   "Investing from abroad",
-                  "Six of ninety-seven providers say whether they will take you",
+                  `${(access["non_resident_access"] ?? { published: 0, total: 0 }).published} of ${(access["non_resident_access"] ?? { published: 0, total: 0 }).total} providers say whether they will take you`,
                 ],
                 [
                   "/is-it-licensed",
@@ -510,7 +512,12 @@ export default async function Home() {
               className="mt-6 rounded-2xl p-4"
               style={{ background: C.card, border: `1px solid ${C.rule}` }}
             >
-              <p className="text-[12.5px] font-bold">8 funds of 106, in full</p>
+              {/* Derived, because this section carried three different
+                  totals — "8 funds of 106", "the other 98" and "see all 75"
+                  — while /funds said 144. One of them was right. */}
+              <p className="text-[12.5px] font-bold">
+                8 funds of {funds.length}, in full
+              </p>
               <p
                 className="mt-1.5 text-[11.5px] leading-relaxed"
                 style={{ color: C.muted }}
@@ -519,7 +526,7 @@ export default async function Home() {
                 and what they returned. Those are compared here.
                 <br />
                 <br />
-                The other 98 are listed with the fields blank. We are in
+                The other {funds.length - 8} are listed with the fields blank. We are in
                 contact with providers to close the gaps, and publish whatever
                 they send, cited and dated — an empty row is more use to you
                 than a number we made up.
@@ -530,7 +537,7 @@ export default async function Home() {
                   className="font-semibold underline underline-offset-4"
                   style={{ color: C.deep }}
                 >
-                  See all 75 &rarr;
+                  See all {funds.length} &rarr;
                 </Link>
               </p>
             </section>
