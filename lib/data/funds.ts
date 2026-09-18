@@ -216,7 +216,24 @@ export interface FundRow {
 const AGEING_DAYS = 45;
 const STALE_DAYS = 100;
 
-export function stalenessOf(lastObservation: string | null): {
+/*
+  Daily series need their own thresholds.
+
+  45 days is right for a monthly factsheet — a manager publishing in August
+  is not late in September. It is wrong for a price published every working
+  day: the gold coin sat three weeks behind and the page said "Prices
+  current", because 21 is less than 45.
+
+  A series is judged against how often it is published, not against a single
+  number that suits the commonest case.
+*/
+const DAILY_AGEING_DAYS = 7;
+const DAILY_STALE_DAYS = 21;
+
+export function stalenessOf(
+  lastObservation: string | null,
+  cadence: "daily" | "monthly" = "monthly",
+): {
   staleness: Staleness;
   days: number | null;
 } {
@@ -224,8 +241,10 @@ export function stalenessOf(lastObservation: string | null): {
   const days = Math.floor(
     (Date.now() - new Date(lastObservation + "T00:00:00Z").getTime()) / 86_400_000,
   );
-  if (days <= AGEING_DAYS) return { staleness: "current", days };
-  if (days <= STALE_DAYS) return { staleness: "ageing", days };
+  const ageing = cadence === "daily" ? DAILY_AGEING_DAYS : AGEING_DAYS;
+  const stale = cadence === "daily" ? DAILY_STALE_DAYS : STALE_DAYS;
+  if (days <= ageing) return { staleness: "current", days };
+  if (days <= stale) return { staleness: "ageing", days };
   return { staleness: "stale", days };
 }
 
@@ -397,7 +416,15 @@ function toFundRow(p: RawProduct): FundRow {
   );
   const last = obs[obs.length - 1] ?? null;
   const kind = (last?.series_kind ?? "quoted") as FundRow["seriesKind"];
-  const { staleness, days } = stalenessOf(last?.as_of ?? null);
+  // Gold coins are priced every working day and Treasury bills weekly, so
+  // three weeks behind is stale for them and unremarkable for a fund
+  // factsheet. Judging both by one threshold is what made the gold series
+  // read "Prices current" while it sat three weeks short.
+  const cadence =
+    p.asset_class === "commodity" || p.asset_class === "government_security"
+      ? "daily"
+      : "monthly";
+  const { staleness, days } = stalenessOf(last?.as_of ?? null, cadence);
 
   const yields = obs.filter((o) => o.yield_annualised !== null);
   const latestYield = yields[yields.length - 1] ?? null;
