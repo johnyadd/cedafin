@@ -298,10 +298,24 @@ def check_freshness(quiet: bool) -> None:
         )
         return rows[0]["as_of"] if rows else None
 
+    def newest_macro(code: str) -> str | None:
+        rows = get(
+            f"/macro_series?select=as_of&series_code=eq.{code}"
+            "&order=as_of.desc&limit=1"
+        )
+        return rows[0]["as_of"] if rows else None
+
     checks = [
         ("Gold coin prices", newest_for_class("commodity"), 5, 15),
         ("Treasury bill rates", newest_for_class("government_security"), 14, 42),
-        ("Inflation", newest("/macro_series?select=as_of&series_code=eq.GH_CPI_YOY"), 60, 120),
+        ("Inflation", newest_macro("GH_CPI_YOY"), 60, 120),
+        # Monthly, but the Exchange publishes a few weeks after month end.
+        ("GSE composite index", newest_macro("GSE_COMPOSITE_INDEX"), 60, 120),
+        ("GSE value traded", newest_macro("GSE_VALUE_TRADED"), 60, 120),
+        ("Policy rate", newest_macro("GH_POLICY_RATE"), 90, 150),
+        # Fund managers publish factsheets late and irregularly, so this is
+        # the loosest tolerance here.
+        ("Fund NAVs", newest_for_class("money_market"), 90, 180),
     ]
 
     ok = 0

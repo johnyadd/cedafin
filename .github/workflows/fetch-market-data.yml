@@ -93,7 +93,6 @@ jobs:
 
       - name: Extract
         run: python extract_gold_coin.py
-        continue-on-error: true
 
       - name: Load
         run: python load_gold_coin.py
@@ -167,15 +166,12 @@ jobs:
 
       - name: Extract
         run: python extract_gse.py
-        continue-on-error: true
 
       - name: Load prices
         run: python load_gse.py
-        continue-on-error: true
 
       - name: Load market aggregates
         run: python load_gse_market.py
-        continue-on-error: true
 
       - name: Load broker activity
         run: python load_broker_activity.py
@@ -205,7 +201,6 @@ jobs:
 
       - name: Extract
         run: python extract_apr.py --dir data/apr
-        continue-on-error: true
 
       - name: Load
         run: python load_lending_products.py
