@@ -185,7 +185,7 @@ def main() -> int:
     # Just the project ref — enough to identify the database without
     # printing a secret GitHub would mask anyway.
     _ref = BASE.split("//")[-1].split(".")[0]
-    print(f"  project ref starts {_ref[:6]}, length {len(_ref)}")
+    print(f"  project ref {_ref[:4]}...{_ref[-6:]} ({len(_ref)})")
 
     status, html = fetch(PAGE)
     if status != 200 or not html:
