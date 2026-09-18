@@ -275,9 +275,9 @@ def main() -> int:
                     "source_id": source_id,
                 }
             ],
-            prefer="resolution=merge-duplicates",
+            prefer="return=representation,resolution=merge-duplicates",
         )
-        written += 1
+        print(f"    inserted: {res}"); written += 1
 
     print(f"  {written} observation(s) written")
     print()
