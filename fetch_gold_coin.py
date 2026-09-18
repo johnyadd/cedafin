@@ -192,6 +192,14 @@ def main() -> int:
 
     os.makedirs(args.out, exist_ok=True)
     ok = miss = skipped = 0
+    # Stop after a run of failures rather than grinding through every date.
+    #
+    # When Bank of Ghana went down for eighteen days, this job spent
+    # twenty-two minutes timing out once per missing day and had to be
+    # cancelled. A backlog makes the job slower exactly when the source is
+    # least likely to answer, and a job nobody waits for is a job nobody reads.
+    consecutive_misses = 0
+    GIVE_UP_AFTER = 5
     d = start
     for _ in range(args.days):
         if d < LAUNCH:
@@ -212,8 +220,19 @@ def main() -> int:
                     f.write(blob)
                 ok += 1
                 print(f"  {d.isoformat()}  {len(blob):>7,} bytes")
+                consecutive_misses = 0
             else:
                 miss += 1
+                consecutive_misses += 1
+                if consecutive_misses >= GIVE_UP_AFTER:
+                    print(
+                        f"\n  {GIVE_UP_AFTER} consecutive misses — stopping at "
+                        f"{d.isoformat()}."
+                    )
+                    print("  Either the source is down or the filename")
+                    print("  convention has changed. Both are worth a look, and")
+                    print("  neither is worth another twenty minutes of timeouts.")
+                    break
         d -= timedelta(days=1)
         time.sleep(args.delay)
 
