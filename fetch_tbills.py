@@ -264,7 +264,7 @@ def main() -> int:
         )
         if not prod:
             continue
-        call(
+        res = call(
             "POST",
             "/nav_observations?on_conflict=product_id,as_of",
             [
