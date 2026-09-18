@@ -111,9 +111,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install pypdf
-        run: python -m pip install --quiet pypdf
-
       # Reads Bank of Ghana's rates table rather than guessing at PDF
       # filenames. NOT continue-on-error: the previous fetcher failed
       # silently for three weeks while the 91-day rate fell from 5.08% to
@@ -122,12 +119,25 @@ jobs:
       - name: Fetch the rates table
         run: python fetch_tbills.py
 
-      - name: Extract
-        run: python extract_tbills.py
-        continue-on-error: true
+      # The Extract and Load steps that used to sit here are gone, and this
+      # note exists so nobody puts them back.
+      #
+      # The old chain was: fetch auction PDFs, extract them to benchmarks.csv,
+      # then load the CSV. The load step began with
+      #     DELETE /nav_observations?product_id=eq.{pid}
+      # and re-inserted the whole file.
+      #
+      # So once fetch_tbills.py started writing observations directly, the
+      # loader deleted them eight seconds later and restored a CSV that had
+      # stopped updating on 21 August. The fetcher reported nine writes, the
+      # job went green, and the benchmark stayed three weeks stale — while
+      # the 91-day rate fell from 5.08% to 4.69% and every real return on the
+      # site was computed against the wrong number.
+      #
+      # load_tbills_as_products.py is still in the repo: it creates the
+      # product rows and is worth keeping for a rebuild. It must not run on
+      # a schedule.
 
-      - name: Load
-        run: python load_tbills_as_products.py
 
       # The T-bill yields feed the comparison pages and the calculator, both of
       # which read precomputed metrics.
