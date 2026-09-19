@@ -250,6 +250,54 @@ def check_partial_series(quiet: bool) -> None:
         print(f"  ok    no broker series is under half the {top}-month maximum")
 
 
+def check_price_spikes(quiet: bool) -> None:
+    """
+    A price that jumps by two orders of magnitude and comes straight back.
+
+    IIL Manufacturing sat at GH¢0.05 every month of 2025 except November,
+    which recorded GH¢19.79 — four hundred times its neighbours, and back to
+    0.05 in December. That is a column misread from the exchange report, not a
+    market event.
+
+    It produced a volatility of 45,080% and an annualised return of 2,000%,
+    both of which reached the comparison page. A reader seeing 45,000%
+    volatility knows something is broken; the 2,000% return is the one that
+    misleads, because it looks like a number.
+
+    Twenty times is deliberately loose. A Ghanaian share can double in a
+    month. It cannot multiply by four hundred and divide back.
+    """
+    prods = get("/products?select=id,name&status=eq.published")
+    flagged = 0
+    checked = 0
+
+    for p in prods or []:
+        rows = get(
+            f"/nav_observations?select=as_of,nav&product_id=eq.{p['id']}"
+            "&nav=not.is.null&order=as_of"
+        )
+        navs = [(r["as_of"], float(r["nav"])) for r in rows or [] if r.get("nav")]
+        if len(navs) < 3:
+            continue
+        checked += 1
+
+        for i in range(1, len(navs) - 1):
+            prev, cur, nxt = navs[i - 1][1], navs[i][1], navs[i + 1][1]
+            neighbour = max(prev, nxt)
+            if neighbour <= 0 or cur <= 0:
+                continue
+            if cur > neighbour * 20 or cur < neighbour / 20:
+                fail(
+                    "price spike",
+                    f"{p['name']}: {navs[i][0]} is {cur:g} against "
+                    f"{prev:g} before and {nxt:g} after",
+                )
+                flagged += 1
+
+    if not flagged and not quiet:
+        print(f"  ok    {checked} price series with no implausible jump")
+
+
 def check_freshness(quiet: bool) -> None:
     """
     A series that has stopped updating, while every job reported success.
@@ -386,6 +434,7 @@ def main() -> int:
         check_dates_in_notes,
         check_partial_series,
         check_freshness,
+        check_price_spikes,
     ):
         try:
             fn(args.quiet)
