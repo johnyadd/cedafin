@@ -242,10 +242,9 @@ def main() -> int:
     else:
         print(f"\n  {total_rows} metric rows written")
     if skipped_real:
-        print(f"\n  {skipped_real} product(s) got NO real return: the CPI series")
-        print("  does not span their observation window. Load monthly CPI from")
-        print("  GSS StatsBank and re-run — until then, do not display a real")
-        print("  return for those funds.")
+        print(f"\n  {skipped_real} product(s) have observations predating the CPI")
+        print("  series, so their longest windows carry no real return. The")
+        print("  shorter windows do. More monthly CPI from GSS would extend it.")
     return 0
 
 
