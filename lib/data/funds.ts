@@ -2133,7 +2133,13 @@ interface TbillRateRow {
 export async function getTbillRates(): Promise<TbillRateRow[]> {
   const { data, error } = await publicClient()
     .from("products")
+    // Only the latest few observations per product. Pulling the whole
+    // series truncated the response mid-stream once it passed fifty rows —
+    // the same failure getLending hit at 157 products. This page shows one
+    // rate per tenor and never needed the history.
     .select("name, nav_observations ( as_of, yield_annualised )")
+    .order("as_of", { referencedTable: "nav_observations", ascending: false })
+    .limit(4, { referencedTable: "nav_observations" })
     .eq("asset_class", "government_security")
     .eq("status", "published");
   if (error) throw new Error(`getTbillRates: ${error.message}`);
