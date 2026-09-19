@@ -180,12 +180,16 @@ def main() -> int:
         start, end = obs[0]["as_of"], obs[-1]["as_of"]
         kind = obs[-1].get("series_kind", "quoted")
 
-        benchmarks: dict = {}
-        if covers(tbill, start, end):
-            benchmarks["tbill_91"] = tbill
-        if covers(cpi, start, end):
-            benchmarks["cpi_yoy"] = cpi
-        else:
+        # Both benchmarks are passed always. The engine decides per WINDOW
+        # whether each spans the period being measured — see _spans in
+        # engine/metrics.py.
+        #
+        # This used to withhold the CPI unless it covered a product's whole
+        # observation history, so an equity priced back to early 2025 got no
+        # real return even for its one-year window, which the CPI covers
+        # completely. Forty-eight products were affected.
+        benchmarks: dict = {"tbill_91": tbill, "cpi_yoy": cpi}
+        if not covers(cpi, start, end):
             skipped_real += 1
 
         out = compute({

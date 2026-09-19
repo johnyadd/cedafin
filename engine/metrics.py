@@ -133,6 +133,27 @@ def annualise(total_return: float, days: int) -> float | None:
     return (1.0 + total_return) ** (365.0 / days) - 1.0
 
 
+def _spans(series: list[dict] | None, start: date, end: date) -> bool:
+    """
+    Does this benchmark cover the whole window?
+
+    _series_mean averages whatever falls inside the window, which is right
+    once the series spans it and dangerously wrong otherwise: two mid-2026
+    CPI readings averaged across a window running from early 2025 would give
+    a confident, incorrect real return.
+
+    This check used to live in compute_metrics.py, applied to a product's
+    ENTIRE observation history. So an equity priced back to February 2025 got
+    no real return for any window — including its one-year window, which the
+    CPI series covers completely. Forty-eight products showed a nominal
+    return and no real one for that reason.
+    """
+    if not series:
+        return False
+    dates = [_parse_date(p["as_of"]) for p in series]
+    return min(dates) <= start and max(dates) >= end
+
+
 def _series_mean(series: list[dict], start: date, end: date) -> float | None:
     """Mean of a benchmark series over a window. Values are decimals."""
     vals = [float(p["value"]) for p in series
@@ -195,8 +216,12 @@ def compute_window(obs: list[Observation], window_code: str, as_of: date,
         result["positive_period_pct"] = None
 
     ann = result.get("annualised_return")
-    rf = _series_mean(tbill or [], start, as_of)
-    infl = _series_mean(cpi or [], start, as_of)
+    # Each benchmark is used only where it spans THIS window. A product
+    # whose prices predate the CPI series still gets a real return for its
+    # shorter windows, and none for the longer ones — which is the honest
+    # answer rather than silence everywhere.
+    rf = _series_mean(tbill or [], start, as_of) if _spans(tbill, start, as_of) else None
+    infl = _series_mean(cpi or [], start, as_of) if _spans(cpi, start, as_of) else None
     result["excess_over_tbill"] = (ann - rf) if (ann is not None and rf is not None) else None
     # Fisher, not subtraction: at 20%+ inflation the approximation is materially wrong.
     result["real_return"] = (
