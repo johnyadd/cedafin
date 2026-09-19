@@ -18,7 +18,17 @@ const serverSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20, "looks truncated"),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, "looks truncated"),
   ANTHROPIC_API_KEY: z.string().startsWith("sk-ant-").optional().or(z.literal("")),
-  PYTHON_ENGINE_URL: z.string().url("must be a full URL, e.g. http://localhost:8000"),
+  // Optional, and currently unused by anything.
+  //
+  // The engine was never deployed — Render has one service and it belongs to
+  // another project — so this pointed at nothing in production for weeks. The
+  // maths now lives in engine/metrics.py and compute_metrics.py imports it
+  // directly, in-process.
+  //
+  // The FastAPI wrapper stays in the repo for the day a page needs live
+  // computation. On that day this becomes required again, and something will
+  // actually read it.
+  PYTHON_ENGINE_URL: z.string().url().optional().or(z.literal("")),
   OUTBOUND_TOKEN_SECRET: z.string().min(32, "use at least 32 random characters"),
   COMPLIANCE_PHASE: z.coerce.number().int().min(1).max(3),
 });
