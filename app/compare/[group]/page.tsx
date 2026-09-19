@@ -1114,8 +1114,7 @@ export default async function ComparePage({
                 <strong style={{ color: C.ink }}>
                   How you open the rest.
                 </strong>{" "}
-                Not published. No Ghanaian provider we track states what is
-                Mostly not published. Six Ghanaian providers state what is
+                Mostly not published. Eleven Ghanaian providers state what is
                 needed to open an account — which documents, whether a
                 Ghanaian bank account comes first, whether someone living
                 abroad is eligible. The rest say nothing, and{" "}
