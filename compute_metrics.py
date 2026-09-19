@@ -99,26 +99,31 @@ def rest(method: str, path: str, body=None, prefer: str | None = None) -> list:
                            f"{e.read().decode('utf-8', 'replace')[:300]}") from e
 
 
-def engine_health() -> str | None:
-    try:
-        with urllib.request.urlopen(f"{ENGINE}/health", timeout=10) as r:
-            return json.loads(r.read()).get("engine_version")
-    except Exception:                                        # noqa: BLE001
-        return None
+# The maths, imported rather than called over HTTP.
+#
+# This used to POST to a FastAPI service on localhost:8000. That service was
+# never deployed anywhere — Render has one engine and it belongs to another
+# project — so every scheduled run failed, and continue-on-error made the job
+# go green anyway. The metrics on the live site were as old as the last time
+# somebody ran this by hand.
+#
+# Nothing in the Next.js app calls the engine: PYTHON_ENGINE_URL appears only
+# in env.ts, in a schema and an unused health check. So the HTTP layer had one
+# client, on the same machine, running weekly. engine/main.py stays in the
+# repo for the day the site needs live computation; this script does not need
+# a web server to add up numbers.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "engine"))
+from metrics import ENGINE_VERSION, compute_metrics as _compute  # noqa: E402
 
 
 def compute(payload: dict) -> dict | None:
-    req = urllib.request.Request(
-        f"{ENGINE}/compute/metrics", data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        print(f"    engine {e.code}: {e.read().decode('utf-8','replace')[:200]}")
-        return None
-    except Exception as e:                                   # noqa: BLE001
-        print(f"    engine unreachable: {e}")
+        return _compute(payload)
+    except (KeyError, ValueError) as e:
+        # The engine raises these for bad data, which means the ingestion
+        # layer let something through. Worth naming the product rather than
+        # failing the whole run.
+        print(f"    invalid payload: {e}")
         return None
 
 
@@ -146,13 +151,10 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    version = engine_health()
-    if not version:
-        print(f"Engine not responding at {ENGINE}")
-        print("Start it:  cd engine ; .\\.venv\\Scripts\\Activate.ps1 ; "
-              "uvicorn main:app --reload --port 8000")
-        return 1
-    print(f"Engine {version} at {ENGINE}\n")
+    # No health probe: the engine is imported, so if it were missing this
+    # script would not have started.
+    version = ENGINE_VERSION
+    print(f"Engine {version}, imported\n")
 
     tbill = series("GH_TBILL_91")
     cpi = series("GH_CPI_YOY")
