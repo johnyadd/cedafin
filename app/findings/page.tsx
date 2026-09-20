@@ -208,6 +208,22 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
         why: "The 91-day bill cleared at 4.695% on 14 September against inflation of 5.0% in August — so a saver in the safest Ghanaian instrument is losing purchasing power, slowly and certainly. It paid over 20% in early 2025. Every other return on this site is shown against the same benchmark, because a nominal figure without it is half a number.",
         href: "/treasury-bill-calculator",
       },
+      {
+        claim:
+          "Gold held its value this summer and Ghanaians who owned it still lost money",
+        source: "Bank of Ghana daily gold coin circulars, June to August 2026",
+        why:
+          "The London gold price opened June at $4,545.95 an ounce and closed August at $4,568.95 — up half a percent. Over the same months the one-ounce Ghana Gold Coin fell from GH₵55,181 to GH₵53,014, down 3.93%. The difference is the cedi, which strengthened from 11.735 to the dollar to 11.215. The coin tracked the metal precisely; a currency hedge pays when the currency falls and costs you when it rises, and this quarter it rose.",
+        href: "/insights/gold-coin-three-months",
+      },
+      {
+        claim:
+          "Bank of Ghana has published no gold coin price since 2 September, on a daily commitment",
+        source: "Bank of Ghana notice list, read 19 September 2026",
+        why:
+          "The Ghana Gold Coin was launched in November 2024 with a pricing circular every working day, derived from the previous day's London price and the Bloomberg exchange rate. Their notice list shows the most recent dated 2 September 2026. They may resume, but a saver holding the coin currently has no published price to value it against — and we hold 56 of those circulars because we kept them.",
+        href: "/the-archive",
+      },
     ],
   },
   {
