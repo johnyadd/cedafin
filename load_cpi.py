@@ -51,6 +51,31 @@ SERIES = "GH_CPI_YOY"
 # have left it absent rather than interpolating — a made-up point in an
 # inflation series would quietly corrupt every real return computed across it.
 CPI = [
+    # May 2024 to May 2025, added 19 September 2026 from the historical
+    # tables printed inside two GSS CPI press releases — the August 2025
+    # release carries Aug-24 to May-25, the May 2025 release the three
+    # months before that. Both are GSS's own documents.
+    #
+    # This took the series from 15 months to 28, and the number of products
+    # whose observations predate the CPI from 46 to 7. Fifty products now
+    # carry a real return where eight did that morning.
+    #
+    # The seam at May/June 2025 is not an overlap, so nothing cross-checks
+    # it directly. But August 2025 appears in both halves at 11.5%, and the
+    # disinflation runs continuously through the join.
+    ("2024-05-31", 0.231),
+    ("2024-06-30", 0.228),
+    ("2024-07-31", 0.209),
+    ("2024-08-31", 0.204),
+    ("2024-09-30", 0.215),
+    ("2024-10-31", 0.221),
+    ("2024-11-30", 0.230),
+    ("2024-12-31", 0.238),
+    ("2025-01-31", 0.235),
+    ("2025-02-28", 0.231),
+    ("2025-03-31", 0.224),
+    ("2025-04-30", 0.212),
+    ("2025-05-31", 0.184),
     ("2025-06-30", 0.137),
     ("2025-07-31", 0.121),
     ("2025-08-31", 0.115),
@@ -123,12 +148,14 @@ def main() -> int:
             bar = "#" * round(v * 100)
             print(f"    {d}   {v*100:>5.1f}%  {bar}")
         print()
-        print("  Against what the site currently publishes:")
-        print(f"    91-day Treasury bill    5.08%  vs inflation 5.0%  ->  +0.1 real")
-        print(f"    364-day Treasury bill  11.59%  vs inflation 5.0%  ->  +6.6 real")
-        print(f"    Stanbic Income Fund    38.80%  vs inflation ~5%   -> +33.8 real")
         print()
-        print("  The shortest bill is earning almost nothing after inflation.")
+        print("  These figures used to be compared here against the T-bill"
+              " and a fund, with all three typed in.")
+        print("  They went stale: the 91-day bill was 5.08% when that was"
+              " written and 4.70% now, which flipped the")
+        print("  conclusion from a small positive real return to a"
+              " negative one. The comparison belongs on a page that")
+        print("  reads both numbers live, not in a loader.")
         return 0
 
     src = call("GET", f"/sources?url=eq.{SOURCE['url']}&kind=eq.{SOURCE['kind']}&select=id")

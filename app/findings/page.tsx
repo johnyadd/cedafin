@@ -203,9 +203,9 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "The 91-day Treasury bill pays almost exactly the inflation rate",
+          "The 91-day Treasury bill now pays less than inflation — the safest Ghanaian product loses money slowly",
         source: "Bank of Ghana auction results against Ghana Statistical Service CPI",
-        why: "The safest Ghanaian product currently returns close to nothing in real terms. Every other return on this site is shown against the same benchmark.",
+        why: "The 91-day bill cleared at 4.695% on 14 September against inflation of 5.0% in August — so a saver in the safest Ghanaian instrument is losing purchasing power, slowly and certainly. It paid over 20% in early 2025. Every other return on this site is shown against the same benchmark, because a nominal figure without it is half a number.",
         href: "/treasury-bill-calculator",
       },
     ],
