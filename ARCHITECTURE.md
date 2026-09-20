@@ -161,9 +161,28 @@ the record says it was read by hand.
 
 ## 6. Known gaps, September 2026
 
-**Fund NAVs last updated 1 March 2026** — 201 days. The pages date them
-honestly, so no reader is misled, but the core dataset has not moved since
-March.
+**The Stanbic funds are stuck at March 2026, and it is a format change.**
+SIMS factsheets published a monthly RETURN up to March 2026 and a NAV from
+April. The extractor builds one series per product and picks whichever kind
+has more points — 25 chained against 3 quoted — so the three NAVs are read
+and discarded.
+
+They cannot simply be joined. A chained index and a dealing price have no
+common scale: the index base is arbitrary, so the ratio between the last
+index level and the first NAV means nothing.
+
+Doing it properly means the extractor emitting both series, the unique index
+growing to include `series_kind`, and `toFundRow` choosing a series rather
+than taking the kind from the last observation — which today would label a
+mixed array "quoted" and chart index levels as prices.
+
+Left alone deliberately, September 2026: three data points against a change
+that touches the extractor, the schema and every page showing a return, in
+the one place a mistake produces a plausible wrong number. Worth revisiting
+once SIMS have published a few more months and the NAV format looks settled.
+
+The fee history from those factsheets DID load — 30 new charge rows — so the
+collection was not wasted.
 
 **Bank of Ghana stopped publishing gold coin circulars after 2 September.**
 Not a fetcher fault. Worth publishing as a finding.
