@@ -301,8 +301,18 @@ def load(navs_csv: str, dry: bool) -> int:
         chained = [r for r in rs if num(r.get("period_return_pct")) is not None]
         kind = "quoted" if len(navs) >= len(chained) else "chained"
 
-        existing = rest("GET", f"/products?slug=eq.{p['slug']}"
-                               f"&share_class=eq.{p['share_class']}&select=id")
+        # Look up by the UNIQUE INDEX, not the slug.
+        #
+        # A non-main share class is stored with a suffixed slug (see below),
+        # so searching for the base slug never finds it and the loader tried
+        # to create a product that already existed. The index is
+        # (provider_id, name, share_class); match on that.
+        existing = rest(
+            "GET",
+            f"/products?provider_id=eq.{prov_ids[p['provider']]}"
+            f"&name=eq.{urllib.parse.quote(p['name'])}"
+            f"&share_class=eq.{p['share_class']}&select=id",
+        )
         if existing:
             pid = existing[0]["id"]
         else:
@@ -385,9 +395,27 @@ def load(navs_csv: str, dry: bool) -> int:
                 "source_id": src_ids[r["file"]],
             })
         if obs:
-            rest("POST", "/nav_observations", obs,
-                 prefer="return=minimal,resolution=ignore-duplicates")
-            total_obs += len(obs)
+            # Skip what is already held, rather than relying on
+            # resolution=ignore-duplicates.
+            #
+            # nav_live_unique is a PARTIAL index — unique on
+            # (product_id, as_of, basis) WHERE superseded_by IS NULL — which
+            # is what lets a correction coexist with the figure it replaced.
+            # PostgREST cannot resolve conflicts against a partial index, so
+            # ignore-duplicates has nothing to match and the insert hits the
+            # constraint raw with a 409.
+            held = rest(
+                "GET",
+                f"/nav_observations?select=as_of,basis&product_id=eq.{pid}",
+            ) or []
+            seen = {(h["as_of"][:10], h.get("basis")) for h in held}
+            fresh = [o for o in obs if (o["as_of"][:10], o["basis"]) not in seen]
+            if fresh:
+                rest("POST", "/nav_observations", fresh,
+                     prefer="return=minimal")
+                total_obs += len(fresh)
+            if len(fresh) < len(obs):
+                print(f"    {len(obs) - len(fresh)} already held, skipped")
 
         flagged = sum(1 for r in rs if str(r.get("review_required")).lower() == "true")
         print(f"  {p['name'][:38]:<40} {p['share_class']:<5} "
