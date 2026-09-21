@@ -74,7 +74,6 @@ const MENUS: { label: string; items: Item[] }[] = [
     label: "Shares & gold",
     items: [
       ["/shares", "Listed shares", "39 companies, price history"],
-      ["/compare/equity-GHS", "Compare shares"],
       ["/brokers", "Stockbrokers", "24 firms, none publishes a rate"],
       ["/compare/commodity-GHS", "Gold", "Coins and the NewGold ETF"],
     ],

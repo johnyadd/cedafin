@@ -55,7 +55,7 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
       ["/shares", "Listed shares"],
       ["/brokers", "Stockbrokers"],
       ["/compare/commodity-GHS", "Gold"],
-      ["/compare/equity-GHS", "Compare shares"],
+      ["/shares", "Compare shares"],
     ],
   },
   {
