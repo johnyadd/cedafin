@@ -252,6 +252,12 @@ jobs:
       - name: Snapshot the registers
         run: python snapshot_registers.py
 
+      # Compare with last month. Runs before the commit so CHANGES.md and the
+      # name lists are archived with the pages they came from. Never fails the
+      # job: a register changing is news, not an error.
+      - name: What changed on the registers
+        run: python diff_registers.py
+
       # An archive only committed by hand is one that stops being archived.
       - name: Commit the snapshot
         run: |
