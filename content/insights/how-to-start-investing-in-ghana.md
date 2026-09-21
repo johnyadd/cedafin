@@ -24,7 +24,9 @@ your age — the minimum.
 | What you have | What opens up |
 |---|---|
 | GH₵0.10 | A share, in principle — see the caution below |
-| GH₵20 | Money market funds |
+| GH₵1 | A money market fund — IC Liquidity Fund, opened online |
+| GH₵5 | A Treasury bill by mobile money — Ecobank TBill4All |
+| GH₵20 | Stanbic's money market and income funds |
 | GH₵100 | Most fund minimums |
 | GH₵462 | The NewGold ETF, one unit |
 | GH₵500 | Treasury bills through most banks |
@@ -43,8 +45,8 @@ That uncertainty is itself the finding. Every other row in that table is a
 published figure. The first row is a price with an unpublished condition
 attached.
 
-A quarter-ounce Ghana Gold Coin, meanwhile, costs about **690 times** what the
-cheapest money market fund asks for. Gold is recommended to ordinary savers
+A quarter-ounce Ghana Gold Coin, meanwhile, costs about **13,800 times** what
+the cheapest money market fund asks for. Gold is recommended to ordinary savers
 everywhere as protection against inflation, and in Ghana it is priced for
 people who already have money.
 
@@ -58,22 +60,27 @@ of reaching it is not published.
 
 The usual starting point. A manager pools money from many investors and buys
 short-dated instruments — mostly Treasury bills, sometimes bank deposits and
-commercial paper.
+commercial paper. You can compare them side by side on
+[money market funds](/compare/money_market-GHS) and
+[fixed income funds](/compare/fixed_income-GHS).
 
 **What it costs.** An annual charge, taken from the fund's value. Ghana has
-around 75 of these funds. Three publish enough for us to show what they charge,
-and those three are below — the rest is not a short list because the market is
-small, it is short because most managers publish little.
+dozens of these funds. Three managers publish enough for us to show what their
+funds charge, and those funds are below — the rest is not a short list because
+the market is small, it is short because most managers publish little.
 
 | Fund | Annual charge |
 |---|---|
 | First Atlantic Income Fund | 1.75% |
-| Petra Diversified Income Fund | 2.10% |
+| IC Liquidity Fund | 2.00% |
+| Platinum Debt Income Fund | 2.10% |
+| Stanbic Income Fund Trust | 2.25% |
 | **Stanbic Cash Trust** | **2.25%** |
 
 On GH₵5,000, the difference between 1.75% and 2.25% is GH₵25 a year. Not
 enormous — but it is charged every year, on a rising balance, and it comes out
-whether the fund makes money or not.
+whether the fund makes money or not. [Every fund we hold figures for](/funds)
+is on one page.
 
 **The lowest minimum in Ghana is GH₵1.** IC state that GH₵1 opens and
 maintains an account in their IC Liquidity Fund, subscribed online at
@@ -90,11 +97,11 @@ are different things — a fund that can rise and fall, and a government bill
 that pays a fixed amount on a fixed date.
 
 **Among funds, the minimum and the charge are separate questions.** Stanbic
-Cash Trust takes GH₵20 to open — the lowest verified fund minimum — and charges
-2.25% a year. First Atlantic charges 1.75%. So the most accessible fund is not the
-cheapest one — on GH₵20 the difference is pesewas, but on GH₵20,000 it is
-GH₵100 a year, every year, on a rising balance. Starting with what you can
-reach does not mean staying there.
+Cash Trust takes GH₵20 to open and charges 2.25% a year. First Atlantic charges
+1.75%. So the most accessible fund is not necessarily the cheapest one — on
+GH₵20 the difference is pesewas, but on GH₵20,000 it is GH₵100 a year, every
+year, on a rising balance. Starting with what you can reach does not mean
+staying there.
 
 **And ask for the top-up minimum, not just the opening one.** They are
 frequently different, and a fund that opens at GH₵20 may want GH₵100 each time
@@ -104,6 +111,8 @@ after. If you plan to add monthly, that is the figure that governs.
 figures, and they should agree. Stanbic publishes stated charges of 2.25% and a
 TER of 1.86% — the TER is normally the fuller figure, so seeing it 39 basis
 points *below* is odd. We have asked them why.
+[How to read a Ghanaian fund factsheet](/insights/how-to-read-a-ghanaian-fund-factsheet)
+explains the difference.
 
 **What to ask about.** Two funds with the same name can hold very different
 things — one may be almost entirely Treasury bills, another may hold bank
@@ -122,6 +131,10 @@ Lending directly to the government of Ghana, for 91, 182 or 364 days.
 | 182-day | 7.08% |
 | **364-day** | **11.59%** |
 
+Those are the August rates. They change every week — the
+[Treasury bill calculator](/treasury-bill-calculator) carries this week's, and
+shows what a bill would pay you after inflation.
+
 **What it costs.** No management charge on the instrument itself. Your bank or
 broker takes something to buy it for you, and what that is depends on the bank
 — none publishes it clearly.
@@ -138,12 +151,13 @@ from secondary sources, so treat it as unverified until your bank confirms.
 ### 3. Listed shares
 
 Part-ownership of a company on the Ghana Stock Exchange. Thirty-nine are
-listed.
+listed, and [every one is on the shares page](/shares) with its price history.
 
 **What it costs.** Brokerage, charged by whichever licensed dealing member you
 use. **We checked all twenty-four broker websites in August 2026 and not one
 publishes a rate.** One publishes a minimum to open an account. Six have no
-working website at all.
+working website at all. [The stockbrokers page](/brokers) lists all of them,
+with what each does and does not publish.
 
 That means you cannot find out the price of a trade before choosing a firm and
 opening an account with them.
@@ -161,7 +175,8 @@ want retail clients, and how easily an account opens.
 
 ### 4. Gold
 
-Three ways, and they cost very differently.
+Three ways, and they cost very differently. [Gold compared](/compare/commodity-GHS)
+shows all three with current prices.
 
 | | To start | Cost |
 |---|---|---|
@@ -183,6 +198,7 @@ cedi strengthened, and a strengthening currency works against anyone holding a
 dollar-priced asset. Gold is bought as protection against a falling currency;
 over that period the cedi rose, so it guarded against something that did not
 happen — and the premium was paid regardless.
+[The full arithmetic is here](/insights/gold-coin-three-months).
 
 ## What you need to open an account
 
@@ -199,8 +215,10 @@ transfer or mobile money — cash is not accepted.
 
 **What we cannot tell you** is how long any of it takes, or whether it can be
 done without visiting a branch. Almost nobody publishes it, and for a Ghanaian
-abroad that is the most important question of all. We have asked every broker
-and will publish what comes back.
+abroad that is the most important question of all. What providers do say about
+opening an account from outside Ghana is gathered on
+[investing from abroad](/investing-from-abroad), and we publish more as it
+comes back.
 
 ## Four things to check before you commit
 
@@ -226,13 +244,21 @@ circumstances is your decision, or a licensed adviser's.
 **What anything will return.** Every figure here is what has already happened,
 in rate conditions that have changed sharply and may change again.
 
-**What most of the market charges.** We have catalogued 106 Ghanaian funds. Eight
-publish enough for us to show their full cost. The other 98 publish little or
-nothing, and we would rather leave a row blank than fill it with an estimate.
+**What most of the market charges.** Most Ghanaian fund managers publish little
+or nothing about what their funds cost, and we would rather leave a row blank
+than fill it with an estimate. [Who publishes what](/what-gets-published) is
+recorded provider by provider, with the date we looked.
 
 That gap is not ours to close alone. If you are considering a fund whose
 charges we do not show, ask the manager directly — and if they will not tell
 you before you invest, that is itself an answer.
+
+*Corrected 21 September 2026. An earlier version named the fund charging 2.10%
+as "Petra Diversified Income Fund"; it is Platinum Debt Income Fund. It gave
+GH₵20 as the lowest fund minimum and GH₵500 as the lowest route into Treasury
+bills, contradicting the GH₵1 and GH₵5 figures further down, and so overstated
+the gap between a gold coin and the cheapest fund. It also omitted IC's
+published 2% charge, and gave fund counts that had gone out of date.*
 
 ---
 
