@@ -630,7 +630,7 @@ export default async function BrokersPage() {
         <ShareThis
           path="/brokers"
           audience="somebody about to buy shares"
-          message="Not one of Ghana's 24 licensed stockbrokers publishes what a trade costs."
+          message="Not one of the 24 stockbrokers trading on the exchange publishes what a trade costs."
         />
 
         <DataProvenance

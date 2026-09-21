@@ -81,7 +81,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
     href: "/insights/bank-fees-falling-not-equally",
   },
   {
-    claim: "Not one of Ghana's 24 licensed stockbrokers publishes a commission rate",
+    claim: "Not one of the 24 stockbrokers trading on the exchange publishes a commission rate",
     detail:
       "We visited every website in August 2026, then re-checked platform subdomains and fee pages in September after a broker pointed out we had looked in the wrong place. A Ghanaian cannot establish the cost of buying a share before opening an account with somebody.",
     href: "/brokers",

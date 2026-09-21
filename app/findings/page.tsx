@@ -138,7 +138,7 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
     findings: [
       {
         claim:
-          "Not one of Ghana's 24 licensed stockbrokers publishes a commission rate",
+          "Not one of the 24 stockbrokers trading on the exchange publishes a commission rate",
         source:
           "Every dealing member's website, checked August and September 2026",
         why: "Comparing what brokers charge means contacting them one at a time and asking. Nothing is published, so there is nothing to compare before you start.",

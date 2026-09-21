@@ -333,8 +333,8 @@ export default async function InvestingFromAbroadPage() {
             className="mt-2 text-[13.5px] leading-relaxed"
             style={{ color: C.muted }}
           >
-            We track 106 Ghanaian funds and twenty-four licensed
-            stockbrokers. The entries above are what we could find published
+            We track Ghana&rsquo;s collective investment funds and the twenty-four
+            stockbrokers trading on the exchange. The entries above are what we could find published
             about access, from anybody.
             <br />
             <br />
@@ -346,7 +346,7 @@ export default async function InvestingFromAbroadPage() {
                 It is still hard-coded, which is wrong — the entries above are
                 read from the database and this is typed. It will go stale the
                 next time a provider replies. */}
-            Of the twenty-four licensed stockbrokers, three — listed above —
+            Of the twenty-four stockbrokers trading on the exchange, three — listed above —
             say anything about who they will take on. The other twenty-one
             publish nothing on the question, and neither does any fund
             manager we track beyond those listed.
