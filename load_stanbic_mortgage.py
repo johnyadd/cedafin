@@ -163,29 +163,19 @@ def main() -> int:
     )
     print(f"  Stanbic terms recorded (source {src})")
 
-    call(
-        "POST",
-        "/provider_disclosure?on_conflict=provider_id,field",
-        [
-            {
-                "provider_id": prov[0]["id"],
-                "field": "lending_rate",
-                "published_on": None,
-                "checked_on": VERIFIED_ON,
-                "asked_on": None,
-                "answered_on": None,
-                "source_kind": None,
-                "note": None,
-            }
-        ],
-        prefer="resolution=merge-duplicates",
-    )
-    print("  Absence of a published mortgage rate recorded")
+    # No provider_disclosure write here, deliberately.
+    #
+    # This used to record "no published mortgage rate" into the lending_rate
+    # field with merge-duplicates. But Stanbic files Bank of Ghana's lending
+    # return, so its lending_rate record was already "published" — and this
+    # silently overwrote it. The disclosure page then listed Stanbic among
+    # banks that publish nothing. A narrow fact must not be written into a
+    # broad field another writer owns; see ARCHITECTURE.md section 5.
 
     print()
-    print("  Stanbic joins the diaspora page: sterling and euro mortgages are")
-    print("  the only ones we have found that let somebody earning abroad")
-    print("  borrow in the currency they are paid in.")
+    print("  Stanbic joins the diaspora page: sterling and euro mortgages let")
+    print("  somebody earning abroad borrow in the currency they are paid in.")
+    print("  First National offers pounds too; this is no longer the only one.")
     return 0
 
 
