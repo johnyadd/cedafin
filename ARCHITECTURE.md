@@ -10,15 +10,16 @@ Much of its reasoning still holds and it is worth reading once. It describes
 what was intended in August 2026, not what was built.
 
 Two files cite this note by section — `lib/data/funds.ts` for the staleness
-policy, `engine/metrics.py` for the metrics contract — and until today it did
-not exist. Every architectural question was answered by searching the
+policy, `engine/metrics.py` for the metrics contract — and until 19 September
+it did not exist. Every architectural question was answered by searching the
 codebase, which is slow and twice produced a confident wrong answer that took
 hours to unpick.
 
 Written 19 September 2026, after a week in which the Treasury bill benchmark
 sat three weeks stale, the metrics engine turned out never to have been
 deployed, and a load step was found deleting everything a fetcher had just
-written.
+written. Amended 21 September 2026: provider types, register diffing, and four
+more rules.
 
 ---
 
@@ -69,6 +70,12 @@ deployed, so every scheduled run failed — and the step was marked
 `continue-on-error`, so the job went green. The metrics on the live site were
 as old as the last time somebody ran the script by hand.
 
+**Benchmarks are checked per window.** `_spans()` in `engine/metrics.py`
+passes the CPI or the T-bill into a window only if the series covers that
+whole window. It used to be applied to a product's entire history, so an
+equity priced from February 2025 got no real return even for its one-year
+window. Products with a real return went from 8 to 50 when it moved.
+
 **If the wrapper is ever deployed**, make `PYTHON_ENGINE_URL` required again in
 `lib/env.ts` and decide which of the two paths is authoritative. Two routes to
 the same calculation will drift.
@@ -85,7 +92,7 @@ Scheduled in `.github/workflows/fetch-market-data.yml`:
 | `tbills` | Fridays 19:00 | Bank of Ghana Treasury bill rates table |
 | `gse` | 8th monthly | Ghana Stock Exchange monthly report |
 | `apr` | monthly | Bank of Ghana lending rate return |
-| `registers` | 1st monthly | SEC and BoG register snapshots |
+| `registers` | 1st monthly | SEC and BoG register snapshots, then `diff_registers.py` writes `CHANGES.md` |
 | `check` | daily 20:00 | `check_consistency.py` |
 
 **Everything else runs by hand.** The `discover_*.py` scanners, every
@@ -96,6 +103,12 @@ Scheduled in `.github/workflows/fetch-market-data.yml`:
 because a source is down, which is not a data error. A load failing means data
 did not land, and that must turn the job red. The distinction was learned after
 three weeks of green jobs writing nothing.
+
+**The registers are diffed.** Each month's pages are reduced to a sorted
+`<register>.names.txt` beside the HTML, and compared with the month before. A
+page that parses to nothing is reported as unreadable, never as empty; a
+register that halves in a month is reported as a suspected layout change, not
+a mass deregistration.
 
 ---
 
@@ -135,6 +148,32 @@ Correct when it was the only writer. Destructive the moment a second appeared:
 it deleted every observation the new fetcher wrote, eight seconds after it
 wrote them.
 
+**Do not write a narrow fact into a broad field.** A mortgage loader recorded
+"no published mortgage rate" into `provider_disclosure.lending_rate` with
+merge-duplicates, and silently overwrote Stanbic's correct record — Stanbic
+files Bank of Ghana's lending return. The same shape as the delete bug: one
+writer assuming it owns something another writer also writes.
+
+**Providers carry a type; count within it.** `providers.provider_type` is one
+of `fund_manager`, `broker`, `bank`, `savings_loans`, `mortgage_finance`,
+`issuer` or `other`. Before it existed, "six of fifty fund managers state a
+charge" counted twenty-six savings and loans companies, three regulators and a
+placeholder called "Unverified" among the fifty, and three regulators among
+the six. The fund-manager figure was three of twenty. Any count that describes
+a kind of firm must filter on this column; `getDisclosure` declares which
+types each field applies to.
+
+**One source's list is not the universe.** "24 licensed stockbrokers" came from
+the exchange's reports; the SEC licenses 34. "22 licensed banks" had the same
+shape. The register snapshots now make claims like these checkable, and
+`diff_registers.py` found the broker one on its first run.
+
+**Read the whole source before calling something missing.** National
+Investment Bank was declared absent from Bank of Ghana's return because it was
+missing from the business-lending list. It files personal-loan rates only. All
+23 licensed banks file; 22 report business lending. Both the correction and the
+correction of the correction went live.
+
 **Fail loudly.** A fetcher that cannot reach its source must say so, not report
 zero rows as though the week was quiet. A blank figure is honest; a stale one
 is confident and wrong.
@@ -151,7 +190,13 @@ when the source is least likely to answer.
 
 **Derive counts; do not type them.** "Six of 97 providers" became eight, then
 nine, then eleven within a week, and was wrong on the site in between each
-time. `getDisclosureCounts()` exists for this.
+time. `getDisclosureCounts()` and `getFundManagerChargeCounts()` exist for
+this.
+
+**A badge is a claim.** `/funds` printed "✓ Documents verified" on every row,
+including funds with no figure of any kind, and "Prices 0 months old" on funds
+that had never had a price. Both are now conditional. Anything that looks like
+a verification must be backed by the thing it verifies.
 
 **Identify the scanner honestly.** `polite_fetch.py` sends a named user agent
 and honours robots.txt. Where a site refuses it, a person reads the page and
@@ -185,21 +230,37 @@ The fee history from those factsheets DID load — 30 new charge rows — so the
 collection was not wasted.
 
 **Bank of Ghana stopped publishing gold coin circulars after 2 September.**
-Not a fetcher fault. Worth publishing as a finding.
+Not a fetcher fault. The archive holds 56 circulars, June to August 2026.
 
-**CPI does not span most observation windows.** 46 products get no real return,
-and `compute_metrics.py` says plainly not to display one for them.
-`fetch_cpi_index.py` exists; whether it has been run is another question.
+**Eleven SEC-licensed broker-dealers never appear in eighteen months of
+exchange reports** — Algebra, Apakan, Blackwood Capital, Critical Ideas, Dosh,
+GFX, One Africa, Regulus, Savvy, Wallstreet and Worldwide. Inactive, trading
+elsewhere, or recently licensed: not yet established.
 
-**44 published products carry a minimum with no source.** Flagged daily by the
-consistency check.
+**UMB Stockbrokers appears in the exchange's reports but not on the SEC's
+September 2026 broker-dealer register.** Possibly a naming or licensing-route
+difference. Nothing should be published about it until it has been checked.
+
+**"Unverified" is a holding provider, not a firm.** It owns draft copies of
+SEC-register funds loaded before their manager was matched. It is typed
+`other` and removed from every count; the drafts still need reassigning to
+their real managers, which would also clear the duplicates.
+
+**Eleven published unit trusts have no asset class**, because none has
+published a factsheet saying what it invests in. Null is the honest value.
+Classifying them from their names would be guessing.
+
+**CPI covers May 2024 onward.** Extended from 15 months to 28 from two GSS
+releases. Seven products still have observations predating it, so their
+longest windows carry no real return; the shorter windows do.
 
 **`/admin/health` does not exist**, though `lib/env.ts` offers `checkEngine()`
 for it.
 
-**Homepage and `/funds` count funds differently** — 88 against 144. Both
-derived, counting different things, and a reader moving between them sees two
-numbers.
+**The homepage and `/funds` count differently.** The homepage counts every
+invest-side product; `/funds` excludes shares, gold and Treasury bills, which
+have their own pages. Both are derived, and a reader moving between them sees
+two numbers.
 
 ---
 
