@@ -484,6 +484,18 @@ export default async function ComparePage({
                 directly to the government and your money is returned at
                 maturity, not on demand.
               </>
+            ) : peerGroup.startsWith("commodity:") ? (
+              <>
+                {/* The fund sentence below described an annual management
+                    fee plus custody, and sat above figures that are a
+                    one-off premium over the metal paid when a coin is
+                    bought. Same numbers, wrong description. */}
+                Compared on the premium over the gold in each coin, paid once
+                when you buy. Bank of Ghana sets it; there is no annual
+                management or custody charge while you hold the coin. The
+                NewGold ETF works differently and does not publish its
+                charges.
+              </>
             ) : (
               <>
                 Compared on the charges every provider publishes — annual
