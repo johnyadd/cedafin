@@ -14,17 +14,19 @@ import { BRAND } from "@/lib/brand";
  * whether to trust a financial site should not have to assemble that
  * themselves.
  *
- * WHY IT LEADS WITH WHAT CEDAFIN OFFERS
- * An About page is about Cedafin. What providers do and do not publish is a
- * finding, and it has its own page at /what-gets-published; it does not need
- * to open this one.
+ * WHY IT LEADS WITH THE ORGANISATION
+ * Credibility on a financial site comes from process a reader can check, not
+ * from the size of the team behind it. So this describes what Cedafin is and
+ * the standards it works to, then who leads it. It claims no staff, offices
+ * or registration it does not have: overstated scale is the thing that ruins
+ * trust the moment somebody looks. When incorporation completes, the
+ * registered name and number belong in "Who we are".
  *
  * WHAT IT DELIBERATELY DOES NOT CLAIM
  * No advertising site-wide — the decision is that comparison pages carry
- * none, and that is what it says. No company registration details it has not
- * been given. No update frequency the pipeline does not actually keep: gold
- * is priced "on each working day Bank of Ghana publishes", because since
- * 2 September 2026 Bank of Ghana has not.
+ * none, and that is what it says. No update frequency the pipeline does not
+ * actually keep: gold is priced "on each working day Bank of Ghana
+ * publishes", because since 2 September 2026 Bank of Ghana has not.
  */
 
 const display = Fraunces({
@@ -53,9 +55,9 @@ const C = {
 };
 
 export const metadata = {
-  title: "About Cedafin — who runs it, how it works, and who pays",
+  title: "About Cedafin — independent financial data and research on Ghana",
   description:
-    "Cedafin puts Ghanaian savings, investment and borrowing options side by side, every figure dated and sourced. Who runs it, how the figures are produced, how often they update, and how the consulting is kept apart from the research.",
+    "Cedafin is an independent financial data and research service covering Ghana's savings, investment and borrowing markets. How its figures are produced, how often they update, and how its research is kept independent.",
 };
 
 const OFFERS: [string, string, string][] = [
@@ -67,6 +69,14 @@ const OFFERS: [string, string, string][] = [
   ["/funding", "Business credit", "What loans actually cost at every licensed bank"],
   ["/mortgages", "Mortgages", "Published rates and terms for buying a home in Ghana"],
   ["/investing-from-abroad", "Investing from abroad", "Which providers say they will open an account from outside Ghana"],
+];
+
+const STANDARDS: [string, string][] = [
+  ["Primary sources only", "Every figure comes from a provider's or regulator's own published document, never from an aggregator or an estimate."],
+  ["Every figure dated and sourced", "Each figure carries the date it was published and a link to the document it came from."],
+  ["Every source kept", "Copies of the underlying documents are archived, so any figure can be checked against its original."],
+  ["Checked daily", "Automated checks run every day for figures that have stopped updating, prices that move implausibly, and anything without a source."],
+  ["Corrected openly", "Errors are corrected the same day, free of charge, and past corrections are published."],
 ];
 
 const SCHEDULE: [string, string][] = [
@@ -156,20 +166,49 @@ export default function AboutPage() {
           just in cedis. And every page says how current its figures are.
         </P>
 
-        <H2>Who runs it</H2>
+        <H2>Who we are</H2>
         <P>
-          Cedafin is run by John Addae. His background is in financial planning
-          and analysis and in data engineering, and he holds a BSc in Computer
-          Science and an MBA in Finance.
+          Cedafin is an independent financial data and research service covering
+          Ghana&rsquo;s savings, investment and borrowing markets. It has no
+          ownership ties to any bank, fund manager, broker or regulator whose
+          products it compares.
         </P>
         <P>
-          That background is visible in how the site works. Figures are read
-          from source documents by deterministic parsing rather than typed in or
-          estimated, so the same document always gives the same answer. Every
-          figure carries the date it was published and a link back to where it
-          came from. And the site checks itself daily for figures that have
-          stopped updating, prices that move implausibly, and anything without a
-          source.
+          Its work rests on documented processes rather than individual
+          judgement, so that every figure can be traced, checked and, where
+          necessary, corrected.
+        </P>
+
+        <div
+          className="mt-5 overflow-hidden rounded-2xl"
+          style={{ background: C.card, border: `1px solid ${C.rule}` }}
+        >
+          {STANDARDS.map(([title, what], i) => (
+            <div
+              key={title}
+              className="p-4"
+              style={{ borderTop: i === 0 ? "none" : `1px solid ${C.rule}` }}
+            >
+              <p className="text-[14px] font-bold">{title}</p>
+              <p className="mt-1 text-[13.5px] leading-relaxed" style={{ color: C.muted }}>
+                {what}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <H2>Leadership</H2>
+        <P>
+          Cedafin was founded and is led by John Addae, Founder and Chief
+          Executive. His background spans financial planning and analysis and
+          data engineering, and he holds an MBA in Finance and a BSc in Computer
+          Science.
+        </P>
+        <P>
+          That combination shapes how Cedafin works: figures are read from
+          source documents by deterministic parsing rather than keyed in by hand,
+          so the same document always yields the same answer, and the whole
+          process is designed to be audited.
         </P>
 
         <H2>How the figures are produced</H2>
@@ -184,16 +223,8 @@ export default function AboutPage() {
           The full method, including what counts as verified, is on the{" "}
           <A href="/methodology">methodology page</A>. A provider-by-provider
           record of what each one publishes is on{" "}
-          <A href="/what-gets-published">what gets published</A>.
-        </P>
-
-        <H2>Every source, kept</H2>
-        <P>
-          Cedafin keeps a copy of every document its figures come from —
-          regulator returns, factsheets, auction results and circulars. The{" "}
-          <A href="/the-archive">archive</A> means any figure on the site can be
-          checked against its original, including after the publisher has
-          replaced it with a newer version.
+          <A href="/what-gets-published">what gets published</A>, and every
+          source document is held in the <A href="/the-archive">archive</A>.
         </P>
 
         <H2>How often it updates</H2>
@@ -223,7 +254,7 @@ export default function AboutPage() {
           <A href="/methodology">methodology page</A>.
         </P>
 
-        <H2>Who pays</H2>
+        <H2>Independence</H2>
         <div
           className="mt-4 overflow-hidden rounded-2xl"
           style={{ background: C.card, border: `1px solid ${C.good}` }}
@@ -243,20 +274,14 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-
-        <H2>How the consulting is kept apart</H2>
         <P>
-          Cedafin also works with organisations, helping them turn documents and
-          data into figures they can trace and defend. That work is described
-          on <A href="/work-with-us">work with us</A>, and it is how the site is
-          funded.
-        </P>
-        <P>
-          It does not touch the research. Consulting clients receive no
+          Cedafin also provides data and analysis services to organisations,
+          described on <A href="/work-with-us">work with us</A>, and that work
+          funds the research. It is kept separate from it. Clients receive no
           different treatment on the comparison pages, no advance sight of
-          findings, and no say over what is published about them. If a
-          consulting client is ever also a provider shown on this site, that
-          will be stated on their page.
+          findings, and no say over what is published about them. If a client
+          is ever also a provider shown on this site, that is stated on their
+          page.
         </P>
 
         <H2>Using what is here</H2>
@@ -282,7 +307,7 @@ export default function AboutPage() {
           >
             data@cedafin.com
           </a>
-          . Everything else:{" "}
+          . Enquiries:{" "}
           <a
             href="mailto:enquiries@cedafin.com"
             className="font-semibold underline underline-offset-4"
