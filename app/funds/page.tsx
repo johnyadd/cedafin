@@ -20,6 +20,7 @@ import Link from "next/link";
 
 import Footer from "@/components/Footer";
 import Spark from "@/components/Spark";
+import { getFundManagerChargeCounts } from "@/lib/data/funds";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { BRAND } from "@/lib/brand";
@@ -90,10 +91,11 @@ export const metadata = {
 export const revalidate = 3600;
 
 export default async function FundsPage() {
-  const [coveredAll, directory, groups] = await Promise.all([
+  const [coveredAll, directory, groups, fm] = await Promise.all([
     getPublishedFunds(),
     getDirectory(),
     getPeerGroups(),
+    getFundManagerChargeCounts(),
   ]);
   // Shares, gold and Treasury bills are investments but not funds, and each
   // has its own page. Listing them here made "every fund" include GCB and a
@@ -341,7 +343,7 @@ export default async function FundsPage() {
             className="font-semibold underline underline-offset-4"
             style={{ color: C.deep }}
           >
-            six of fifty fund managers state a charge
+            {fm.published} of the {fm.total} fund managers we have checked state a charge
           </Link>
           , and we record the date we looked for each one.
         </p>

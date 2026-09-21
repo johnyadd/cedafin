@@ -2312,3 +2312,27 @@ export async function getDisclosureCounts(): Promise<
   }
   return out;
 }
+
+
+/**
+ * Fund managers with a published charge, over fund managers checked.
+ *
+ * "Six of fifty fund managers state a charge" counted twenty-six savings and
+ * loans companies, three issuers and a placeholder called "Unverified" among
+ * the fifty — and Bank of Ghana, the Government of Ghana and the exchange
+ * among the six. The fund-manager figure was three of twenty. Filtering on
+ * provider_type keeps it honest as the table grows.
+ */
+export async function getFundManagerChargeCounts() {
+  const { data, error } = await publicClient()
+    .from("provider_disclosure")
+    .select("published_on, providers!inner ( provider_type )")
+    .eq("field", "charges")
+    .eq("providers.provider_type", "fund_manager");
+  if (error) throw new Error(`getFundManagerChargeCounts: ${error.message}`);
+  const rows = (data ?? []) as { published_on: string | null }[];
+  return {
+    published: rows.filter((r) => r.published_on).length,
+    total: rows.length,
+  };
+}
