@@ -1473,6 +1473,12 @@ export async function getPeerGroups(): Promise<PeerGroupSummary[]> {
     total.set(f.peerGroup, (total.get(f.peerGroup) ?? 0) + 1);
   }
   return [...distinct.entries()]
+    // Equities are excluded deliberately. Ranking a single company beside a
+    // diversified fund on cost puts every share top — they carry no management
+    // charge — while the real cost is brokerage nobody publishes and the real
+    // difference is concentration risk. /shares exists for exactly that reason
+    // and says so on the page; a generated /compare/equity-GHS contradicted it.
+    .filter(([peerGroup]) => !peerGroup.startsWith("equity:"))
     .map(([peerGroup, funds]) => ({
       peerGroup,
       label: PEER_LABELS[peerGroup] ?? peerGroup,
