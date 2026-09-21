@@ -76,13 +76,13 @@ const FIELDS: Record<
     label: "The minimum to open",
     whoFor: "the fund managers we have checked",
     matters:
-      "Somebody with GH₵500 cannot tell which funds would take them. The published minimums we have found run from GH₵1 to the cedi equivalent of US$20,000.",
+      "Somebody with GH₵500 cannot tell which funds would take them. The published minimums we have found run from GH₵1 to GH₵25,000.",
   },
   commission: {
     label: "What a trade costs",
     whoFor: "the stockbrokers trading on the exchange",
     matters:
-      "There is no published commission rate anywhere in Ghana. A buyer of shares cannot establish the cost of buying them until they have opened an account with somebody.",
+      "None of them publishes a commission rate. A buyer of shares cannot establish the cost of buying them until they have opened an account with somebody.",
   },
   non_resident_access: {
     label: "Whether somebody abroad can open an account",
