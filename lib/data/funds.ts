@@ -2344,3 +2344,74 @@ export async function getFundManagerChargeCounts() {
     total: rows.length,
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// Lending history
+// ---------------------------------------------------------------------------
+
+export interface LendingHistoryRow {
+  bank: string;
+  providerSlug: string | null;
+  category: string;
+  tenorYears: number;
+  asOf: string;
+  apr: number | null;
+  lendingRate: number | null;
+  sourceFile: string;
+}
+
+/**
+ * Every Bank of Ghana lending return held, not only the latest.
+ *
+ * The current rate lives on the product row; this reads lending_history,
+ * which load_lending_history.py alone writes, from all four returns in
+ * data/apr. Three of those the Bank no longer publishes.
+ *
+ * CPI comes back alongside so the page can show each return's median
+ * against inflation in the same month. Rates are percentages as published;
+ * CPI is a decimal, as stored in macro_series.
+ */
+export async function getLendingHistory(): Promise<{
+  rows: LendingHistoryRow[];
+  cpi: { asOf: string; value: number }[];
+}> {
+  const { data, error } = await publicClient()
+    .from("lending_history")
+    .select(
+      "bank, category, tenor_years, as_of, average_apr, avg_lending_rate, source_file, providers ( slug )",
+    )
+    .order("as_of")
+    .limit(2000);
+  if (error) throw new Error(`getLendingHistory: ${error.message}`);
+
+  const { data: cpiData, error: cpiError } = await publicClient()
+    .from("macro_series")
+    .select("as_of, value")
+    .eq("series_code", "GH_CPI_YOY")
+    .order("as_of");
+  if (cpiError) throw new Error(`getLendingHistory (cpi): ${cpiError.message}`);
+
+  const numOrNull = (v: unknown) =>
+    v === null || v === undefined || v === "" ? null : Number(v);
+
+  return {
+    rows: (data ?? []).map((r: Record<string, unknown>) => {
+      const p = r.providers as { slug?: string } | null;
+      return {
+        bank: String(r.bank),
+        providerSlug: p?.slug ?? null,
+        category: String(r.category),
+        tenorYears: Number(r.tenor_years),
+        asOf: String(r.as_of).slice(0, 10),
+        apr: numOrNull(r.average_apr),
+        lendingRate: numOrNull(r.avg_lending_rate),
+        sourceFile: String(r.source_file),
+      };
+    }),
+    cpi: (cpiData ?? []).map((c: Record<string, unknown>) => ({
+      asOf: String(c.as_of).slice(0, 10),
+      value: Number(c.value),
+    })),
+  };
+}

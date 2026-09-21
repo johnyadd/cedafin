@@ -56,6 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/the-archive`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/mortgages`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/lending-rates`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/savings`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/findings`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/work-with-us`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
