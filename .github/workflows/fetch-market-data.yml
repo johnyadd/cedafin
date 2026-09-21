@@ -205,6 +205,11 @@ jobs:
       - name: Load
         run: python load_lending_products.py
 
+      # History as well as today's rates, or /lending-rates stops at the last
+      # return loaded by hand.
+      - name: Load the history
+        run: python load_lending_history.py
+
   check:
     # Its own job, running daily after the loads rather than appended to each
     # of them — the data either hangs together or it does not, and checking

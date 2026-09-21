@@ -256,40 +256,59 @@ def check_price_spikes(quiet: bool) -> None:
 
     IIL Manufacturing sat at GH¢0.05 every month of 2025 except November,
     which recorded GH¢19.79 — four hundred times its neighbours, and back to
-    0.05 in December. That is a column misread from the exchange report, not a
-    market event.
-
-    It produced a volatility of 45,080% and an annualised return of 2,000%,
-    both of which reached the comparison page. A reader seeing 45,000%
-    volatility knows something is broken; the 2,000% return is the one that
-    misleads, because it looks like a number.
+    0.05 in December. That was a column misread from the exchange report, not
+    a market event. It produced a volatility of 45,080% and an annualised
+    return of 2,000%, both of which reached the comparison page.
 
     Twenty times is deliberately loose. A Ghanaian share can double in a
     month. It cannot multiply by four hundred and divide back.
+
+    WHY IT FETCHES IN PAGES
+    The first version made one request per product — about 250 in a row — and
+    a connection reset partway through left the check unable to run. It now
+    reads every observation in pages of a thousand, a handful of requests in
+    all, and groups them here.
     """
-    prods = get("/products?select=id,name&status=eq.published")
+    names = {
+        p["id"]: p["name"]
+        for p in (get("/products?select=id,name&status=eq.published") or [])
+    }
+
+    series: dict[str, list[tuple[str, float]]] = {}
+    offset = 0
+    while True:
+        page = get(
+            "/nav_observations?select=product_id,as_of,nav"
+            "&nav=not.is.null&order=product_id,as_of"
+            f"&limit=1000&offset={offset}"
+        ) or []
+        for r in page:
+            if r.get("nav") is None:
+                continue
+            series.setdefault(r["product_id"], []).append(
+                (r["as_of"], float(r["nav"]))
+            )
+        if len(page) < 1000:
+            break
+        offset += 1000
+
     flagged = 0
     checked = 0
-
-    for p in prods or []:
-        rows = get(
-            f"/nav_observations?select=as_of,nav&product_id=eq.{p['id']}"
-            "&nav=not.is.null&order=as_of"
-        )
-        navs = [(r["as_of"], float(r["nav"])) for r in rows or [] if r.get("nav")]
-        if len(navs) < 3:
+    for pid, navs in series.items():
+        if pid not in names or len(navs) < 3:
             continue
         checked += 1
-
         for i in range(1, len(navs) - 1):
             prev, cur, nxt = navs[i - 1][1], navs[i][1], navs[i + 1][1]
             neighbour = max(prev, nxt)
             if neighbour <= 0 or cur <= 0:
                 continue
-            if cur > neighbour * 20 or cur < neighbour / 20:
+            # Only the middle point of a spike is suspect; its neighbours are
+            # the evidence against it, not a second and third fault.
+            if cur > neighbour * 20 or cur < min(prev, nxt) / 20:
                 fail(
                     "price spike",
-                    f"{p['name']}: {navs[i][0]} is {cur:g} against "
+                    f"{names[pid]}: {navs[i][0]} is {cur:g} against "
                     f"{prev:g} before and {nxt:g} after",
                 )
                 flagged += 1
@@ -353,6 +372,10 @@ def check_freshness(quiet: bool) -> None:
         )
         return rows[0]["as_of"] if rows else None
 
+    def newest_lending() -> str | None:
+        rows = get("/lending_history?select=as_of&order=as_of.desc&limit=1")
+        return rows[0]["as_of"] if rows else None
+
     checks = [
         ("Gold coin prices", newest_for_class("commodity"), 5, 15),
         ("Treasury bill rates", newest_for_class("government_security"), 14, 42),
@@ -364,6 +387,7 @@ def check_freshness(quiet: bool) -> None:
         # Fund managers publish factsheets late and irregularly, so this is
         # the loosest tolerance here.
         ("Fund NAVs", newest_for_class("money_market"), 90, 180),
+        ("Bank lending returns", newest_lending(), 100, 150),
     ]
 
     ok = 0
