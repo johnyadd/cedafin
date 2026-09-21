@@ -1162,7 +1162,7 @@ export default async function FundingPage({
           otherwise write "according to a website".
         */}
         <DataProvenance
-          title="Ghanaian bank lending rates, the 22 banks in Bank of Ghana&rsquo;s return"
+          title="Ghanaian bank lending rates, the 23 banks in Bank of Ghana&rsquo;s return"
           source="Bank of Ghana, Annual Percentage Rates and Average Interest Rates"
           sourceUrl="https://www.bog.gov.gh/"
           covering="May 2026"

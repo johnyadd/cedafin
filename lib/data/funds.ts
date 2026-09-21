@@ -2251,13 +2251,21 @@ export interface DisclosureField {
 export async function getDisclosure(): Promise<DisclosureField[]> {
   const { data, error } = await publicClient()
     .from("provider_disclosure")
-    .select("field, published_on, checked_on, providers ( trading_name, legal_name, slug )");
+    .select("field, published_on, checked_on, providers ( trading_name, legal_name, slug, provider_type )");
   if (error) throw new Error(`getDisclosure: ${error.message}`);
 
+  const APPLIES: { [field: string]: string[] } = { charges: ["fund_manager"] };
   const by = new Map<string, DisclosureField>();
   for (const r of data ?? []) {
     const row = r as Record<string, unknown>;
     const f = String(row.field);
+    // A field counts only the providers it describes. "What the fund charges
+    // a year" was counted across savings and loans companies, Bank of Ghana,
+    // the Government and the exchange, so it read six of fifty when the
+    // fund-manager figure was three of twenty.
+    const ptype = (row.providers as { provider_type?: string } | null)?.provider_type ?? "";
+    const allowed = APPLIES[f];
+    if (allowed && !allowed.includes(ptype)) continue;
     if (!by.has(f)) {
       by.set(f, { field: f, total: 0, published: 0, publishers: [] });
     }
