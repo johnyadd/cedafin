@@ -19,6 +19,7 @@
 import Link from "next/link";
 
 import Footer from "@/components/Footer";
+import Spark from "@/components/Spark";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { BRAND } from "@/lib/brand";
@@ -89,11 +90,18 @@ export const metadata = {
 export const revalidate = 3600;
 
 export default async function FundsPage() {
-  const [covered, directory, groups] = await Promise.all([
+  const [coveredAll, directory, groups] = await Promise.all([
     getPublishedFunds(),
     getDirectory(),
     getPeerGroups(),
   ]);
+  // Shares, gold and Treasury bills are investments but not funds, and each
+  // has its own page. Listing them here made "every fund" include GCB and a
+  // gold coin — the same contradiction that removed /compare/equity-GHS.
+  const NOT_A_FUND = ["equity", "commodity", "government_security"];
+  const covered = coveredAll.filter(
+    (f) => !NOT_A_FUND.includes(f.assetClass ?? ""),
+  );
 
   // One entry per fund, not per share class.
   const coveredFunds = [
@@ -406,6 +414,15 @@ export default async function FundsPage() {
                           )}
                         </div>
 
+                        {/* Below the row, not beside the name — the name
+                            column is narrow and the line had nowhere to go.
+                            Spark draws nothing below ten points, which is
+                            most funds: an absence reads more honestly than a
+                            line through four readings. */}
+                        <div className="mt-4">
+                          <Spark points={f.priceSeries} minPoints={10} caption={false} />
+                        </div>
+
                         <dl className="mt-4 flex flex-wrap gap-x-7 gap-y-2 text-[12.5px]">
                           <div className="flex gap-1.5">
                             <dt style={{ color: C.muted }}>Minimum</dt>
@@ -430,22 +447,47 @@ export default async function FundsPage() {
                         </dl>
 
                         <div className="mt-3 flex flex-wrap items-center gap-2">
+                          {/* Only where something actually was verified.
+                              This printed unconditionally, so funds with no
+                              charge, no minimum and no dealing frequency
+                              carried a green tick reading "Documents
+                              verified" — a claim made on the strength of
+                              appearing in a list. */}
+                          {(f.statedChargesPct || f.minimumGhs) && (
                           <span
                             className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold"
                             style={{ background: `${C.good}14`, color: C.good }}
                           >
                             ✓ Documents verified
                           </span>
+                          )}
+                          {/* No observations at all is not "0 months old".
+                              daysSinceLastObservation is null there, and the
+                              ?? 0 fallback printed "Prices 0 months old" for
+                              funds that have never had a price — which reads
+                              as a figure from today. */}
                           <span
                             className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold"
                             style={{
-                              background: stale ? `${C.clay}14` : `${C.good}14`,
-                              color: stale ? C.clay : C.good,
+                              background:
+                                f.daysSinceLastObservation === null
+                                  ? `${C.muted}14`
+                                  : stale
+                                    ? `${C.clay}14`
+                                    : `${C.good}14`,
+                              color:
+                                f.daysSinceLastObservation === null
+                                  ? C.muted
+                                  : stale
+                                    ? C.clay
+                                    : C.good,
                             }}
                           >
-                            {stale
-                              ? `Prices ${Math.round((f.daysSinceLastObservation ?? 0) / 30)} months old`
-                              : "Prices current"}
+                            {f.daysSinceLastObservation === null
+                              ? "No prices held"
+                              : stale
+                                ? `Prices ${Math.round(f.daysSinceLastObservation / 30)} months old`
+                                : "Prices current"}
                           </span>
                           {f.feeChanged && (
                             <span
