@@ -2254,7 +2254,7 @@ export async function getDisclosure(): Promise<DisclosureField[]> {
     .select("field, published_on, checked_on, providers ( trading_name, legal_name, slug, provider_type )");
   if (error) throw new Error(`getDisclosure: ${error.message}`);
 
-  const APPLIES: { [field: string]: string[] } = { charges: ["fund_manager"] };
+  const APPLIES: { [field: string]: string[] } = { charges: ["fund_manager"], minimum: ["fund_manager"] };
   const by = new Map<string, DisclosureField>();
   for (const r of data ?? []) {
     const row = r as Record<string, unknown>;

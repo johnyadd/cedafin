@@ -68,37 +68,37 @@ const FIELDS: Record<
 > = {
   charges: {
     label: "What the fund charges a year",
-    whoFor: "collective investment schemes",
+    whoFor: "the fund managers we have checked",
     matters:
       "Two funds holding the same instruments can differ by more than two percentage points a year. Over a decade that is most of the difference between them, and it is the one thing a saver can actually control.",
   },
   minimum: {
     label: "The minimum to open",
-    whoFor: "collective investment schemes",
+    whoFor: "the fund managers we have checked",
     matters:
       "Somebody with GH₵500 cannot tell which funds would take them. The published minimums we have found run from GH₵1 to the cedi equivalent of US$20,000.",
   },
   commission: {
     label: "What a trade costs",
-    whoFor: "licensed stockbrokers",
+    whoFor: "the stockbrokers trading on the exchange",
     matters:
       "There is no published commission rate anywhere in Ghana. A buyer of shares cannot establish the cost of buying them until they have opened an account with somebody.",
   },
   non_resident_access: {
     label: "Whether somebody abroad can open an account",
-    whoFor: "every provider",
+    whoFor: "every provider we have checked",
     matters:
       "Ghanaians abroad sent home US$7.8bn in 2025. Almost none of them can establish, before committing money, whether a given Ghanaian product is open to them at all.",
   },
   custody: {
     label: "Whether securities can be held on your behalf",
-    whoFor: "licensed stockbrokers",
+    whoFor: "the stockbrokers trading on the exchange",
     matters:
       "Relevant to anyone who cannot easily maintain a securities account in their own name, which includes many people living outside Ghana.",
   },
   lending_rate: {
     label: "What a loan costs",
-    whoFor: "banks and licensed lenders",
+    whoFor: "Ghana's banks and licensed lenders",
     matters:
       "The one field where disclosure is near-complete, and only because Bank of Ghana requires it and publishes the result. Left to themselves, almost no Ghanaian lender publishes a rate.",
   },
@@ -155,7 +155,7 @@ export default async function WhatGetsPublishedPage() {
           {fields.map((f) => {
             const meta = FIELDS[f.field] ?? {
               label: f.field,
-              whoFor: "providers",
+              whoFor: "the providers we have checked",
               matters: "",
             };
             const pct = f.total ? (f.published / f.total) * 100 : 0;
@@ -204,7 +204,7 @@ export default async function WhatGetsPublishedPage() {
                     className="mt-3 text-[13.5px] leading-relaxed"
                     style={{ color: C.muted }}
                   >
-                    Across Ghana&rsquo;s {meta.whoFor}. {meta.matters}
+                    Across {meta.whoFor}. {meta.matters}
                   </p>
 
                   {/* Named because they publish. We do not list the rest —
