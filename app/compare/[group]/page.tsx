@@ -357,7 +357,19 @@ export default async function ComparePage({
     .map((f) => f.primary.currentYield?.value)
     .filter((v): v is number => typeof v === "number");
 
+  // Compare like with like. On the gold page the coins' premium is paid once
+  // and NewGold's charge every year; pooled, 0.30% read as "cheapest" and
+  // the ETF was marked lowest. The headline uses the basis most products in
+  // the group share; the other appears in the crossover line instead.
+  const basisCount: { [basis: string]: number } = {};
+  for (const f of funds) {
+    const b = f.primary.chargeBasis;
+    if (b && f.primary.statedChargesPct) basisCount[b] = (basisCount[b] ?? 0) + 1;
+  }
+  const headlineBasis =
+    Object.entries(basisCount).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   const charges = funds
+    .filter((f) => headlineBasis === null || f.primary.chargeBasis === headlineBasis)
     .map((f) => f.primary.statedChargesPct?.value)
     .filter((v): v is number => typeof v === "number");
   const cheapest = charges.length ? Math.min(...charges) : null;
@@ -389,7 +401,7 @@ export default async function ComparePage({
    */
   function barWidth(v: number): number {
     if (cheapest === null || dearest === null || dearest === cheapest) return 100;
-    return 16 + ((v - cheapest) / (dearest - cheapest)) * 84;
+    return Math.min(100, Math.max(4, 16 + ((v - cheapest) / (dearest - cheapest)) * 84));
   }
 
   return (
@@ -493,8 +505,8 @@ export default async function ComparePage({
                 Compared on the premium over the gold in each coin, paid once
                 when you buy. Bank of Ghana sets it; there is no annual
                 management or custody charge while you hold the coin. The
-                NewGold ETF works differently and does not publish its
-                charges.
+                NewGold ETF works differently: it charges 0.30% a year, set out in its
+                issuer&rsquo;s disclosure document.
               </>
             ) : (
               <>
