@@ -185,7 +185,7 @@ export default async function ArticlePage({
                   className="underline underline-offset-2"
                   style={{ color: C.deep }}
                 >
-                  {href.replace("/compare/", "").replace("-GHS", "").replace(/_/g, " ")}
+                  {({ "/funds": "every fund", "/compare/commodity-GHS": "gold", "/compare/government_security-GHS": "Treasury bills", "/compare/money_market-GHS": "money market funds", "/compare/fixed_income-GHS": "fixed income funds", "/compare/balanced-GHS": "balanced funds", "/shares": "listed shares", "/brokers": "stockbrokers", "/treasury-bill-calculator": "the Treasury bill calculator", "/lending-rates": "lending rates over time" } as { [k: string]: string })[href] ?? href.replace(/^\//, "").replace("compare/", "").replace("-GHS", "").replace(/[_-]/g, " ")}
                 </Link>
               </span>
             ))}
