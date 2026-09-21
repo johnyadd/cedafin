@@ -47,6 +47,7 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
       ["/compare/money_market-GHS", "Money market funds"],
       ["/compare/fixed_income-GHS", "Fixed income funds"],
       ["/compare/government_security-GHS", "Treasury bills"],
+      ["/savings", "Savings accounts"],
     ],
   },
   {
@@ -62,6 +63,16 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
     links: [
       ["/funding", "Compare business credit"],
       ["/funding/match", "Find funding that fits"],
+      ["/mortgages", "Mortgages"],
+    ],
+  },
+  {
+    heading: "Cedafin",
+    links: [
+      ["/about", "About Cedafin"],
+      ["/methodology", "How we source every figure"],
+      ["/for-journalists", "For journalists"],
+      ["/work-with-us", "Work with us"],
     ],
   },
 ];
