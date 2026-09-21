@@ -1,9 +1,4 @@
 /**
-}
-  );
-      ["/about", "About Cedafin", "Who we are, how we work, who pays"],
-}
-/**
  * components/SiteHeader.tsx — navigation across the whole site.
  *
  * WHY DROPDOWNS RATHER THAN A FLAT ROW
