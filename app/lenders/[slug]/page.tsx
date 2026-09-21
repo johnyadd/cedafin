@@ -27,6 +27,7 @@
 import Link from "next/link";
 
 import Footer from "@/components/Footer";
+import DataProvenance from "@/components/DataProvenance";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 
@@ -435,6 +436,15 @@ export default async function LenderPage({
             ← All business credit
           </Link>
         </p>
+
+        <DataProvenance
+          title={`${lender.name} — lending rates`}
+          source="Bank of Ghana's Annual Percentage Rate return"
+          covering={`${lender.name}, fees included${lender.asOf ? `, return dated ${fmtDate(lender.asOf)}` : ""}`}
+          checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
+          method="Read directly from the return Bank of Ghana requires every licensed bank to file. Rates are annual percentage rates with fees included, as the Bank published them. Where the bank publishes its own figures, those are shown separately and dated. Indicative: the rate a borrower is offered depends on the bank's assessment."
+          pageUrl={`https://www.cedafin.com/lenders/${slug}`}
+        />
       </div>
       <Footer />
     </main>
