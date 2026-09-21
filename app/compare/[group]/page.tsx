@@ -413,7 +413,7 @@ export default async function ComparePage({
         className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
         style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        {all.length} funds tracked · {corpus.size} source documents · every figure
+        {all.length} products tracked · {corpus.size} source documents · every figure
         dated
       </div>
 
@@ -1094,7 +1094,7 @@ export default async function ComparePage({
                 </>
               ) : (
                 <>
-                  Every figure here is what a fund has already done, over the
+                  Every figure here is what has already happened, over the
                   period stated. Ghanaian rates have fallen hard — the 91-day
                   Treasury bill paid over 20% in early 2025 and around 5% by
                   August 2026 — so a return earned in one rate environment says
@@ -1170,6 +1170,13 @@ export default async function ComparePage({
                   A bill runs to maturity. Selling before then means the
                   secondary market, where the price depends on rates that day —
                   you may get back less than you put in.
+                </>
+              ) : peerGroup.startsWith("commodity:") ? (
+                <>
+                  What you get back when you sell is not shown here — a
+                  coin&rsquo;s buy-back price, or the ETF&rsquo;s price on the
+                  exchange less brokerage. Read the issuer&rsquo;s own terms
+                  before deciding.
                 </>
               ) : (
                 <>
