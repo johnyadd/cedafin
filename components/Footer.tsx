@@ -44,6 +44,8 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
       ["/funds", "Every fund"],
       ["/match", "Find what fits you"],
       ["/calculator", "Return calculator"],
+      ["/treasury-bill-calculator", "Treasury bill calculator"],
+      ["/inflation-calculator", "Inflation calculator"],
       ["/compare/money_market-GHS", "Money market funds"],
       ["/compare/fixed_income-GHS", "Fixed income funds"],
       ["/compare/government_security-GHS", "Treasury bills"],
@@ -65,6 +67,7 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
       ["/funding/match", "Find funding that fits"],
       ["/mortgages", "Mortgages"],
       ["/lending-rates", "Lending rates over time"],
+      ["/loan-calculator", "Loan calculator"],
     ],
   },
   {

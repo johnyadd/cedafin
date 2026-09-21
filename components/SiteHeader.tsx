@@ -67,6 +67,7 @@ const MENUS: { label: string; items: Item[] }[] = [
       // under "Shares & gold" for it.
       ["/compare/commodity-GHS", "Gold", "Coins and the NewGold ETF"],
       ["/calculator", "Return calculator", "What the fund did, what the currency did"],
+      ["/inflation-calculator", "Inflation calculator", "What inflation has done to your cedis"],
       ["/match", "Find what fits you", "Eight questions, nothing saved"],
     ],
   },
@@ -85,6 +86,7 @@ const MENUS: { label: string; items: Item[] }[] = [
       ["/funding/match", "Find funding that fits"],
       ["/mortgages", "Mortgages", "One bank of 21 publishes a rate"],
       ["/lending-rates", "Lending rates over time", "Every Bank of Ghana return we hold"],
+      ["/loan-calculator", "Loan calculator", "What a loan will cost you, fees counted"],
     ],
   },
   {
