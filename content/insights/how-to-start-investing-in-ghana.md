@@ -27,9 +27,7 @@ your age — the minimum.
 | GH₵1 | A money market fund — IC Liquidity Fund, opened online |
 | GH₵5 | A Treasury bill by mobile money — Ecobank TBill4All |
 | GH₵20 | Stanbic's money market and income funds |
-| GH₵100 | Most fund minimums |
 | GH₵462 | The NewGold ETF, one unit |
-| GH₵500 | Treasury bills through most banks |
 | **GH₵13,803** | **Gold coins, the cheapest denomination** |
 
 **The share price is not the barrier — the account is.** Aluworks trades at 10
