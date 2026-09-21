@@ -437,6 +437,19 @@ export default function CalculatorPage() {
           sending money from abroad, how much of your outcome was the exchange
           rate rather than the fund.
         </p>
+        {/* Search Console showed Google sending Treasury bill searches to
+            this page. Point those readers to the calculator that answers
+            them. */}
+        <p className="mt-3 text-[13px]">
+          Working out a Treasury bill?{" "}
+          <a
+            href="/treasury-bill-calculator"
+            className="font-semibold underline underline-offset-4"
+            style={{ color: "#0B4F6C" }}
+          >
+            Use the Treasury bill calculator &rarr;
+          </a>
+        </p>
 
         {/*
           The answer, before anything is asked — and it follows you down the
