@@ -26,7 +26,7 @@ import type { MetadataRoute } from "next";
 import { getLenderSlugs, getPeerGroups } from "@/lib/data/funds";
 import { getArticles } from "@/lib/insights";
 
-const BASE = "https://cedafin.com";
+const BASE = "https://www.cedafin.com";
 
 export const revalidate = 3600;
 

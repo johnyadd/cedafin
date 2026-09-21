@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "Fund charges, Treasury bill rates, bank lending APRs, gold and listed " +
     "shares in Ghana — from the documents providers publish themselves. " +
     "Every figure dated and sourced.",
-  metadataBase: new URL("https://cedafin.com"),
+  metadataBase: new URL("https://www.cedafin.com"),
 };
 
 /*

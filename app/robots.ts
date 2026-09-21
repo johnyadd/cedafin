@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/api/",
     },
-    sitemap: "https://cedafin.com/sitemap.xml",
+    sitemap: "https://www.cedafin.com/sitemap.xml",
   };
 }

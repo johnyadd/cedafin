@@ -79,6 +79,10 @@ function fmtDate(iso: string): string {
 }
 
 export const metadata = {
+  // Every ?type= and ?term= combination is the same page with a different
+  // tab open. One canonical, so Google consolidates them instead of
+  // weighing each as its own thin page.
+  alternates: { canonical: "/funding" },
   // A link pasted into WhatsApp shows a bare URL without this. With it, the
   // figure travels — and a link is shared on WhatsApp in Ghana far more often
   // than anywhere else.
