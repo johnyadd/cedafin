@@ -269,6 +269,16 @@ export default async function ComparePage({
   const allFree = grouped.every(
     (f) => (f.primary.statedChargesPct?.value ?? -1) === 0,
   );
+  // The basis the headline uses — charges levied the same way sort first.
+  // Without it NewGold's 0.30% a year sorted above coins costing 3.58% once,
+  // while the headline and "Lowest here" both named the coin.
+  const sortBasisCount: { [basis: string]: number } = {};
+  for (const f of grouped) {
+    const b = f.primary.chargeBasis;
+    if (b && f.primary.statedChargesPct) sortBasisCount[b] = (sortBasisCount[b] ?? 0) + 1;
+  }
+  const sortBasis =
+    Object.entries(sortBasisCount).sort((x, y) => y[1] - x[1])[0]?.[0] ?? null;
   const funds = grouped.sort((a, b) => {
     if (allFree) {
       // Highest yield first — the only thing that separates one bill from
@@ -276,6 +286,11 @@ export default async function ComparePage({
       const ay = a.primary.currentYield?.value ?? -1;
       const by = b.primary.currentYield?.value ?? -1;
       return by - ay || a.primary.name.localeCompare(b.primary.name);
+    }
+    if (sortBasis) {
+      const aw = a.primary.chargeBasis === sortBasis ? 0 : 1;
+      const bw = b.primary.chargeBasis === sortBasis ? 0 : 1;
+      if (aw !== bw) return aw - bw;
     }
     const av = a.primary.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
     const bv = b.primary.statedChargesPct?.value ?? Number.POSITIVE_INFINITY;
