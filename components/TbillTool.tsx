@@ -64,7 +64,7 @@ export default function TbillTool({
   rates: TbillRate[];
   inflationPct: number | null;
 }) {
-  const [direction, setDirection] = useState<Direction>("need");
+  const [direction, setDirection] = useState<Direction>("have");
   const [amount, setAmount] = useState("15000");
   const [days, setDays] = useState(rates[0]?.days ?? 91);
 
