@@ -238,7 +238,7 @@ export async function generateMetadata({
   const g = groups.find((x) => x.peerGroup.replace(":", "-") === group);
   if (!g) return { title: "Not found" };
   return {
-    title: `${g.label} compared — charges and returns`,
+    title: `${g.label} in Ghana — compared on charges and returns`,
     description: `${g.fundCount} ${g.label.toLowerCase()} in Ghana, compared on what they charge and what they returned. Every figure from documents the providers publish themselves, dated and sourced.`,
   };
 }

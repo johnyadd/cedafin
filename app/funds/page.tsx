@@ -84,7 +84,7 @@ function fmtDate(iso: string): string {
 }
 
 export const metadata = {
-  title: "Ghanaian mutual fund charges compared — 106 funds",
+  title: "Mutual funds in Ghana compared — charges, minimums and returns",
   description:
     "What Ghanaian mutual funds charge, from their own factsheets. Management fees, total expense ratios and minimum investments for every fund we can verify.",
 };

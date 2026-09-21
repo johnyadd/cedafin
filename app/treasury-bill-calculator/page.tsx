@@ -52,7 +52,7 @@ const C = {
 };
 
 export const metadata = {
-  title: "Ghana Treasury bill calculator — what to buy for what you need",
+  title: "Ghana Treasury bill calculator and this week's rates — 91, 182 and 364-day",
   description:
     "Work out what a Ghanaian Treasury bill costs today to give you the amount you need on a date, using current Bank of Ghana rates — and what it earns after inflation.",
   keywords: [
