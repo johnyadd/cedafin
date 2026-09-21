@@ -37,7 +37,7 @@ const MENUS: { label: string; items: Item[] }[] = [
   {
     label: "Invest",
     items: [
-      ["/funds", "Every fund", "106 catalogued, charges compared"],
+      ["/funds", "Every fund", "Every one we know of, charges compared"],
       ["/savings", "Savings accounts", "What banks pay, and what they want first"],
       // Near the top because it is a starting point rather than a product —
       // somebody abroad needs to know what they can reach before they can
@@ -119,6 +119,11 @@ const MENUS: { label: string; items: Item[] }[] = [
     // site, and all four were reachable only from the footer.
     label: "How we know",
     items: [
+      [
+        "/about",
+        "About Cedafin",
+        "Who we are, how we work, who pays",
+      ],
       [
         "/findings",
         "What we have found",
