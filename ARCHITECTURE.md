@@ -190,8 +190,8 @@ when the source is least likely to answer.
 
 **Derive counts; do not type them.** "Six of 97 providers" became eight, then
 nine, then eleven within a week, and was wrong on the site in between each
-time. `getDisclosureCounts()` and `getFundManagerChargeCounts()` exist for
-this.
+time. Every count now comes from `getSiteCounts()` in `lib/data/funds.ts`, served
+at `/api/counts`. A claim that describes a moment is dated in the sentence itself. Anything else needs an entry in the ALLOW list in `check_page_claims.py`, with its reason — which runs daily and fails if a page types a count or disagrees with the module.
 
 **A badge is a claim.** `/funds` printed "✓ Documents verified" on every row,
 including funds with no figure of any kind, and "Prices 0 months old" on funds

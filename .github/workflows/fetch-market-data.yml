@@ -233,6 +233,13 @@ jobs:
       - name: Check the data hangs together
         run: python check_consistency.py
 
+      # What the pages SAY, against /api/counts, and no typed counts in page text.
+      - name: Page claims
+        # Runs even when the data check fails — stale gold should not hide a
+        # page claiming the wrong count.
+        if: always()
+        run: python check_page_claims.py
+
   registers:
     # The default token is read-only, and a push without this fails at the
     # last step having already done the work.
