@@ -19,6 +19,7 @@
 import Link from "next/link";
 
 import Footer from "@/components/Footer";
+import DataProvenance from "@/components/DataProvenance";
 import Spark from "@/components/Spark";
 import { getFundManagerChargeCounts } from "@/lib/data/funds";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
@@ -630,6 +631,24 @@ export default async function FundsPage() {
             </Link>
           ))}
         </nav>
+
+        <DataProvenance
+          title="Ghanaian funds — charges and minimums"
+          source="Fund managers' own factsheets and product pages, checked against the Securities and Exchange Commission's register"
+          covering={(() => {
+            const d = coveredFunds
+              .map((f) => f.statedChargesPct?.asOf)
+              .filter((x): x is string => !!x)
+              .sort();
+            const m = (s: string) => new Date(s.slice(0, 10) + "T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+            if (!d.length) return `${coveredFunds.length} funds from providers' own documents`;
+            const a = m(d[0]), b = m(d[d.length - 1]);
+            return `${coveredFunds.length} funds from providers' own documents; charges confirmed ${a === b ? `in ${a}` : `between ${a} and ${b}`}`;
+          })()}
+          checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
+          method="Each charge and minimum is taken from the fund manager's own published document, with the date it was confirmed. Funds whose managers publish nothing are listed as awaiting data rather than estimated. Names in that list come from a third-party catalogue and have not all been checked against the register."
+          pageUrl="https://www.cedafin.com/funds"
+        />
       </div>
       <Footer />
     </main>
