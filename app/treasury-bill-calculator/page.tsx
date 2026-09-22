@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import Footer from "@/components/Footer";
+import DataProvenance from "@/components/DataProvenance";
 import TbillTool, { type TbillRate } from "@/components/TbillTool";
 import { getTbillRates, getLatestInflation } from "@/lib/data/funds";
 
@@ -230,6 +231,20 @@ export default async function TreasuryBillCalculatorPage() {
           </Link>
           .
         </p>
+
+        <DataProvenance
+          title="Ghana Treasury bill rates"
+          source="Bank of Ghana's Treasury bill auction results; inflation from the Ghana Statistical Service"
+          covering={(() => {
+            const d = rates.map((r) => r.asOf).filter((x): x is string => !!x).sort().slice(-1)[0];
+            return d
+              ? `91, 182 and 364-day bills, auction of ${new Date(d.slice(0, 10) + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}`
+              : "91, 182 and 364-day bills";
+          })()}
+          checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
+          method="Rates read each week from the table Bank of Ghana publishes after its auction. What a bill earns after inflation uses the latest headline inflation figure. Your bank or broker may charge to buy a bill for you; none publishes that charge clearly, so it is not included."
+          pageUrl="https://www.cedafin.com/treasury-bill-calculator"
+        />
       </div>
 
       <Footer />
