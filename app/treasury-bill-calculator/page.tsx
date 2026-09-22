@@ -141,8 +141,8 @@ export default async function TreasuryBillCalculatorPage() {
           className="mt-3 max-w-2xl text-[14.5px] leading-relaxed"
           style={{ color: C.muted }}
         >
-          What to buy today for the amount you need on a date — or what a sum
-          you have would return. Using the latest rates we hold, and showing
+          What a sum you have would return — or what to buy today for the
+          amount you need on a date. Using the latest rates we hold, and showing
           what the money will actually buy after inflation.
         </p>
 
@@ -242,7 +242,7 @@ export default async function TreasuryBillCalculatorPage() {
               : "91, 182 and 364-day bills";
           })()}
           checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
-          method="Rates read each week from the table Bank of Ghana publishes after its auction. What a bill earns after inflation uses the latest headline inflation figure. Your bank or broker may charge to buy a bill for you; none publishes that charge clearly, so it is not included."
+          method="Rates read each week from the table Bank of Ghana publishes after its auction. What a bill earns after inflation uses the latest headline inflation figure. A bank or broker may charge to buy a bill for you — one publishes a processing fee of up to 2.5% — and that is not included here."
           pageUrl="https://www.cedafin.com/treasury-bill-calculator"
         />
       </div>
