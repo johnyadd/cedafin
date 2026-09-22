@@ -738,9 +738,9 @@ export default async function Home() {
                   <div className="mt-3 grid gap-3 sm:grid-cols-3">
                     {(
                       [
-                        ["sme_credit", "Business", "22 banks"],
-                        ["personal_credit", "Personal", "21 banks"],
-                        ["corporate_credit", "Corporate", "21 banks"],
+                        ["sme_credit", "Business", `${counts.banksBusinessLending} banks`],
+                        ["personal_credit", "Personal", `${counts.banksPersonalLending} banks`],
+                        ["corporate_credit", "Corporate", `${counts.banksCorporateLending} banks`],
                       ] as [string, string, string][]
                     ).map(([type, label, count]) => (
                       <div key={type}>
