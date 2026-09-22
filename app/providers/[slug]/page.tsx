@@ -21,6 +21,7 @@
 import Link from "next/link";
 
 import Footer from "@/components/Footer";
+import DataProvenance from "@/components/DataProvenance";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 
@@ -427,6 +428,15 @@ export default async function ProviderPage({
             ← All Ghanaian funds
           </Link>
         </p>
+
+        <DataProvenance
+          title={`${provider.name} — what they publish`}
+          source={`${provider.name}'s own published material, against the regulator's register`}
+          covering={`${provider.disclosed.length - missing.length} of ${provider.disclosed.length} fields published`}
+          checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
+          method="Each figure is taken from this provider's own factsheet, product page or terms, and carries the date it was confirmed. A field left blank means we looked and found nothing published — not that the provider refused, and not that the figure does not exist. Corrections are free and applied the same day."
+          pageUrl={`https://www.cedafin.com/providers/${slug}`}
+        />
       </div>
       <Footer />
     </main>
