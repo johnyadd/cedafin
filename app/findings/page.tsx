@@ -145,8 +145,8 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
         href: "/brokers",
       },
       {
-        claim: "Six of 50 Ghanaian fund managers publish what they charge",
-        source: "Provider material, against the SEC licensee register",
+        claim: "Three of the 20 Ghanaian fund managers we checked publish what they charge",
+        source: "Provider material, checked September 2026",
         why: "Two funds holding the same instruments can differ by more than two percentage points a year — most of the difference between them over a decade.",
         href: "/what-gets-published",
       },

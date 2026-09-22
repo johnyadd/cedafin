@@ -176,9 +176,9 @@ export default function MethodologyPage() {
           estimate.
         </p>
         <p className="mt-4 text-[16px] leading-relaxed">
-          The consequence is visible everywhere. We have catalogued{" "}
-          <strong>106 Ghanaian funds and publish complete figures for eight</strong>.
-          The other 98 are listed with the fields blank. That is not a gap we
+          The consequence is visible everywhere. Most of the funds we have
+          catalogued publish too little for us to show their full cost, and
+          they are listed with the fields blank. That is not a gap we
           are hiding — it is the policy working, and closing it depends on
           managers publishing more than they currently do.
         </p>

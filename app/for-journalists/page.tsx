@@ -105,9 +105,9 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
     href: "/methodology",
   },
   {
-    claim: "Two of 106 Ghanaian funds say what a non-resident needs",
+    claim: "11 of 96 Ghanaian providers we checked say whether somebody abroad can open an account",
     detail:
-      "Across 106 collective investment schemes, 24 brokers and 26 savings and loans companies, two published positions on whether somebody living abroad can open an account. Ghanaians sent home US$7.8bn in 2025.",
+      "Across fund managers, stockbrokers, banks and savings and loans companies, checked September 2026. Ghanaians sent home US$7.8bn in 2025.",
     href: "/investing-from-abroad",
   },
 ];

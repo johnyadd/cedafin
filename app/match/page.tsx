@@ -1034,7 +1034,7 @@ export default function MatchPage() {
                   >
                     Nothing we hold matches all of that. That may mean no such
                     fund exists in Ghana, or that we haven&rsquo;t got the
-                    figures yet — 67 funds are listed with nothing against them.
+                    figures yet — many funds are listed with nothing against them.
                     Loosening one answer usually helps.
                   </p>
                 )}
