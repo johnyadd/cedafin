@@ -111,6 +111,19 @@ export default async function FundsPage() {
     ...new Map(covered.map((f) => [`${f.provider.slug}::${f.name}`, f])).values(),
   ];
 
+  // "Verified" means at least one figure from the manager's own documents —
+  // a charge or a minimum. Published rows with neither were counted as
+  // verified, so the page claimed 37 when six showed a charge; and adding the
+  // directory counted every fund on both lists twice.
+  const verifiedFunds = coveredFunds.filter((f) => f.statedChargesPct || f.minimumGhs);
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const uniqueNames = new Set([
+    ...coveredFunds.map((f) => norm(f.name)),
+    ...directory.map((d) => norm(d.name)),
+  ]);
+  const verifiedNames = new Set(verifiedFunds.map((f) => norm(f.name)));
+  const awaitingCount = [...uniqueNames].filter((n) => !verifiedNames.has(n)).length;
+
   const coveredByClass = new Map<string, FundRow[]>();
   for (const f of coveredFunds) {
     const k = f.assetClass ?? "uncategorised";
@@ -131,7 +144,7 @@ export default async function FundsPage() {
     dirByClass.get(k)!.push(d);
   }
 
-  const total = coveredFunds.length + directory.length;
+  const total = uniqueNames.size;
 
   // The lowest minimum any verified fund actually accepts. Quoted in the
   // audience section below, so it must come from the data rather than be
@@ -154,7 +167,7 @@ export default async function FundsPage() {
         className="w-full px-5 py-2 text-center text-[11px] font-medium tracking-wide text-white"
         style={{ background: `linear-gradient(90deg, ${C.deep}, ${C.teal})` }}
       >
-        {total} Ghanaian funds tracked · {coveredFunds.length} with verified
+        {total} Ghanaian funds tracked · {verifiedFunds.length} with verified
         charges
       </div>
 
@@ -193,7 +206,7 @@ export default async function FundsPage() {
                 className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none sm:text-[2rem]"
                 style={{ color: C.gold }}
               >
-                {coveredFunds.length}
+                {verifiedFunds.length}
               </p>
             </div>
             <div>
@@ -201,7 +214,7 @@ export default async function FundsPage() {
                 Awaiting data
               </p>
               <p className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none sm:text-[2rem]">
-                {directory.length}
+                {awaitingCount}
               </p>
             </div>
           </div>
@@ -636,14 +649,14 @@ export default async function FundsPage() {
           title="Ghanaian funds — charges and minimums"
           source="Fund managers' own factsheets and product pages, checked against the Securities and Exchange Commission's register"
           covering={(() => {
-            const d = coveredFunds
+            const d = verifiedFunds
               .map((f) => f.statedChargesPct?.asOf)
               .filter((x): x is string => !!x)
               .sort();
             const m = (s: string) => new Date(s.slice(0, 10) + "T00:00:00Z").toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
-            if (!d.length) return `${coveredFunds.length} funds from providers' own documents`;
+            if (!d.length) return `${verifiedFunds.length} funds from providers' own documents`;
             const a = m(d[0]), b = m(d[d.length - 1]);
-            return `${coveredFunds.length} funds from providers' own documents; charges confirmed ${a === b ? `in ${a}` : `between ${a} and ${b}`}`;
+            return `${verifiedFunds.length} funds from providers' own documents; charges confirmed ${a === b ? `in ${a}` : `between ${a} and ${b}`}`;
           })()}
           checked={new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
           method="Each charge and minimum is taken from the fund manager's own published document, with the date it was confirmed. Funds whose managers publish nothing are listed as awaiting data rather than estimated. Names in that list come from a third-party catalogue and have not all been checked against the register."
