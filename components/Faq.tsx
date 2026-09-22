@@ -46,7 +46,7 @@ const QA: { q: string; a: string }[] = [
   },
   {
     q: "What do Ghanaian mutual funds charge?",
-    a: "Of the funds that publish enough for us to verify, annual charges run from 1.75% to 2.25%. First Atlantic Income Fund is the cheapest at 1.75%; Stanbic Cash Trust and Stanbic Income Fund Trust are 2.25%. We have catalogued 75 Ghanaian funds and eight publish enough to compare — the rest are listed with the fields blank, because we do not publish figures we cannot source.",
+    a: "As of September 2026, of the funds that publish enough for us to verify, annual charges run from 1.75% to 2.25%. First Atlantic Income Fund is the cheapest at 1.75%; Stanbic Cash Trust and Stanbic Income Fund Trust are 2.25%. Most Ghanaian funds publish too little to compare and are listed with the fields blank, because we do not publish figures we cannot source.",
   },
   {
     q: "What does a Ghanaian stockbroker charge to buy shares?",

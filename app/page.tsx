@@ -35,7 +35,7 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Subscribe from "@/components/Subscribe";
 import { BRAND } from "@/lib/brand";
-import { getDisclosureCounts, getPeerGroups, getPublishedFunds } from "@/lib/data/funds";
+import { getDisclosureCounts, getPeerGroups, getPublishedFunds, getSiteCounts } from "@/lib/data/funds";
 import { getArticles, type Article } from "@/lib/insights";
 
 const display = Fraunces({
@@ -218,12 +218,13 @@ function SectionHead({
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [groups, access, funds, articles] = await Promise.all([
+  const [groups, access, funds, articles, counts] = await Promise.all([
     getPeerGroups(),
     // Counts drift. This one has been six, eight and nine within a week.
     getDisclosureCounts(),
     getPublishedFunds(),
     Promise.resolve(getArticles()),
+    getSiteCounts(),
   ]);
 
   const borrowArticles = articles.filter(isBorrowArticle).slice(0, 4);
@@ -516,17 +517,17 @@ export default async function Home() {
                   totals — "8 funds of 106", "the other 98" and "see all 75"
                   — while /funds said 144. One of them was right. */}
               <p className="text-[12.5px] font-bold">
-                8 funds of {funds.length}, in full
+                {counts.fundsVerified} funds of {counts.fundsTracked}, in full
               </p>
               <p
                 className="mt-1.5 text-[11.5px] leading-relaxed"
                 style={{ color: C.muted }}
               >
-                Eight Ghanaian funds publish enough to show what they charge
-                and what they returned. Those are compared here.
+                {counts.fundsVerified} Ghanaian funds publish enough to show what they charge.
+                Those are compared here.
                 <br />
                 <br />
-                The other {funds.length - 8} are listed with the fields blank. We are in
+                The other {counts.fundsAwaiting} are listed with the fields blank. We are in
                 contact with providers to close the gaps, and publish whatever
                 they send, cited and dated — an empty row is more use to you
                 than a number we made up.
@@ -537,7 +538,7 @@ export default async function Home() {
                   className="font-semibold underline underline-offset-4"
                   style={{ color: C.deep }}
                 >
-                  See all {funds.length} &rarr;
+                  See all {counts.fundsTracked} &rarr;
                 </Link>
               </p>
             </section>

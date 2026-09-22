@@ -138,14 +138,14 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
     findings: [
       {
         claim:
-          "Not one of the 24 stockbrokers trading on the exchange publishes a commission rate",
+          "None of the stockbrokers trading on the exchange publishes a commission rate",
         source:
           "Every dealing member's website, checked August and September 2026",
         why: "Comparing what brokers charge means contacting them one at a time and asking. Nothing is published, so there is nothing to compare before you start.",
         href: "/brokers",
       },
       {
-        claim: "Three of the 20 Ghanaian fund managers we checked publish what they charge",
+        claim: "Three of the 20 Ghanaian fund managers we checked in September 2026 publish what they charge",
         source: "Provider material, checked September 2026",
         why: "Two funds holding the same instruments can differ by more than two percentage points a year — most of the difference between them over a decade.",
         href: "/what-gets-published",

@@ -71,7 +71,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
   {
     claim: "A Ghanaian SME can pay three times as much for the same loan",
     detail:
-      "11.03% at the cheapest of 22 banks against 33.58% at the dearest, for a one-year facility in the same month. About GH₵22,550 a year of difference on GH₵100,000. From Bank of Ghana's own APR returns.",
+      "11.03% at the cheapest of 22 banks against 33.58% at the dearest, for a one-year facility, in Bank of Ghana's May 2026 return. About GH₵22,550 a year of difference on GH₵100,000. From Bank of Ghana's own APR returns.",
     href: "/funding",
   },
   {
@@ -81,7 +81,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
     href: "/insights/bank-fees-falling-not-equally",
   },
   {
-    claim: "Not one of the 24 stockbrokers trading on the exchange publishes a commission rate",
+    claim: "None of the stockbrokers trading on the exchange publishes a commission rate",
     detail:
       "We visited every website in August 2026, then re-checked platform subdomains and fee pages in September after a broker pointed out we had looked in the wrong place. A Ghanaian cannot establish the cost of buying a share before opening an account with somebody.",
     href: "/brokers",
@@ -89,7 +89,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
   {
     claim: "The alternative to a bank costs more, not less",
     detail:
-      "Of 26 licensed savings and loans companies, two publish a lending rate. The one unambiguous figure is 42% on a public sector loan, plus 2% processing and 1% monitoring — eight points above the dearest of the 22 banks.",
+      "Of 26 licensed savings and loans companies checked in September 2026, two publish a lending rate. The one unambiguous figure is 42% on a public sector loan, plus 2% processing and 1% monitoring — eight points above the dearest of the 22 banks.",
     href: "/funding#savings-loans",
   },
   {
@@ -105,7 +105,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
     href: "/methodology",
   },
   {
-    claim: "11 of 96 Ghanaian providers we checked say whether somebody abroad can open an account",
+    claim: "11 of 96 Ghanaian providers we checked in September 2026 say whether somebody abroad can open an account",
     detail:
       "Across fund managers, stockbrokers, banks and savings and loans companies, checked September 2026. Ghanaians sent home US$7.8bn in 2025.",
     href: "/investing-from-abroad",
