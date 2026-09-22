@@ -60,7 +60,7 @@ const MENUS: { label: string; items: Item[] }[] = [
       // looking to invest expects shares in the Invest menu, and the
       // distinction between a single company and a diversified fund is worth
       // keeping visible without making shares hard to find.
-      ["/shares", "Listed shares", "39 companies on the exchange"],
+      ["/shares", "Listed shares", "Every company on the exchange"],
       // Gold sits here too. It is a commodity rather than a capital market
       // product, which is why it has its own menu — but people search for it
       // as an investment, and someone browsing Invest will not think to look
@@ -74,15 +74,15 @@ const MENUS: { label: string; items: Item[] }[] = [
   {
     label: "Shares & gold",
     items: [
-      ["/shares", "Listed shares", "39 companies, price history"],
-      ["/brokers", "Stockbrokers", "24 firms, none publishes a rate"],
+      ["/shares", "Listed shares", "Every listed company, price history"],
+      ["/brokers", "Stockbrokers", "None publishes a commission rate"],
       ["/compare/commodity-GHS", "Gold", "Coins and the NewGold ETF"],
     ],
   },
   {
     label: "Borrow",
     items: [
-      ["/funding", "Business credit", "22 banks, real APRs"],
+      ["/funding", "Business credit", "Every bank's real APR"],
       ["/funding/match", "Find funding that fits"],
       ["/mortgages", "Mortgages", "One bank of 21 publishes a rate"],
       ["/lending-rates", "Lending rates over time", "Every Bank of Ghana return we hold"],
