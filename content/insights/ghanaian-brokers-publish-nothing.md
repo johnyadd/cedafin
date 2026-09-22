@@ -1,5 +1,5 @@
 ---
-title: We checked all 24 Ghanaian stockbrokers. None publishes what it charges.
+title: We checked all 24 stockbrokers trading on the Ghana Stock Exchange. None publishes what it charges.
 date: 2026-08-31
 summary: Twenty-four firms are licensed to trade shares on the Ghana Stock Exchange. Not one tells you the commission before you open an account. Six have no working website at all.
 tags: [brokers, shares, costs]

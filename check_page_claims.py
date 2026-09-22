@@ -21,6 +21,13 @@ TWO CHECKS
    /funds still does its own sums for its lists, so this is what catches it
    the day it drifts.
 
+3. Retired claims, across pages, components AND articles. Phrasings the site
+   has corrected and must not say again, each with its reason. Articles are
+   dated, so a number in one is a snapshot and is not flagged by check 1 —
+   but a claim that was wrong in SCOPE ("24 Ghanaian stockbrokers", when the
+   SEC licenses 34) is wrong whenever it was written. That slipped through
+   in an article title, which is why this exists.
+
 Run:  python check_page_claims.py            (both checks)
       python check_page_claims.py --code     (typed counts only, no network)
 Exits non-zero on any failure, like check_consistency.py.
@@ -73,6 +80,51 @@ ALLOW: list[tuple[str, str, str]] = [
         "From the SEC private funds register snapshot, which getSiteCounts does not yet read.",
     ),
 ]
+
+
+# Claims the site has corrected. Matched case-insensitively anywhere in page,
+# component or article text. Each entry: (phrase, why it is retired).
+RETIRED: list[tuple[str, str]] = [
+    ("24 licensed stockbrokers", "The SEC licenses 34; 24 trade on the exchange."),
+    ("24 ghanaian stockbrokers", "The SEC licenses 34; 24 trade on the exchange."),
+    ("twenty-four licensed stockbrokers", "The SEC licenses 34; 24 trade on the exchange."),
+    ("ghana's 24 licensed", "The SEC licenses 34; 24 trade on the exchange."),
+    ("106 funds", "An old count; the site now tracks each fund once, from getSiteCounts."),
+    ("106 ghanaian funds", "An old count; the site now tracks each fund once, from getSiteCounts."),
+    ("six of 50", "The fund-manager figure is 3 of 20, checked September 2026."),
+    ("6 of 50", "The fund-manager figure is 3 of 20, checked September 2026."),
+    ("petra diversified", "The 2.10% fund is Platinum Debt Income Fund."),
+    ("22 licensed banks", "All 23 licensed banks file Bank of Ghana's return; 22 report business lending."),
+    ("lowest verified fund minimum", "IC's GH\u20b51 is lower than Stanbic's GH\u20b520."),
+]
+
+
+def check_retired(root: str) -> list[str]:
+    failures: list[str] = []
+    for base in ("app", "components", "content"):
+        for dirpath, _, files in os.walk(os.path.join(root, base)):
+            for fn in files:
+                if not fn.endswith((".tsx", ".ts", ".md", ".mdx")):
+                    continue
+                path = os.path.join(dirpath, fn)
+                rel = os.path.relpath(path, root).replace("\\", "/")
+                with open(path, encoding="utf-8") as fh:
+                    # A correction note quotes the old claim on purpose, and
+                    # runs to the end of its paragraph — skip all of it, not
+                    # only the line that says "Corrected".
+                    in_note = False
+                    for i, line in enumerate(fh, 1):
+                        low = line.lower()
+                        if not low.strip():
+                            in_note = False
+                        if "corrected" in low or "earlier version" in low:
+                            in_note = True
+                        if in_note:
+                            continue
+                        for phrase, why in RETIRED:
+                            if phrase in low:
+                                failures.append(f"{rel}:{i}: \"{phrase}\" \u2014 {why}")
+    return failures
 
 
 def strip_comments(text: str) -> str:
@@ -156,6 +208,15 @@ def main() -> int:
     else:
         print("  ok    no typed counts outside comments, dated claims and the allow list")
 
+    retired = check_retired(root)
+    print()
+    if retired:
+        print(f"  {len(retired)} retired claim(s) still in the text:")
+        for f in retired:
+            print(f"    {f}")
+    else:
+        print("  ok    no retired claims in pages, components or articles")
+
     live: list[str] = []
     if not args.code:
         try:
@@ -170,7 +231,7 @@ def main() -> int:
         else:
             print("  ok    /funds and /is-it-licensed agree with /api/counts")
 
-    failed = bool(code or live)
+    failed = bool(code or retired or live)
     if failed:
         print()
         print("  A typed count goes stale; a page doing its own sums drifts. Fix the")

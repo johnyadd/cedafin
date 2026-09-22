@@ -126,8 +126,8 @@ operate. So is one who does not.
 
 ## Why this matters for what we publish
 
-We hold complete figures for eight of the 106 Ghanaian funds we have
-catalogued. The other ninety-eight publish too little to compare — no charge, no
+Most of the Ghanaian funds we have catalogued publish too little to
+compare — no charge, no
 minimum, no dealing terms, or a return with no window attached.
 
 That is not a criticism of any one manager. It is a description of a market
