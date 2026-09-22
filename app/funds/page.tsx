@@ -125,7 +125,7 @@ export default async function FundsPage() {
   const awaitingCount = [...uniqueNames].filter((n) => !verifiedNames.has(n)).length;
 
   const coveredByClass = new Map<string, FundRow[]>();
-  for (const f of coveredFunds) {
+  for (const f of verifiedFunds) {
     const k = f.assetClass ?? "uncategorised";
     if (!coveredByClass.has(k)) coveredByClass.set(k, []);
     coveredByClass.get(k)!.push(f);
@@ -138,7 +138,18 @@ export default async function FundsPage() {
   }
 
   const dirByClass = new Map<string, typeof directory>();
-  for (const d of directory) {
+  // A published row with no figure is not "verified" — it belongs with the
+  // rest we cannot yet describe. Six such funds used to appear in BOTH
+  // sections, the same fund called verified and unknown on one page.
+  const unverified = coveredFunds
+    .filter((f) => !(f.statedChargesPct || f.minimumGhs))
+    .map((f) => ({ id: f.id, slug: f.slug, name: f.name, assetClass: f.assetClass, note: null, nameVerified: false as const }));
+  const dirNames = new Set(directory.map((d) => norm(d.name)));
+  const awaitingAll = [
+    ...directory,
+    ...unverified.filter((f) => !dirNames.has(norm(f.name))),
+  ];
+  for (const d of awaitingAll) {
     const k = d.assetClass ?? "uncategorised";
     if (!dirByClass.has(k)) dirByClass.set(k, []);
     dirByClass.get(k)!.push(d);
@@ -535,7 +546,7 @@ export default async function FundsPage() {
         >
           <p>
             <strong>
-              {directory.length} funds we know exist but can&rsquo;t yet describe.
+              {awaitingCount} funds we know exist but can&rsquo;t yet describe.
             </strong>{" "}
             Their managers publish little or nothing publicly, or publish it
             somewhere we can&rsquo;t reach.
