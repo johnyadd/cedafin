@@ -76,14 +76,14 @@ const INVEST_TOOLS: Tool[] = [
   ["/inflation-calculator", "Inflation calculator", "What your cedis were worth, back to 1964."],
   ["/investing-from-abroad", "Investing from abroad", "What providers say about diaspora access."],
   ["/shares", "39 listed shares", "Price history from the exchange's own reports."],
-  ["/brokers", "24 stockbrokers", "Not one publishes a commission rate. We checked."],
+  ["/brokers", "Stockbrokers", "Not one publishes a commission rate. We checked."],
   ["/compare/commodity-GHS", "Gold, four ways", "The small coin costs twice what the big one does."],
 ];
 
 const BORROW_TOOLS: Tool[] = [
-  ["/funding", "Compare 22 banks", "What each actually charges, fees included."],
+  ["/funding", "Compare every bank", "What each actually charges, fees included."],
   ["/funding/match", "Find funding that fits", "Six questions. Nothing saved."],
-  ["/loan-calculator", "Loan calculator", "What a loan costs, at each of 22 banks."],
+  ["/loan-calculator", "Loan calculator", "What a loan costs, at each bank."],
 ];
 
 /**
@@ -423,7 +423,7 @@ export default async function Home() {
                   <p className="mt-1 text-[1.6rem] font-bold tabular-nums leading-none">
                     11.03%
                   </p>
-                  <p className="mt-1 text-[10px] opacity-70">APR, of 22 banks</p>
+                  <p className="mt-1 text-[10px] opacity-70">APR, across every bank</p>
                 </div>
               </div>
 
@@ -652,7 +652,7 @@ export default async function Home() {
           <SectionHead
             label="Borrowing"
             colour={C.brown}
-            note="What 22 Ghanaian banks charge for business, personal and corporate credit"
+            note="What Ghanaian banks charge for business, personal and corporate credit"
           />
 
           <div className={grid}>
@@ -771,7 +771,7 @@ export default async function Home() {
                     className="rounded-full px-4 py-2.5 text-[13px] font-bold"
                     style={{ background: C.gold, color: C.ink }}
                   >
-                    Compare all 22 banks &rarr;
+                    Compare every bank &rarr;
                   </Link>
                   <Link
                     href="/funding/match"

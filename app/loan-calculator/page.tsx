@@ -51,7 +51,7 @@ const C = {
 export const metadata = {
   title: "Loan calculator Ghana — what a business loan really costs",
   description:
-    "Work out the monthly repayment and total cost of a Ghanaian business or personal loan, and compare it against what 22 banks actually charge. Uses Bank of Ghana's own APR data.",
+    "Work out the monthly repayment and total cost of a Ghanaian business or personal loan, and compare it against what every bank actually charges. Uses Bank of Ghana's own APR data.",
   keywords: [
     "loan calculator Ghana",
     "business loan Ghana",
@@ -233,7 +233,7 @@ export default async function LoanCalculatorPage() {
               className="font-semibold underline underline-offset-4"
               style={{ color: C.deep }}
             >
-              Compare all 22 banks &rarr;
+              Compare every bank &rarr;
             </Link>
           </p>
         </section>

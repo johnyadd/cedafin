@@ -88,7 +88,7 @@ export const metadata = {
   // than anywhere else.
   openGraph: { images: ["/api/card/lending-spread"] },
   twitter: { card: "summary_large_image", images: ["/api/card/lending-spread"] },
-  title: "SME and business loan rates in Ghana — 22 banks compared",
+  title: "SME and business loan rates in Ghana — every bank compared",
   description:
     "What Ghanaian banks actually charge for business, personal and corporate credit, from Bank of Ghana's own APR returns. The rate with the fees counted.",
 };
@@ -412,7 +412,7 @@ export default async function FundingPage({
 
   WHY IT BELONGS HERE
   Everything else on the borrow side of this site is bank credit: 157 products
-  across 22 banks, compared on APR. A business owner reading it would conclude
+  across every bank, compared on APR. A business owner reading it would conclude
   that borrowing from a bank is the only route, because nothing here says
   otherwise.
 
@@ -741,7 +741,7 @@ export default async function FundingPage({
   WHAT THE CHECK FOUND, AND WHY IT MATTERS
   Two of twenty-three working websites publish a lending rate. The one that
   publishes an unambiguous figure charges 42% — eight percentage points above
-  the dearest of the 22 banks on this page.
+  the dearest bank on this page.
 
   That is the finding. A business turned down by a bank may assume the
   alternative is more accessible and therefore, somehow, more reasonable. On
@@ -812,7 +812,7 @@ export default async function FundingPage({
       >
         That is{" "}
         <strong style={{ color: C.ink }}>
-          eight percentage points above the dearest of the 22 banks
+          eight percentage points above the dearest bank
         </strong>{" "}
         compared above, before its fees are counted. A business refused by a
         bank may assume the alternative is easier and therefore gentler. On the

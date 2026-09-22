@@ -121,14 +121,14 @@ const EVIDENCE: { claim: string; detail: string; href: string; label: string }[]
       detail:
         "Monthly market documents published as prose and tables, turned into a queryable price history for every listed company. Daily and weekly releases from several institutions, extracted on a schedule and reconciled against each other. The result is a series; the inputs were never designed to produce one.",
       href: "/shares",
-      label: "39 companies, with price history",
+      label: "Every listed company, with price history",
     },
     {
       claim: "Comparable figures from filings that resist comparison",
       detail:
         "Regulatory filings that exist to be filed rather than read. Assembled across 22 institutions, three product types and three terms, they show a spread of 22.5 percentage points on the same one-year facility — a figure nobody publishes because nobody had put the returns side by side.",
       href: "/funding",
-      label: "22 banks, what they actually charge",
+      label: "Every bank, what it actually charges",
     },
     {
       claim: "Analysis that finds what the data was hiding",
