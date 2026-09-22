@@ -237,6 +237,22 @@ export async function generateMetadata({
   const groups = await getPeerGroups();
   const g = groups.find((x) => x.peerGroup.replace(":", "-") === group);
   if (!g) return { title: "Not found" };
+  // Two groups answer a specific search and deserve their own words. The
+  // rest are well served by the pattern below.
+  const OVERRIDE: { [prefix: string]: { title: string; description: string } } = {
+    "commodity:": {
+      title: "Ghana Gold Coin prices and premiums — and how NewGold compares",
+      description:
+        "What each Ghana Gold Coin costs over the gold inside it — 1 oz, ½ oz and ¼ oz — and how that one-off premium compares with the NewGold ETF's annual charge. From Bank of Ghana's own pricing circulars.",
+    },
+    "government_security:": {
+      title: "Ghana Treasury bill rates — 91, 182 and 364 day compared",
+      description:
+        "What Ghanaian Treasury bills pay at each tenor, from Bank of Ghana's auction results, and what each earns after inflation.",
+    },
+  };
+  const o = Object.entries(OVERRIDE).find(([prefix]) => g.peerGroup.startsWith(prefix))?.[1];
+  if (o) return o;
   return {
     title: `${g.label} in Ghana — compared on charges and returns`,
     description: `${g.fundCount} ${g.label.toLowerCase()} in Ghana, compared on what they charge and what they returned. Every figure from documents the providers publish themselves, dated and sourced.`,
