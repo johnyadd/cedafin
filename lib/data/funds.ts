@@ -2448,6 +2448,9 @@ export interface SiteCounts {
   fundsVerified: number;
   /** Tracked funds that are not verified. */
   fundsAwaiting: number;
+  /** Lowest and highest annual charge among verified funds, as percentages. */
+  chargeLowestPct: number | null;
+  chargeHighestPct: number | null;
   /** Fund managers checked for a published charge, and how many state one. */
   fundManagersChecked: number;
   fundManagersPublishingCharge: number;
@@ -2501,6 +2504,12 @@ export async function getSiteCounts(): Promise<SiteCounts> {
     ...directory.map((d) => norm(d.name)),
   ]);
   const verifiedNames = new Set(verified.map((f) => norm(f.name)));
+  // The published annual charges among verified funds — so a page can state
+  // the range without typing it. "between nothing and 2.65%" outlived the cut
+  // that took Stanbic to 2.25%.
+  const fundCharges = verified
+    .map((f) => f.statedChargesPct?.value)
+    .filter((v): v is number => typeof v === "number");
   const awaiting = [...names].filter((n) => !verifiedNames.has(n)).length;
 
   // Providers by type.
@@ -2526,6 +2535,8 @@ export async function getSiteCounts(): Promise<SiteCounts> {
     fundsTracked: names.size,
     fundsVerified: verified.length,
     fundsAwaiting: awaiting,
+    chargeLowestPct: fundCharges.length ? Math.min(...fundCharges) : null,
+    chargeHighestPct: fundCharges.length ? Math.max(...fundCharges) : null,
     fundManagersChecked: fm.total,
     fundManagersPublishingCharge: fm.published,
     stockbrokersTrading: byType["broker"] ?? 0,

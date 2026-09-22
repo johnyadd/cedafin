@@ -345,7 +345,8 @@ export default async function IsItLicensedPage() {
         </p>
         <p className="mt-3 text-[15.5px] leading-relaxed">
           <strong>And it does not mean cheap.</strong> Licensed funds on this
-          site charge between nothing and 2.65% a year, and most Ghanaian
+          site charge between {counts.chargeLowestPct?.toFixed(2) ?? "—"}% and{" "}
+          {counts.chargeHighestPct?.toFixed(2) ?? "—"}% a year, and most Ghanaian
           providers publish no charge at all. Being regulated and being good
           value are separate questions.
         </p>
