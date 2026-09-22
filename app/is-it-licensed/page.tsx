@@ -3,7 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/brand";
-import { getTbillRates } from "@/lib/data/funds";
+import { getTbillRates, getSiteCounts } from "@/lib/data/funds";
 
 /**
  * app/is-it-licensed/page.tsx
@@ -92,6 +92,8 @@ export const revalidate = 3600;
 
 export default async function IsItLicensedPage() {
   const rates = await getTbillRates();
+  // Every count on this page comes from getSiteCounts — none is typed.
+  const counts = await getSiteCounts();
   const tbill = rates.find((r) => r.days === 91) ?? rates[0] ?? null;
 
   return (
@@ -157,12 +159,12 @@ export default async function IsItLicensedPage() {
             <div className="grid gap-2 sm:grid-cols-2">
               {(
                 [
-                  ["106 funds", "SEC register of licensed collective investment schemes"],
-                  ["24 stockbrokers", "SEC register of licensed dealing members"],
-                  ["23 banks", "Bank of Ghana APR returns — every licensed bank files one"],
-                  ["26 savings and loans companies", "Bank of Ghana register"],
+                  [`${counts.fundsTracked} funds`, "SEC register of collective investment schemes, and a catalogue still being checked against it"],
+                  [`${counts.stockbrokersTrading} stockbrokers`, "Trading on the Ghana Stock Exchange — the SEC licenses more"],
+                  [`${counts.banks} banks`, "Bank of Ghana APR returns — every licensed bank files one"],
+                  [`${counts.savingsAndLoans} savings and loans companies`, "Bank of Ghana register"],
                   ["9 private funds", "SEC register of licensed private funds"],
-                  ["39 listed companies", "Ghana Stock Exchange monthly reports"],
+                  [`${counts.listedCompanies} listed companies`, "Ghana Stock Exchange monthly reports"],
                 ] as [string, string][]
               ).map(([count, source]) => (
                 <div
@@ -222,9 +224,9 @@ export default async function IsItLicensedPage() {
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           {(
             [
-              ["/funds", "106 funds", "Every licensed scheme we found"],
-              ["/brokers", "24 brokers", "Every licensed dealing member"],
-              ["/funding", "23 banks + 26 lenders", "Those in the APR return and the savings and loans register"],
+              ["/funds", `${counts.fundsTracked} funds`, "Every scheme we know of, and what each publishes"],
+              ["/brokers", `${counts.stockbrokersTrading} brokers`, "Every firm trading on the exchange"],
+              ["/funding", `${counts.banks} banks + ${counts.savingsAndLoans} lenders`, "Those in the APR return and the savings and loans register"],
             ] as [string, string, string][]
           ).map(([href, title, note]) => (
             <Link
