@@ -463,7 +463,7 @@ export default async function InvestingFromAbroadPage() {
         <ShareThis
           path="/investing-from-abroad"
           audience="a Ghanaian abroad wondering what they can invest in"
-          message="Most Ghanaian providers do not say whether somebody living abroad can
+          message="Most Ghanaian providers do not say whether somebody living abroad can open an account."
         />
       </div>
 
