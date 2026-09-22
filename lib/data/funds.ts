@@ -2415,3 +2415,128 @@ export async function getLendingHistory(): Promise<{
     })),
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// Site counts — the ONLY place a count shown on the site is defined.
+//
+// WHY THIS EXISTS
+// Every page used to work out its own numbers. /funds decided any published
+// row was "verified" and claimed 37 when six funds showed a figure; the
+// homepage, /what-gets-published and the findings each counted in their own
+// way; and "106 funds", "24 licensed stockbrokers" and "six of 50" were typed
+// into pages and left behind when the data moved. The data was right; the
+// pages disagreed about what to call it.
+//
+// THE RULE
+// A page that shows a count takes it from here. It does not compute its own
+// and it does not type one. If a definition is wrong, it is fixed once, below,
+// and every page changes together. /api/counts returns this object, so the
+// consistency check — and anyone else — can see what the site currently
+// believes.
+//
+// DATED CLAIMS ARE DIFFERENT
+// "Bank of Ghana APR returns, May 2026, all 22 banks" describes one return and
+// stays true forever. Those stay typed. What comes from here is anything that
+// claims to describe the present.
+// ---------------------------------------------------------------------------
+
+export interface SiteCounts {
+  /** Every fund we know of, each counted once across published rows and the directory. */
+  fundsTracked: number;
+  /** Funds showing at least one figure — a charge or a minimum — from the manager's own documents. */
+  fundsVerified: number;
+  /** Tracked funds that are not verified. */
+  fundsAwaiting: number;
+  /** Fund managers checked for a published charge, and how many state one. */
+  fundManagersChecked: number;
+  fundManagersPublishingCharge: number;
+  /** Stockbrokers trading on the Ghana Stock Exchange. The SEC licenses more; see the register snapshot. */
+  stockbrokersTrading: number;
+  /** Banks, by provider type. */
+  banks: number;
+  /** Banks reporting each kind of lending in Bank of Ghana's return. */
+  banksBusinessLending: number;
+  banksPersonalLending: number;
+  banksCorporateLending: number;
+  /** Savings and loans companies, by provider type. */
+  savingsAndLoans: number;
+  /** Companies listed on the exchange — preference shares are the same company, so excluded. */
+  listedCompanies: number;
+  /** Every listed security, preference shares included. */
+  listedSecurities: number;
+  /** Providers checked for what somebody abroad needs, and how many state it. */
+  providersCheckedForAbroadAccess: number;
+  providersStatingAbroadAccess: number;
+}
+
+export async function getSiteCounts(): Promise<SiteCounts> {
+  const [funds, directory, fm, disclosure, provs, lending] = await Promise.all([
+    getPublishedFunds(),
+    getDirectory(),
+    getFundManagerChargeCounts(),
+    getDisclosureCounts(),
+    publicClient().from("providers").select("provider_type"),
+    publicClient()
+      .from("products")
+      .select("asset_class, provider_id, providers!inner ( provider_type )")
+      .eq("market_side", "borrow")
+      .eq("status", "published")
+      .eq("providers.provider_type", "bank")
+      .in("asset_class", ["personal_credit", "sme_credit", "corporate_credit"]),
+  ]);
+  if (provs.error) throw new Error(`getSiteCounts (providers): ${provs.error.message}`);
+  if (lending.error) throw new Error(`getSiteCounts (lending): ${lending.error.message}`);
+
+  // Funds: the same definitions /funds uses, so the two can never disagree.
+  const NOT_A_FUND = ["equity", "commodity", "government_security"];
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const fundRows = funds.filter((f) => !NOT_A_FUND.includes(f.assetClass ?? ""));
+  const unique = [
+    ...new Map(fundRows.map((f) => [`${f.provider.slug}::${f.name}`, f])).values(),
+  ];
+  const verified = unique.filter((f) => f.statedChargesPct || f.minimumGhs);
+  const names = new Set([
+    ...unique.map((f) => norm(f.name)),
+    ...directory.map((d) => norm(d.name)),
+  ]);
+  const verifiedNames = new Set(verified.map((f) => norm(f.name)));
+  const awaiting = [...names].filter((n) => !verifiedNames.has(n)).length;
+
+  // Providers by type.
+  const byType: { [t: string]: number } = {};
+  for (const p of (provs.data ?? []) as { provider_type: string | null }[]) {
+    const t = p.provider_type ?? "untyped";
+    byType[t] = (byType[t] ?? 0) + 1;
+  }
+
+  // Banks by kind of lending reported.
+  const lendingRows = (lending.data ?? []) as { asset_class: string; provider_id: string }[];
+  const banksIn = (cls: string) =>
+    new Set(lendingRows.filter((r) => r.asset_class === cls).map((r) => r.provider_id)).size;
+
+  // Listed shares: "CALPREF · Finance" is the same company as "CAL · Finance".
+  const equities = funds.filter((f) => f.assetClass === "equity");
+  const ticker = (n: string) => n.split(" · ")[0].trim();
+  const companies = equities.filter((f) => !/PREF$/i.test(ticker(f.name)));
+
+  const abroad = disclosure["non_resident_access"] ?? { published: 0, total: 0 };
+
+  return {
+    fundsTracked: names.size,
+    fundsVerified: verified.length,
+    fundsAwaiting: awaiting,
+    fundManagersChecked: fm.total,
+    fundManagersPublishingCharge: fm.published,
+    stockbrokersTrading: byType["broker"] ?? 0,
+    banks: byType["bank"] ?? 0,
+    banksBusinessLending: banksIn("sme_credit"),
+    banksPersonalLending: banksIn("personal_credit"),
+    banksCorporateLending: banksIn("corporate_credit"),
+    savingsAndLoans: byType["savings_loans"] ?? 0,
+    listedCompanies: companies.length,
+    listedSecurities: equities.length,
+    providersCheckedForAbroadAccess: abroad.total,
+    providersStatingAbroadAccess: abroad.published,
+  };
+}
