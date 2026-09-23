@@ -3,6 +3,7 @@ load_provider_charges.py - load charges transcribed from provider documents.
 
 Reads:
     data/provider-docs/provider_doc_fees_2026-09.csv               Republic, Absa, Tesah
+    data/provider-docs/provider_doc_fees_first-atlantic_2026-08.csv First Atlantic (page 2 read from the page image)
     data/provider-docs/first-national-bank-ghana/fnb_homeloan_fees.csv   First National
 
 Writes (only with --apply):
@@ -44,7 +45,10 @@ ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "data" / "provider-docs"
 SCANS = ROOT / "reports" / "scans" / "2026-09"
 
-COMBINED_CSV = DOCS / "provider_doc_fees_2026-09.csv"
+COMBINED_CSVS = [
+    DOCS / "provider_doc_fees_2026-09.csv",
+    DOCS / "provider_doc_fees_first-atlantic_2026-08.csv",
+]
 FNB_CSV = DOCS / "first-national-bank-ghana" / "fnb_homeloan_fees.csv"
 
 READ_ON = "2026-09-23"   # the day these documents were read and transcribed
@@ -90,6 +94,18 @@ DOCUMENTS = {
         "document_date": "2026-09-01",
         "effective_note": "Cover states 'September 2026' (p1); stored as 1 September 2026.",
     },
+    "Tariff_Guide_24th_August_2026.pdf": {
+        "provider": "first-atlantic-bank",
+        "folder": "first-atlantic-bank",
+        "kind": "tariff_guide",
+        "publisher": "First Atlantic Bank PLC",
+        "title": "Tariff Guide (24 August 2026)",
+        "document_date": "2026-08-24",
+        "effective_note": "The guide states no date; its file name ('Tariff_Guide_24th_August_2026') and PDF "
+                          "metadata give 24 August 2026. Page 2 is an image: its figures were transcribed by "
+                          "reading the page image, not extracted text. Rates quoted as a margin over the Ghana "
+                          "Reference Rate (GRR) are stored as the margin; the GRR itself changes monthly.",
+    },
     "Individual-or-Joint-Account-Opening-002.pdf": {
         "provider": "tesah-capital",
         "folder": "tesah-capital",
@@ -103,9 +119,14 @@ DOCUMENTS = {
 }
 
 CATEGORIES = {"mortgage", "credit_card", "personal_loan", "overdraft",
-              "investment_management", "account", "other"}
+              "investment_management", "account", "other",
+              "auto_loan", "business_loan", "guarantee", "savings"}
 RATE_PERIODS = {"one_off", "year", "month", "per_transaction",
-                "per_occurrence", "per_billing_cycle", "not_stated"}
+                "per_occurrence", "per_billing_cycle", "not_stated", "quarter"}
+
+# Product names that describe a whole product line rather than one product; charges
+# under them are stored with an empty product_label (as first loaded on 23 Sept).
+GENERIC_PRODUCTS = {"mortgage", "personal loan", "current account", "individual/joint managed account"}
 COLLECTED_FOR = {"bank", "manager", "government_stamp_duty",
                  "deposit_towards_registration", "not_stated"}
 
@@ -192,11 +213,13 @@ class Rest:
 # ----------------------------------------------------------------------------- rows
 def rows_from_combined() -> list[dict]:
     out = []
-    with open(COMBINED_CSV, encoding="utf-8", newline="") as fh:
+    for path in COMBINED_CSVS:
+      with open(path, encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             category = r["category"].strip()
-            # Credit cards differ by card; other categories apply to the whole product line.
-            label = r["product"].strip() if category == "credit_card" else ""
+            # A named product keeps its name; a whole product line gets an empty label.
+            product = r["product"].strip()
+            label = "" if product.lower() in GENERIC_PRODUCTS else product
             out.append({
                 "source_file": r["source_file"].strip(),
                 "provider": r["provider"].strip(),
@@ -288,7 +311,7 @@ def main():
     mode = "APPLY" if args.apply else "DRY RUN - nothing will be written"
     print(f"load_provider_charges.py  [{mode}]\n")
 
-    for f in (COMBINED_CSV, FNB_CSV):
+    for f in (*COMBINED_CSVS, FNB_CSV):
         if not f.exists():
             sys.exit(f"!! missing input: {f}")
 
