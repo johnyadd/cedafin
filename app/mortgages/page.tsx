@@ -191,13 +191,23 @@ export default async function MortgagesPage() {
                             className="text-[1.35rem] font-bold tabular-nums"
                             style={{ color: C.deep }}
                           >
-                            {m.aprPct !== null ? `${m.aprPct.toFixed(2)}% ` : "— "}
-                            <span
-                              className="text-[11px] font-semibold"
-                              style={{ color: C.muted }}
-                            >
-                              a year
-                            </span>
+                            {/* A published formula (e.g. First Atlantic's "Reference Rate +
+                                at least 8%") is shown as published when there is no single rate. */}
+                            {m.aprPct !== null ? (
+                              <>
+                                {`${m.aprPct.toFixed(2)}% `}
+                                <span
+                                  className="text-[11px] font-semibold"
+                                  style={{ color: C.muted }}
+                                >
+                                  a year
+                                </span>
+                              </>
+                            ) : m.rateBasis ? (
+                              <span className="text-[15px]">{m.rateBasis}</span>
+                            ) : (
+                              "—"
+                            )}
                           </span>
                         </div>
                         {m.caveat && (

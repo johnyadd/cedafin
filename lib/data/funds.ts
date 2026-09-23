@@ -746,6 +746,8 @@ export async function getDirectory(): Promise<DirectoryEntry[]> {
  * would be wrong in the direction that costs someone money.
  */
 export interface LendingRow {
+  /** Published pricing formula when there is no single rate, e.g. "Reference Rate + at least 8%". */
+  rateBasis?: string | null;
   id: string;
   slug: string;
   name: string;
@@ -788,7 +790,7 @@ export async function getLending(
     .from("products")
     .select(
       `id, slug, name, asset_class, lock_in_days, rate_min, rate_max,
-       eligibility_notes,
+       rate_basis, eligibility_notes,
        providers!inner ( trading_name, legal_name, slug ),
        product_fees ( verified_on )`,
     )
@@ -828,6 +830,7 @@ export async function getLending(
             ? Number((apr - lending).toFixed(2))
             : null,
         caveat: (d.eligibility_notes as string | null) ?? null,
+        rateBasis: (d.rate_basis as string | null) ?? null,
         asOf: fees[0]?.verified_on ?? null,
       };
     })
