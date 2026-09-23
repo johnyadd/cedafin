@@ -115,11 +115,11 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "Nobody in Ghana publishes what a mortgage costs — including the only licensed mortgage company",
+          "Only one bank in Ghana publishes both a mortgage rate and its fees",
         source:
-          "Five institutions' own websites and the Bank of Ghana Mortgage Finance register, September 2026",
+          "Twenty-one banks' websites and published documents, and the Bank of Ghana Mortgage Finance register, September 2026",
         why:
-          "Twenty-one Ghanaian bank websites were scanned for a published mortgage rate. One has it. First National Bank, who acquired Ghana Home Loans and are described in the business press as the country's mortgage leaders, publish four home loan products and no rate at all. Bank of Ghana also licenses a category called Mortgage Finance; it has one member, NorthStar Home Finance, who publish four service lines and no price — no rate, no minimum, no loan-to-value, no term. Absa publishes terms and no rate; Stanbic seven products, four currencies and no rate; Fidelity no rate; GCB no mortgage product. The single exception is Republic, which publishes 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — all four on their mortgage calculator, and none on the page describing the mortgage.",
+          "Twenty-one Ghanaian bank websites were scanned for a published mortgage rate, and in September 2026 their published documents were read too, where the sites allowed it. One bank publishes both a rate and its fees: Republic, whose four rates — 18% a year for individuals, 23% for businesses, 13.5% under the government scheme and 11.5% in dollars — sit on its mortgage calculator rather than the page describing the mortgage, and whose fees are in a tariff guide dated March 2026. First National Bank, who acquired Ghana Home Loans and are described in the business press as the country's mortgage leaders, publish a full home-loan fee schedule dated March 2026 and no rate — not in the schedule, their brochure or their application form; their penalty for falling behind is 6% a year above a rate they do not publish. Bank of Ghana also licenses a category called Mortgage Finance; its one member, NorthStar Home Finance, publishes four service lines and no price — no rate, no minimum, no loan-to-value, no term. Absa publishes terms and no rate; Stanbic seven products, four currencies and no rate; Fidelity no rate; GCB no mortgage product.",
         href: "/lenders/republic-bank-ghana",
       },
       {
