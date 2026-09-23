@@ -79,6 +79,7 @@ const TERMS_ORDER = [
   "stanbic-bank-ghana",
   "absa-bank-ghana",
   "fidelity-bank-ghana",
+  "first-atlantic-bank",
 ];
 
 const ASK = [
@@ -236,7 +237,7 @@ export default async function MortgagesPage() {
             <span className="w-1 shrink-0" style={{ background: C.clay }} aria-hidden="true" />
             <div className="flex-1 p-5">
               <p className="text-[15px] font-bold">
-                Twenty-one bank websites, one rate
+                One rate on the websites, a second in the documents
               </p>
               <p
                 className="mt-2.5 text-[14px] leading-relaxed"
@@ -245,7 +246,10 @@ export default async function MortgagesPage() {
                 In September 2026 we read the mortgage and home loan pages of
                 every Ghanaian bank whose site we could reach — twenty-one of
                 twenty-three, following each site&rsquo;s own navigation rather
-                than guessing addresses. One published an interest rate.
+                than guessing addresses. One published an interest rate. Reading
+                the documents the banks publish found a second: First
+                Atlantic&rsquo;s tariff guide prices its Purple Plus Mortgage at
+                the Ghana Reference Rate plus a minimum of 8%.
               </p>
               <p
                 className="mt-2.5 text-[14px] leading-relaxed"
@@ -289,7 +293,7 @@ export default async function MortgagesPage() {
           and the 8% tax on residential rental income.
         </p>
         <p className="mt-3 text-[15.5px] leading-relaxed">
-          Set that against the one published rate. A GH₵800,000 mortgage at 18%
+          Set that against the published rates. A GH₵800,000 mortgage at 18%
           costs about GH₵144,000 in first-year interest. A GH₵1m property
           yielding 9% brings in about GH₵90,000 of rent.
         </p>
@@ -393,7 +397,7 @@ export default async function MortgagesPage() {
           source="the banks' own websites and published documents"
           covering="21 of 23 licensed banks' websites, the documents of those whose sites allowed it, plus the Bank of Ghana Mortgage Finance register"
           checked="September 2026"
-          method="Each bank's site navigation followed from its home page rather than addresses guessed. Rates recorded only where the lender publishes a number; terms recorded as published. Two banks were unreachable and are counted as neither."
+          method="Each bank's site navigation followed from its home page rather than addresses guessed. Rates recorded only where the lender publishes a number or a formula; terms recorded as published. Two banks were unreachable and are counted as neither."
           pageUrl="https://cedafin.com/mortgages"
         />
 
