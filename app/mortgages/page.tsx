@@ -59,9 +59,9 @@ const C = {
 };
 
 export const metadata = {
-  title: "Ghanaian mortgage rates — one bank of twenty-one publishes one",
+  title: "Ghanaian mortgage rates — two banks publish one",
   description:
-    "Republic Bank publishes 18% a year for individuals and 23% for businesses. No other Ghanaian bank publishes a mortgage rate at all, including the market leader and the country's only licensed mortgage finance company.",
+    "Republic Bank publishes 18% a year for individuals and 23% for businesses. First Atlantic Bank publishes the Ghana Reference Rate plus a minimum of 8%. We found no other Ghanaian bank that publishes a mortgage rate, including the market leader and the country's only licensed mortgage finance company.",
   keywords: [
     "mortgage rates Ghana",
     "home loan Ghana",
@@ -118,15 +118,27 @@ export default async function MortgagesPage() {
             letterSpacing: "-0.02em",
           }}
         >
-          One bank of twenty-one publishes a mortgage rate
+          Two Ghanaian banks publish a mortgage rate
         </h1>
         <p
           className="mt-5 text-[16.5px] leading-relaxed"
           style={{ color: C.muted }}
         >
           We read every Ghanaian bank&rsquo;s own website looking for the price
-          of a home loan. One had it. Here is what they say, what everybody
-          else says instead, and what it means for the arithmetic of buying.
+          of a home loan and, in September 2026, the documents they publish.
+          Two have it: Republic on its mortgage calculator, and First Atlantic
+          in its tariff guide, as a margin over the Ghana Reference Rate. Here
+          is what they say, what everybody else says instead, and what it
+          means for the arithmetic of buying.
+        </p>
+        <p
+          className="mt-3 text-[13px] leading-relaxed"
+          style={{ color: C.muted }}
+        >
+          Corrected 23 September 2026: this page said one bank publishes a
+          mortgage rate. First Atlantic Bank&rsquo;s tariff guide, read that
+          day, publishes one for its Purple Plus Mortgage: the Ghana Reference
+          Rate plus a minimum of 8%, or 12% in dollars.
         </p>
 
         {/* The rates. From the database, so a second bank appears here without
@@ -363,13 +375,13 @@ export default async function MortgagesPage() {
         <ShareThis
           path="/mortgages"
           audience="somebody buying a home in Ghana"
-          message="One Ghanaian bank of twenty-one publishes a mortgage rate. The market leader is not it."
+          message="Two Ghanaian banks publish a mortgage rate. The market leader is not one of them."
         />
 
         <DataProvenance
           title="Ghanaian mortgage rates and published terms"
-          source="the banks' own websites"
-          covering="21 of 23 licensed banks, plus the Bank of Ghana Mortgage Finance register"
+          source="the banks' own websites and published documents"
+          covering="21 of 23 licensed banks' websites, the documents of those whose sites allowed it, plus the Bank of Ghana Mortgage Finance register"
           checked="September 2026"
           method="Each bank's site navigation followed from its home page rather than addresses guessed. Rates recorded only where the lender publishes a number; terms recorded as published. Two banks were unreachable and are counted as neither."
           pageUrl="https://cedafin.com/mortgages"
