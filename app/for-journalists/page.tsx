@@ -89,7 +89,7 @@ const FINDINGS: { claim: string; detail: string; href: string }[] = [
   {
     claim: "The alternative to a bank costs more, not less",
     detail:
-      "Of 26 licensed savings and loans companies checked in September 2026, two publish a lending rate. The one unambiguous figure is 42% on a public sector loan, plus 2% processing and 1% monitoring — eight points above the dearest of the 22 banks.",
+      "Of 26 licensed savings and loans companies checked in September 2026, two publish a lending rate. The one unambiguous figure is 42% on a public sector loan, plus 2% processing and 1% monitoring. The one bank that publishes a price for the same kind of loan, First Atlantic, charges 36.5% a year on payroll-deducted loans to public servants, with heavier fees.",
     href: "/funding#savings-loans",
   },
   {

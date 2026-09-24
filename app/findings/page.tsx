@@ -124,9 +124,9 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "A savings and loans company publishes 42% on a public sector loan — eight points above the dearest bank",
-        source: "Adehyeman Savings and Loans' own website, September 2026",
-        why: "A business refused by a bank may assume the alternative is gentler. On the only clear published figure, it costs materially more.",
+          "A savings and loans company charges 42% on a public sector loan; the one bank that publishes a price for the same loan charges 36.5%",
+        source: "Adehyeman Savings and Loans' own website, and First Atlantic Bank's tariff guide dated 24 August 2026",
+        why: "Corrected 24 September 2026: this finding said eight points above the dearest bank, which compared it with a small-business loan average rather than the price of this kind of loan. First Atlantic Bank prices loans to public servants repaid through the government payroll at 36.5% a year, so on interest the gap is 5.5 points. First Atlantic's fees are heavier — 2.5% upfront, 3% of every monthly repayment and 1% management, against Adehyeman's 2% and 1% — so the gap in total cost is smaller, and neither publishes enough to say by how much.",
         href: "/funding#savings-loans",
       },
     ],

@@ -740,12 +740,14 @@ export default async function FundingPage({
 
   WHAT THE CHECK FOUND, AND WHY IT MATTERS
   Two of twenty-three working websites publish a lending rate. The one that
-  publishes an unambiguous figure charges 42% — eight percentage points above
-  the dearest bank on this page.
+  publishes an unambiguous figure charges 42% — 5.5 points above the one bank
+  that publishes a price for the same kind of loan (First Atlantic, 36.5%,
+  with heavier fees). Until 24 September 2026 this said eight points above
+  the dearest bank, which compared it with a small-business loan average.
 
   That is the finding. A business turned down by a bank may assume the
   alternative is more accessible and therefore, somehow, more reasonable. On
-  the only published evidence, it is considerably dearer.
+  interest it is dearer; on total cost the published evidence does not say.
 
   WHY JINS IS SHOWN WITH ITS AMBIGUITY RATHER THAN RESOLVED
   Their FAQ gives 3.5% for business loans and does not say per what. Monthly is
@@ -810,13 +812,18 @@ export default async function FundingPage({
         className="mt-2.5 text-[13.5px] leading-relaxed"
         style={{ color: C.muted }}
       >
-        That is{" "}
+        On interest alone that is{" "}
         <strong style={{ color: C.ink }}>
-          eight percentage points above the dearest bank
-        </strong>{" "}
-        compared above, before its fees are counted. A business refused by a
-        bank may assume the alternative is easier and therefore gentler. On the
-        only clear published figure, it is not.
+          5.5 percentage points above the one bank that publishes a price for
+          the same kind of loan
+        </strong>
+        : First Atlantic Bank charges 36.5% a year on loans to public servants
+        repaid through the government payroll. Its fees are heavier (2.5%
+        upfront, 3% of every monthly repayment and 1% management), so the gap
+        in total cost is smaller, and neither publishes enough to say by how
+        much. Until 24 September 2026 this said eight points above the dearest
+        bank compared above, which is a small-business loan average rather
+        than the price of this kind of loan.
       </p>
     </div>
 
@@ -852,9 +859,9 @@ export default async function FundingPage({
             monitoring
           </p>
           <p className="mt-1 text-[12px]" style={{ color: C.muted }}>
-            The most complete lending disclosure we have found from any
-            Ghanaian institution, bank or otherwise — a rate and an itemised
-            fee breakdown, in public, without asking.
+            A rate and an itemised fee breakdown, in public, without asking.
+            Among banks, First Atlantic&rsquo;s tariff guide does the same for a
+            dozen loans, and Republic for its mortgages.
           </p>
         </div>
       </div>
