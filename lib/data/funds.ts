@@ -2554,3 +2554,102 @@ export async function getSiteCounts(): Promise<SiteCounts> {
     providersStatingAbroadAccess: abroad.published,
   };
 }
+
+/**
+ * The Ghana Reference Rate in force now: the latest GH_GRR value in
+ * macro_series (loaded by fetch_grr.py from the Ghana Association of Banks).
+ * Returns null rather than throwing, so a page showing worked rates still
+ * renders without the working if the series cannot be read.
+ */
+export async function getLatestGrr(): Promise<{ asOf: string; value: number } | null> {
+  const { data, error } = await publicClient()
+    .from("macro_series")
+    .select("as_of, value")
+    .eq("series_code", "GH_GRR")
+    .order("as_of", { ascending: false })
+    .limit(1);
+  if (error || !data || data.length === 0) return null;
+  return { asOf: String(data[0].as_of), value: Number(data[0].value) };
+}
+
+/**
+ * Charges as printed in providers' tariff guides (provider_charges), for one
+ * category such as "credit_card". Each row carries the document's own wording
+ * and its source (title, url, date), so a page can show the price exactly as
+ * the bank prints it and link to where it says so.
+ *
+ * Sources are fetched separately: if they cannot be read, charges still show.
+ */
+export interface ProviderCharge {
+  providerSlug: string;
+  providerName: string;
+  category: string;
+  productLabel: string;
+  chargeKey: string;
+  chargeName: string;
+  rate: number | null;
+  ratePeriod: string | null;
+  rateBasis: string | null;
+  flatMinor: number | null;
+  flatCurrency: string | null;
+  limitNote: string | null;
+  wording: string;
+  page: number | null;
+  verifiedOn: string;
+  sourceTitle: string | null;
+  sourceUrl: string | null;
+  documentDate: string | null;
+}
+
+export async function getProviderCharges(category: string): Promise<ProviderCharge[]> {
+  const { data, error } = await publicClient()
+    .from("provider_charges")
+    .select(
+      `product_label, category, charge_key, charge_name, rate, rate_period, rate_basis,
+       flat_minor, flat_currency, limit_note, wording, page, source_id, verified_on,
+       providers!inner ( trading_name, legal_name, slug )`,
+    )
+    .eq("category", category);
+  if (error) throw new Error(`getProviderCharges: ${error.message}`);
+  const rows = (data ?? []) as Record<string, unknown>[];
+
+  const ids = [...new Set(rows.map((r) => String(r.source_id)))];
+  const sources = new Map<string, { title: string | null; url: string | null; document_date: string | null }>();
+  if (ids.length > 0) {
+    const s = await publicClient().from("sources").select("id, title, url, document_date").in("id", ids);
+    if (!s.error) {
+      for (const x of (s.data ?? []) as Record<string, unknown>[]) {
+        sources.set(String(x.id), {
+          title: (x.title as string | null) ?? null,
+          url: (x.url as string | null) ?? null,
+          document_date: (x.document_date as string | null) ?? null,
+        });
+      }
+    }
+  }
+
+  return rows.map((r) => {
+    const prov = r.providers as { trading_name: string | null; legal_name: string; slug: string } | null;
+    const src = sources.get(String(r.source_id));
+    return {
+      providerSlug: prov?.slug ?? "",
+      providerName: prov?.trading_name ?? prov?.legal_name ?? "Unknown",
+      category: String(r.category),
+      productLabel: String(r.product_label ?? ""),
+      chargeKey: String(r.charge_key),
+      chargeName: String(r.charge_name),
+      rate: r.rate === null || r.rate === undefined ? null : Number(r.rate),
+      ratePeriod: (r.rate_period as string | null) ?? null,
+      rateBasis: (r.rate_basis as string | null) ?? null,
+      flatMinor: r.flat_minor === null || r.flat_minor === undefined ? null : Number(r.flat_minor),
+      flatCurrency: (r.flat_currency as string | null) ?? null,
+      limitNote: (r.limit_note as string | null) ?? null,
+      wording: String(r.wording),
+      page: r.page === null || r.page === undefined ? null : Number(r.page),
+      verifiedOn: String(r.verified_on),
+      sourceTitle: src?.title ?? null,
+      sourceUrl: src?.url ?? null,
+      documentDate: src?.document_date ?? null,
+    };
+  });
+}
