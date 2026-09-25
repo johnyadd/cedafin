@@ -69,10 +69,16 @@ const INTEREST_KEYS = ROWS[0].keys;
 
 const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 
+/**
+ * A guide dated only by month ("September 2026") is stored as the 1st of that
+ * month. Showing "1 September 2026" would claim a day the guide never states,
+ * so a 1st is shown as month and year only.
+ */
 function fmtDate(iso: string | null): string | null {
   if (!iso) return null;
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", {
-    day: "numeric",
+  const d = new Date(`${iso}T00:00:00Z`);
+  return d.toLocaleDateString("en-GB", {
+    ...(iso.endsWith("-01") ? {} : { day: "numeric" as const }),
     month: "long",
     year: "numeric",
     timeZone: "UTC",
