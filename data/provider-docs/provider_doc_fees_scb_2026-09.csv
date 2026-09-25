@@ -1,0 +1,50 @@
+provider,source_file,doc_date,page,category,product,fee_key,fee_name,applies_when,rate,rate_period,rate_basis,fixed_amount,currency,minimum_or_cap,collected_for,document_wording
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Standard Current Account,opening_balance,Initial Opening Balance,,,one_off,,1000,GHS,,bank,"1,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Standard Current Account,service_charge,Monthly Service Charge,,,month,,25,GHS,,bank,25
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Access 247,opening_balance,Initial Opening Balance,,,one_off,,500,GHS,,bank,500
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Access 247,service_charge,Monthly Service Charge,,,month,,25,GHS,,bank,25
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,e-Current Account,opening_balance,Initial Opening Balance,,,one_off,,2000,GHS,,bank,"2,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,e-Current Account,service_charge,Monthly Service Charge,,,month,,25,GHS,,bank,25
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,e-Youth Account,opening_balance,Initial Opening Balance,,,one_off,,1000,GHS,,bank,"1,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,e-Youth Account,minimum_balance,Minimum Balance,,,not_stated,,500,GHS,,bank,500
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,e-Youth Account,service_charge,Monthly Service Charge,,,month,,25,GHS,,bank,25
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Premium Current Account,opening_balance,Initial Opening Balance,Priority Banking,,one_off,,50000,GHS,,bank,"50,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Premium Current Account,service_charge,Monthly Service Charge,"Priority Banking; no monthly service charge for average balances above GHS 300,000",,month,,80,GHS,,bank,"80 (* No Monthly Service Charge for average balances above GHS 300,000)"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Diva Club Current Account,opening_balance,Initial Opening Balance,Priority Banking,,one_off,,50000,GHS,,bank,"50,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Diva Club Current Account,service_charge,Monthly Service Charge,"Priority Banking; no monthly service charge for average balances above GHS 300,000",,month,,80,GHS,,bank,"80 (* No Monthly Service Charge for average balances above GHS 300,000)"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Savings Plus,opening_balance,Initial Opening Balance,,,one_off,,4000,GHS,,bank,"4,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Savings Plus,minimum_balance,Minimum Balance,,,not_stated,,2000,GHS,,bank,"2,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Savings Plus,service_charge,Monthly Service Charge,,0,month,,,,,bank,FREE
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,My Dream Account,opening_balance,Initial Opening Balance,,,one_off,,2000,GHS,,bank,"2,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,My Dream Account,minimum_balance,Minimum Balance,,,not_stated,,500,GHS,,bank,500
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,My Dream Account,service_charge,Monthly Service Charge,,0,month,,,,,bank,FREE
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,e-Savings Account,opening_balance,Initial Opening Balance,,,one_off,,500,GHS,,bank,500
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,e-Savings Account,minimum_balance,Minimum Balance,,,not_stated,,100,GHS,,bank,100
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,e-Savings Account,service_charge,Monthly Service Charge,,0,month,,,,,bank,FREE
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Premium Savings Account,opening_balance,Initial Opening Balance,,,one_off,,50000,GHS,,bank,"50,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Premium Savings Account,minimum_balance,Minimum Balance,,,not_stated,,10000,GHS,,bank,"10,000"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,Premium Savings Account,service_charge,Monthly Service Charge,,0,month,,,,,bank,FREE
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,savings,My Dream Account,withdrawal_rule,Branch withdrawals,,,,,,,,bank,"After 4 branch withdrawals, customer forfeits interest for the month"
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Gold,issuance,Card issuance fee,,,one_off,,40,GHS,,bank,40
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Gold,maintenance,Maintenance fee per month,,,month,,20,GHS,,bank,20
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Platinum,issuance,Card issuance fee,,,one_off,,200,GHS,,bank,200
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Platinum,maintenance,Maintenance fee per month,,,month,,30,GHS,,bank,30
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Infinite (by invitation),issuance,Card issuance fee,,,one_off,,300,GHS,,bank,300
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa Infinite (by invitation),maintenance,Maintenance fee per month,,,month,,50,GHS,,bank,50
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa debit cards (all tiers),atm_other_domestic,Other Bank ATMs (Domestic),Per transaction,,per_transaction,,10,GHS,,bank,GHS 10
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa debit cards (all tiers),atm_international,Other Bank ATMs (International),Per transaction,,per_transaction,,150,GHS,,bank,GHS 150 / $15 / €15 / £15
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa debit cards (all tiers),balance_enquiry_other,Balance enquiry on non-SCB ATMs,,,per_transaction,,3,GHS,,bank,GHS 3 / $0.5 / €0.5 / £0.5
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa debit cards (all tiers),foreign_transactions,Optional Issuer Fee (OIF),,0.06,per_transaction,amount,,,,bank,Gold 6% / Platinum 6% / Infinite 6%
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,debit_card,Visa debit cards (all tiers),cardless_withdrawal,Cardless Card withdrawal,Transactions above GHS 300,,per_transaction,,2,GHS,,bank,GHS 2 on transactions above GHS 300
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,4,personal_loan,Personal Loans,arrangement_fee_new,Arrangement Fee (Spread over loan term) - New Loans,,0.025,one_off,not_stated,,,,bank,2.5%
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,4,personal_loan,Personal Loans,arrangement_fee_topup,Arrangement Fee (Spread over loan term) - Top Ups,,0.02,one_off,not_stated,,,,bank,2.0%
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,4,personal_loan,Personal Loans,early_repayment,Early Settlement Fee,,0.0025,one_off,loan_balance,,,,bank,0.25% (on loan balance)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,4,personal_loan,Personal Loans,late_payment,Late payment fee,,,per_occurrence,,50,GHS,,bank,GHS 50
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_1,Monthly Service Fee - FEA & FCA,Average credit balance <5k,,month,,7,USD,,bank,<5k: 7 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_2,Monthly Service Fee - FEA & FCA,Average credit balance 5k - 10k,,month,,20,USD,,bank,5k - 10k: 20 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_3,Monthly Service Fee - FEA & FCA,Average credit balance >10k - 25k,,month,,35,USD,,bank,>10k - 25k: 35 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_4,Monthly Service Fee - FEA & FCA,Average credit balance >25k - 50k,,month,,60,USD,,bank,>25k - 50k: 60 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_5,Monthly Service Fee - FEA & FCA,Average credit balance >50k - 100k,,month,,80,USD,,bank,>50k - 100k: 80 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_6,Monthly Service Fee - FEA & FCA,Average credit balance >100k - 200k,,month,,100,USD,,bank,>100k - 200k: 100 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,3,account,Foreign currency current account (FEA & FCA),fx_service_band_7,Monthly Service Fee - FEA & FCA,Average credit balance >200k,,month,,200,USD,,bank,>200k: 200 (USD/EUR/GBP)
+standard-chartered-bank-ghana,gh-scb-tariff.pdf,,4,account,Cheques,stopped_cheque,Stopped Cheque (GHS),,,per_occurrence,,40,GHS,,bank,40

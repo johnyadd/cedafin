@@ -5,7 +5,7 @@ import DataProvenance from "@/components/DataProvenance";
 import Footer from "@/components/Footer";
 import ShareThis from "@/components/ShareThis";
 import { BRAND } from "@/lib/brand";
-import { getLending } from "@/lib/data/funds";
+import { getLatestGrr, getLending } from "@/lib/data/funds";
 
 /**
  * app/mortgages/page.tsx — what a Ghanaian mortgage costs, and why almost
@@ -93,7 +93,7 @@ const ASK = [
 export const revalidate = 3600;
 
 export default async function MortgagesPage() {
-  const all = await getLending();
+  const [all, grr] = await Promise.all([getLending(), getLatestGrr()]);
   const mortgages = all
     .filter((r) => r.category === "mortgage")
     .sort((a, b) => (a.aprPct ?? 99) - (b.aprPct ?? 99));
@@ -211,6 +211,24 @@ export default async function MortgagesPage() {
                             )}
                           </span>
                         </div>
+                        {/* A formula rate worked out from the GRR in force now, dated. */}
+                        {(() => {
+                          const f = m.rateBasis?.match(/Reference Rate \+ at least (\d+(?:\.\d+)?)%/);
+                          if (m.aprPct !== null || !f || !grr) return null;
+                          const g = grr.value * 100;
+                          const when = new Date(`${grr.asOf}T00:00:00Z`).toLocaleDateString("en-GB", {
+                            day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+                          });
+                          return (
+                            <p
+                              className="mt-1.5 text-[12.5px] font-semibold leading-relaxed"
+                              style={{ color: C.deep }}
+                            >
+                              At the Ghana Reference Rate of {g.toFixed(2)}% effective {when},
+                              at least {(g + Number(f[1])).toFixed(2)}% a year.
+                            </p>
+                          );
+                        })()}
                         {m.caveat && (
                           <p
                             className="mt-1.5 text-[12.5px] leading-relaxed"

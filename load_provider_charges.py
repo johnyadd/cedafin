@@ -48,6 +48,8 @@ SCANS = ROOT / "reports" / "scans" / "2026-09"
 COMBINED_CSVS = [
     DOCS / "provider_doc_fees_2026-09.csv",
     DOCS / "provider_doc_fees_first-atlantic_2026-08.csv",
+    DOCS / "provider_doc_fees_2026-09b.csv",
+    DOCS / "provider_doc_fees_scb_2026-09.csv",
 ]
 FNB_CSV = DOCS / "first-national-bank-ghana" / "fnb_homeloan_fees.csv"
 
@@ -106,6 +108,62 @@ DOCUMENTS = {
                           "reading the page image, not extracted text. Rates quoted as a margin over the Ghana "
                           "Reference Rate (GRR) are stored as the margin; the GRR itself changes monthly.",
     },
+    "Tariff-Guide-2026.pdf": {
+        "provider": "united-bank-for-africa-ghana", "folder": "united-bank-for-africa-ghana",
+        "kind": "tariff_guide", "publisher": "United Bank for Africa (Ghana)",
+        "title": "Tariff Guide 2026",
+        "url": "https://www.ubaghana.com/wp-content/uploads/sites/14/2026/06/Tariff-Guide-2026.pdf",
+        "document_date": "2026-06-16",
+        "effective_note": "The guide states only '2026'. PDF metadata (modified 16 June 2026) and its upload path "
+                          "(June 2026) date it; stored as 16 June 2026. Interest rates are published as the Ghana "
+                          "Reference Rate plus a risk premium; stored as the margin.",
+    },
+    "2026-tariff-guide-july-2026-update.pdf": {
+        "provider": "zenith-bank-ghana", "folder": "zenith-bank-ghana",
+        "kind": "tariff_guide", "publisher": "Zenith Bank (Ghana)",
+        "title": "2026 Tariff Guide (July 2026 update)",
+        "url": "https://www.zenithbank.com.gh/media/bmkfvuui/2026-tariff-guide-july-2026-update.pdf",
+        "document_date": "2026-07-21",
+        "effective_note": "File named '2026 tariff guide, July 2026 update'; PDF modified 21 July 2026; but every page "
+                          "is headed 'Zenith Bank Tariff Guide 2025' and '2025 Charges'. Stored as 21 July 2026.",
+    },
+    "1787228731_PBL TARIFF GUIDE - 15th December 2025.pdf": {
+        "provider": "prudential-bank", "folder": "prudential-bank",
+        "kind": "tariff_guide", "publisher": "Prudential Bank",
+        "title": "PBL Tariff Guide (effective 15 December 2025)",
+        "url": "https://www.prudentialbank.com.gh/tariff_guide",
+        "document_date": "2025-12-15",
+        "effective_note": "Cover states 'Effective 15th December 2025'. Prudential's site also mentions a version "
+                          "dated 1 June 2026, not yet retrieved. Downloaded by hand; url is the page it is listed on.",
+    },
+    "GTBank-Tariff-Guide-Portrait-25.3.2026-GTCO.pdf": {
+        "provider": "guaranty-trust-bank-ghana", "folder": "guaranty-trust-bank-ghana",
+        "kind": "tariff_guide", "publisher": "Guaranty Trust Bank (Ghana)",
+        "title": "GTBank Tariff Guide (25 March 2026)",
+        "url": "https://www.gtbghana.com/help-centre/download-forms",
+        "document_date": "2026-03-25",
+        "effective_note": "The guide states no date; its file name gives 25.3.2026. Downloaded by hand; url is the "
+                          "page it is listed on. Pages read from the page images.",
+    },
+    "CBG-Tariff-Guide-2026-03-25.pdf": {
+        "provider": "consolidated-bank-ghana", "folder": "consolidated-bank-ghana",
+        "kind": "tariff_guide", "publisher": "Consolidated Bank Ghana",
+        "title": "CBG Tariff Guide, 2026 Pricing (effective 25 March 2026)",
+        "url": "https://www.cbg.com.gh/documents/downloads",
+        "document_date": "2026-03-25",
+        "effective_note": "Cover states 'Effective 25th March, 2026'. Its text layer is scrambled; read from the page "
+                          "images and decoded text. Page numbers recorded only where confirmed. Downloaded by hand.",
+    },
+    "gh-scb-tariff.pdf": {
+        "provider": "standard-chartered-bank-ghana", "folder": "standard-chartered-bank-ghana",
+        "kind": "tariff_guide", "publisher": "Standard Chartered Bank Ghana",
+        "title": "Service and Price Guide (SCBGH/TARIFF/1/2026)",
+        "url": "https://av.sc.com/gh/content/docs/gh-scb-tariff.pdf",
+        "document_date": "2026-09-01",
+        "effective_note": "Reference SCBGH/TARIFF/1/2026; first pages state 'September 2026' (stored as 1 September 2026); "
+                          "PDF modified 20 August 2026. Retail (Emerging Affluent and Priority) charges transcribed; "
+                          "SME and corporate sections not loaded.",
+    },
     "Individual-or-Joint-Account-Opening-002.pdf": {
         "provider": "tesah-capital",
         "folder": "tesah-capital",
@@ -120,7 +178,7 @@ DOCUMENTS = {
 
 CATEGORIES = {"mortgage", "credit_card", "personal_loan", "overdraft",
               "investment_management", "account", "other",
-              "auto_loan", "business_loan", "guarantee", "savings"}
+              "auto_loan", "business_loan", "guarantee", "savings", "debit_card"}
 RATE_PERIODS = {"one_off", "year", "month", "per_transaction",
                 "per_occurrence", "per_billing_cycle", "not_stated", "quarter"}
 
@@ -331,7 +389,7 @@ def main():
             "path": path,
             "storage_path": f"data/provider-docs/{meta['folder']}/{name}",
             "sha256": sha256(path),
-            "url": urls.get(name),
+            "url": meta.get("url") or urls.get(name),
             "retrieved_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
         }
 
