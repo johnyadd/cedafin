@@ -66,6 +66,7 @@ const SECTIONS: { heading: string; links: [string, string][] }[] = [
       ["/funding", "Compare business credit"],
       ["/funding/match", "Find funding that fits"],
       ["/mortgages", "Mortgages"],
+      ["/credit-cards", "Credit cards"],
       ["/lending-rates", "Lending rates over time"],
       ["/loan-calculator", "Loan calculator"],
     ],
