@@ -1,0 +1,23 @@
+provider,slug,website,host,identity,scanned_at,home_status,outcome,reason,pages_read,docs_found,docs_kept,capped,docs_downloaded,docs_failed,docs_no_text,hits_rate,hits_mortgage,hits_commission,hits_fee
+Absa Bank Ghana,absa-bank-ghana,https://www.absa.com.gh,www.absa.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,published,,20,47,20,True,19,1,0,7,0,3,12
+Access Bank Ghana,access-bank-ghana,http://www.ghana.accessbankplc.com,www.ghana.accessbankplc.com,cedafinbot,2026-09-26T11:56:04Z,0,unreachable,URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-,0,0,0,False,0,0,0,0,0,0,0
+Agricultural Development Bank,agricultural-development-bank,http://www.agricbank.com,www.agricbank.com,cedafinbot,2026-09-26T11:56:04Z,403,refused,HTTP 403,0,0,0,False,0,0,0,0,0,0,0
+Bank of Africa Ghana,bank-of-africa-ghana,http://www.boaghana.com,www.boaghana.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,1,1,False,1,0,0,0,0,0,0
+CalBank,calbank,http://www.calbank.net,www.calbank.net,cedafinbot,2026-09-26T11:56:04Z,200,published,,20,43,20,True,20,0,1,3,0,0,1
+Consolidated Bank Ghana,consolidated-bank-ghana,http://www.cbg.com.gh,www.cbg.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,0,0,False,0,0,0,0,0,0,0
+Ecobank Ghana,ecobank-ghana,http://www.ecobank.com,www.ecobank.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,1,1,False,1,0,1,0,0,0,0
+Fidelity Bank Ghana,fidelity-bank-ghana,http://www.fidelitybank.com.gh,www.fidelitybank.com.gh,cedafinbot,2026-09-26T11:56:04Z,307,unreachable,HTTP 307,0,0,0,False,0,0,0,0,0,0,0
+First Atlantic Bank,first-atlantic-bank,http://www.firstatlanticbank.com.gh,www.firstatlanticbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,published,,18,53,20,True,18,2,3,2,0,0,3
+First Bank Ghana,first-bank-ghana,http://www.fbnbankghana.com,www.fbnbankghana.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,0,2,2,False,2,0,2,0,0,0,0
+First National Bank (Ghana),first-national-bank-ghana,http://www.firstnationalbank.com.gh,www.firstnationalbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,published,,20,15,15,False,15,0,0,8,0,7,9
+GCB Bank,gcb-bank,http://www.gcbbank.com.gh,www.gcbbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,307,unreachable,HTTP 307,0,0,0,False,0,0,0,0,0,0,0
+Guaranty Trust Bank (Ghana),guaranty-trust-bank-ghana,http://www.gtbghana.com,www.gtbghana.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,1,1,False,0,1,0,0,0,0,0
+National Investment Bank,national-investment-bank,http://www.nib-ghana.com,www.nib-ghana.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,9,0,0,False,0,0,0,0,0,0,0
+OmniBSIC Bank Ghana,omnibsic-bank-ghana,http://www.omnibsic.com.gh,www.omnibsic.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,13,13,False,13,0,2,0,0,0,0
+Prudential Bank,prudential-bank,http://www.prudentialbank.com.gh,www.prudentialbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,28,20,True,0,20,0,0,0,0,0
+Republic Bank (Ghana),republic-bank-ghana,http://www.republicghana.com,www.republicghana.com,cedafinbot,2026-09-26T11:56:04Z,200,published,,11,70,20,True,20,0,0,9,3,3,3
+Societe General Ghana,societe-general-ghana,http://www.societegenerale.com.gh,www.societegenerale.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,56,20,True,12,8,0,0,0,0,0
+Stanbic Bank Ghana,stanbic-bank-ghana,http://www.stanbicbank.com.gh,www.stanbicbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,0,unreachable,URLError: <urlopen error [Errno 11001] getaddrinfo failed>,0,0,0,False,0,0,0,0,0,0,0
+Standard Chartered Bank (Ghana),standard-chartered-bank-ghana,http://www.sc.com/gh,www.sc.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,0,0,0,False,0,0,0,0,0,0,0
+United Bank for Africa (Ghana),united-bank-for-africa-ghana,http://www.ubagroup.com,www.ubagroup.com,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,0,0,0,False,0,0,0,0,0,0,0
+Zenith Bank (Ghana),zenith-bank-ghana,http://www.zenithbank.com.gh,www.zenithbank.com.gh,cedafinbot,2026-09-26T11:56:04Z,200,not_found,,20,0,0,False,0,0,0,0,0,0,0
