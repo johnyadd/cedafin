@@ -1,0 +1,13 @@
+provider,source_file,doc_date,page,category,product,fee_key,fee_name,applies_when,rate,rate_period,rate_basis,fixed_amount,currency,minimum_or_cap,collected_for,document_wording
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Personal account,opening,Account Opening,,0,one_off,,,,,bank,Free
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Personal account,maintenance,Account Maintenance Charge: Personal,,,not_stated,,30,GHS,,bank,GH¢ 30 flat
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Statements,e_statement,Monthly e-statement,,0,month,,,,,bank,Free
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Cheques,returned_cheque_offence_1,Returned Cheque: Lack Of Funds,1st offence,0.1,per_occurrence,face_value,,,,bank,10% of Face-value for 1st Offence
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Cheques,returned_cheque_offence_2,Returned Cheque: Lack Of Funds,2nd offence,0.15,per_occurrence,face_value,,,,bank,15% of Face-value for 2nd Offence
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Cheques,returned_cheque_offence_3,Returned Cheque: Lack Of Funds,3rd offence,0.2,per_occurrence,face_value,,,,bank,20% of Face-value for 3rd Offence
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,debit_card,Cedi Mastercard and Visa card,issuance,Card Issuance fee,,,one_off,,40,GHS,,bank,Card Issuance fee GH¢40
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,debit_card,Cedi Mastercard and Visa card,maintenance,Maintenance fee,,,month,,10,GHS,,bank,Maintenance fee GH¢10(monthly)
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,debit_card,Cedi Mastercard and Visa card,atm_other_local,Other bank's ATM (Ghana),,0.01,per_transaction,amount,,,cap GHS 25,bank,1% capped at Gh¢25
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,debit_card,Cedi Mastercard and Visa card,atm_international,International ATM withdrawal,,0.03,per_transaction,amount,,,,bank,International ATM withdrawal 3%
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,debit_card,Cedi Mastercard and Visa card,fx_conversion,Currency Conversion (OIF),,0.075,per_transaction,amount,,,,bank,Currency Conversion (OIF) 7.5%
+first-bank-ghana,2026-FirstBank-Ghana-Tariff-Guide.pdf,,,account,Foreign currency account (FCA),fx_withdrawal,Withdrawal from Foreign Currency Account,Fed with off-shore cheque & transfer/remittance,0.06,per_transaction,amount,,,,bank,6.00%

@@ -50,6 +50,7 @@ COMBINED_CSVS = [
     DOCS / "provider_doc_fees_first-atlantic_2026-08.csv",
     DOCS / "provider_doc_fees_2026-09b.csv",
     DOCS / "provider_doc_fees_scb_2026-09.csv",
+    DOCS / "provider_doc_fees_firstbank_2026.csv",
 ]
 FNB_CSV = DOCS / "first-national-bank-ghana" / "fnb_homeloan_fees.csv"
 
@@ -163,6 +164,19 @@ DOCUMENTS = {
         "effective_note": "Reference SCBGH/TARIFF/1/2026; first pages state 'September 2026' (stored as 1 September 2026); "
                           "PDF modified 20 August 2026. Retail (Emerging Affluent and Priority) charges transcribed; "
                           "SME and corporate sections not loaded.",
+    },
+    "2026-FirstBank-Ghana-Tariff-Guide.pdf": {
+        "provider": "first-bank-ghana", "folder": "first-bank-ghana",
+        "remote": True,
+        "read_at": "2026-09-25T00:00:00Z",
+        "kind": "tariff_guide", "publisher": "FirstBank Ghana",
+        "title": "2026 Tariff Guide",
+        "url": "https://www.fbnbankghana.com/wp-content/uploads/2026/03/2026-FirstBank-Ghana-Tariff-Guide.pdf",
+        "document_date": "2026-03-01",
+        "effective_note": "Read remotely by Cedafin on 25 September 2026; no archive copy, because the address now "
+                          "redirects to firstbankgroup.com/gh from our network. The guide is titled '2026 Tariff Guide' "
+                          "and was uploaded in March 2026 (its web address); stored as March 2026. Only rows whose "
+                          "text is unambiguous were loaded; the loans table's columns did not come through cleanly.",
     },
     "Individual-or-Joint-Account-Opening-002.pdf": {
         "provider": "tesah-capital",
@@ -380,6 +394,15 @@ def main():
     urls = scan_urls()
     docs: dict[str, dict] = {}
     for name, meta in DOCUMENTS.items():
+        if meta.get("remote"):
+            # Read by Cedafin from the publisher's site; no copy on this machine
+            # (the site refuses or redirects downloads from our network).
+            if not meta.get("url"):
+                errs.append(f"remote document has no url: {name}")
+                continue
+            docs[name] = {**meta, "path": None, "storage_path": None, "sha256": None,
+                          "url": meta["url"], "retrieved_at": meta.get("read_at")}
+            continue
         path = DOCS / meta["folder"] / name
         if not path.exists():
             errs.append(f"document file not found: {path}")
@@ -415,12 +438,18 @@ def main():
         by_doc.setdefault(r["source_file"], []).append(r)
 
     for name, d in docs.items():
-        existing = rest.get("sources?select=id&content_sha256=eq." + d["sha256"]) or []
+        if d["sha256"]:
+            existing = rest.get("sources?select=id&content_sha256=eq." + d["sha256"]) or []
+        else:
+            q = "sources?select=id&url=eq." + urllib.parse.quote(d["url"], safe="")
+            if d.get("document_date"):
+                q += "&document_date=eq." + d["document_date"]
+            existing = rest.get(q) or []
         d["source_id"] = existing[0]["id"] if existing else None
         n = len(by_doc.get(name, []))
         cats = sorted({r["category"] for r in by_doc.get(name, [])})
         print(f"{d['provider']:28} {name}")
-        print(f"    kind={d['kind']}  date={d['document_date'] or 'none stated'}  sha256={d['sha256'][:12]}...")
+        print(f"    kind={d['kind']}  date={d['document_date'] or 'none stated'}  sha256={(d['sha256'][:12] + '...') if d['sha256'] else 'REMOTE (no archive copy)'}")
         print(f"    url={d['url'] or 'NOT IN SCAN LOGS'}")
         print(f"    source row: {'exists (' + d['source_id'][:8] + ')' if d['source_id'] else 'NEW'}")
         print(f"    charges: {n}  categories: {', '.join(cats)}")
@@ -441,7 +470,7 @@ def main():
     for name, d in docs.items():
         if d["source_id"]:
             continue
-        created = rest.insert("sources", [{
+        src_row = {
             "kind": d["kind"],
             "publisher": d["publisher"],
             "title": d["title"],
@@ -450,7 +479,10 @@ def main():
             "retrieved_at": d["retrieved_at"],
             "storage_path": d["storage_path"],
             "content_sha256": d["sha256"],
-        }])
+        }
+        if src_row["retrieved_at"] is None:
+            del src_row["retrieved_at"]      # column defaults to now()
+        created = rest.insert("sources", [src_row])
         d["source_id"] = created[0]["id"]
         print(f"  + source {name} -> {d['source_id'][:8]}")
 
