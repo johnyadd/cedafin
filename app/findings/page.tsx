@@ -195,10 +195,10 @@ const GROUPS: { heading: string; intro: string; findings: Finding[] }[] = [
       },
       {
         claim:
-          "The smallest Ghana Gold Coin costs 7.75% more than the gold inside it",
+          "The smallest Ghana Gold Coin costs 7.75% more than the gold inside it, and 8.14% once a bank's fee is added",
         source:
-          "Bank of Ghana daily coin circulars against LBMA reference prices",
-        why: "Gold is recommended to ordinary savers as protection, and the cheapest way in carries the largest premium.",
+          "Bank of Ghana daily coin circulars against LBMA reference prices; Absa, First Atlantic and OmniBSIC tariff guides",
+        why: "Gold is recommended to ordinary savers as protection, and the cheapest way in carries the largest premium. On 28 August the ¼ oz coin was priced at GH₵13,802.71 against GH₵12,810.19 of gold. Absa, First Atlantic and OmniBSIC each list a GH₵50 per-coin fee in their tariff guides, which takes the premium to 8.14%; the same fee adds a tenth of a point to the 1 oz coin. Absa and OmniBSIC also charge 0.15% of the London gold price to buy a coin back.",
         href: "/compare/commodity-GHS",
       },
       {
