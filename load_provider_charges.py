@@ -51,6 +51,7 @@ COMBINED_CSVS = [
     DOCS / "provider_doc_fees_2026-09b.csv",
     DOCS / "provider_doc_fees_scb_2026-09.csv",
     DOCS / "provider_doc_fees_firstbank_2026.csv",
+    DOCS / "provider_doc_fees_bog_survey_2025-09.csv",
 ]
 FNB_CSV = DOCS / "first-national-bank-ghana" / "fnb_homeloan_fees.csv"
 
@@ -177,6 +178,20 @@ DOCUMENTS = {
                           "redirects to firstbankgroup.com/gh from our network. The guide is titled '2026 Tariff Guide' "
                           "and was uploaded in March 2026 (its web address); stored as March 2026. Only rows whose "
                           "text is unambiguous were loaded; the loans table's columns did not come through cleanly.",
+    },
+    "Survey-of-Bank-Charges-As-at-end-September-2025.pdf": {
+        "provider": "",            # one document, 23 banks: each row names its bank
+        "folder": "",
+        "remote": True,
+        "read_at": "2026-09-25T00:00:00Z",
+        "kind": "regulator_publication", "publisher": "Bank of Ghana",
+        "title": "Survey of Bank Charges, as at end-September 2025 (Financial Stability Department)",
+        "url": "https://www.bog.gov.gh/wp-content/uploads/2025/11/Survey-of-Bank-Charges-As-at-end-September-2025.pdf",
+        "document_date": "2025-09-30",
+        "effective_note": "Charges as reported by each bank to the Bank of Ghana, as at end-September 2025. Read "
+                          "remotely by Cedafin on 25 September 2026; no archive copy, because bog.gov.gh refuses "
+                          "connections from our network. A bank's own later tariff guide may differ. 'NIL' is stored "
+                          "as a zero charge; 'N/A' entries are not stored.",
     },
     "Individual-or-Joint-Account-Opening-002.pdf": {
         "provider": "tesah-capital",
@@ -368,7 +383,7 @@ def validate(rows: list[dict]) -> list[str]:
             errs.append(f"{where}: fixed amount with no currency")
         if not r["wording"]:
             errs.append(f"{where}: no document wording")
-        k = (r["source_file"], r["charge_key"], r["product_label"])
+        k = (r["source_file"], r["provider"], r["charge_key"], r["product_label"])
         if k in seen:
             errs.append(f"{where}: duplicate of an earlier row (same document, key and label)")
         seen.add(k)
@@ -425,7 +440,8 @@ def main():
     rest = Rest()
 
     # Providers must already exist
-    slugs = sorted({d["provider"] for d in DOCUMENTS.values()})
+    # Providers come from the rows: one document (the Bank of Ghana survey) covers many banks.
+    slugs = sorted({r["provider"] for r in rows} | {d["provider"] for d in DOCUMENTS.values() if d.get("provider")})
     found = rest.get("providers?select=id,slug&slug=in.(" + ",".join(slugs) + ")") or []
     provider_ids = {p["slug"]: p["id"] for p in found}
     missing = [s for s in slugs if s not in provider_ids]
@@ -448,7 +464,7 @@ def main():
         d["source_id"] = existing[0]["id"] if existing else None
         n = len(by_doc.get(name, []))
         cats = sorted({r["category"] for r in by_doc.get(name, [])})
-        print(f"{d['provider']:28} {name}")
+        print(f"{d['provider'] or 'Bank of Ghana (all banks)':28} {name}")
         print(f"    kind={d['kind']}  date={d['document_date'] or 'none stated'}  sha256={(d['sha256'][:12] + '...') if d['sha256'] else 'REMOTE (no archive copy)'}")
         print(f"    url={d['url'] or 'NOT IN SCAN LOGS'}")
         print(f"    source row: {'exists (' + d['source_id'][:8] + ')' if d['source_id'] else 'NEW'}")
@@ -510,7 +526,7 @@ def main():
             "effective_note": d["effective_note"],
             "verified_on": READ_ON,
         })
-    written = rest.insert("provider_charges", payload, upsert_on="source_id,charge_key,product_label")
+    written = rest.insert("provider_charges", payload, upsert_on="source_id,provider_id,charge_key,product_label")
     print(f"\nWrote {len(written or [])} charges.")
 
 
