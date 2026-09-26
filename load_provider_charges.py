@@ -52,6 +52,7 @@ COMBINED_CSVS = [
     DOCS / "provider_doc_fees_scb_2026-09.csv",
     DOCS / "provider_doc_fees_firstbank_2026.csv",
     DOCS / "provider_doc_fees_bog_survey_2025-09.csv",
+    DOCS / "provider_doc_fees_stanbic_cc.csv",
 ]
 FNB_CSV = DOCS / "first-national-bank-ghana" / "fnb_homeloan_fees.csv"
 
@@ -192,6 +193,19 @@ DOCUMENTS = {
                           "remotely by Cedafin on 25 September 2026; no archive copy, because bog.gov.gh refuses "
                           "connections from our network. A bank's own later tariff guide may differ. 'NIL' is stored "
                           "as a zero charge; 'N/A' entries are not stored.",
+    },
+    "Credit Card - Tariff Guide.pdf": {
+        "provider": "stanbic-bank-ghana", "folder": "stanbic-bank-ghana",
+        "remote": True,
+        "read_at": "2026-09-26T00:00:00Z",
+        "kind": "tariff_guide", "publisher": "Stanbic Bank Ghana",
+        "title": "Credit Card - Tariff Guide",
+        "url": "https://www.stanbicbank.com.gh/static_file/Ghana/Downloadable%20Files/Credit%20Card%20-%20Tariff%20Guide.pdf",
+        "document_date": None,
+        "effective_note": "The guide states no date, and its web address carries none. Read remotely by Cedafin on "
+                          "26 September 2026; no archive copy. It prices the Gold, Signature and Infinite cards "
+                          "identically and states no interest rate. The 0.084% monthly maintenance fee does not say "
+                          "what it is a percentage of.",
     },
     "Individual-or-Joint-Account-Opening-002.pdf": {
         "provider": "tesah-capital",

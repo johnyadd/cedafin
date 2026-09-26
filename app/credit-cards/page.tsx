@@ -59,6 +59,7 @@ export const revalidate = 3600;
 const ROWS: { label: string; keys: string[] }[] = [
   { label: "Interest rate", keys: ["interest", "interest_purchases", "interest_cash"] },
   { label: "Annual fee", keys: ["annual_fee"] },
+  { label: "Monthly fee", keys: ["monthly_maintenance", "maintenance"] },
   { label: "Issuance fee", keys: ["issuance"] },
   { label: "Late payment", keys: ["late_payment"] },
   { label: "Cash withdrawal", keys: ["cash_advance", "cash_withdrawal_local"] },
